@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>ログイン | Eas</title>
+</head>
+<body>
+
+	<div th:text="${login_error}"></div>
+	
+	<form th:action=@{/loginprocess} th:object="${loginForm}" method="post">
+		<input type="text" th:field="*{id}">
+		<input type="text" th:field="*{name}">
+		<button type="submit" th:text="ログイン"></button>
+	</form>
+	
+</body>
+</html>
