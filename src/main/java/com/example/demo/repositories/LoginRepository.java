@@ -8,6 +8,6 @@ import com.example.demo.entities.LoginEntity;
 
 //ログイン
 @Repository
-public abstract interface LoginRepository extends JpaRepository<LoginEntity,Integer>, LoginCustomRepository<LoginEntity>{
+public interface LoginRepository extends JpaRepository<LoginEntity, Integer>, LoginCustomRepository {
 
 }

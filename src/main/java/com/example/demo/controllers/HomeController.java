@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class HomeController {
 
-	// ホーム画面に遷移
+	// ホーム画面
 	@GetMapping(value = "/home")
 	public String Home() {
 		return "home";

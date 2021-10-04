@@ -17,41 +17,40 @@ public class LoginController {
 
 	@Autowired
 	LoginRepository loginRepostitory;
-	
-	//ログイン画面に遷移
-	@GetMapping(value="/")
+
+	// ログイン画面
+	@GetMapping(value = "/")
 	public String Login(Model model) {
 		model.addAttribute("loginForm", new LoginForm());
 		return "login";
 	}
-	
-	//ログイン処理
-	@PostMapping(value="/loginprocess")
-	public String LoginProcess(LoginForm loginForm,RedirectAttributes redirectAttr) {
-		
-		//Formで受け取ったデータを変数に変換
+
+	// ログイン処理
+	@PostMapping(value = "/loginprocess")
+	public String LoginProcess(LoginForm loginForm, RedirectAttributes redirectAttr) {
+
+		// Formで受け取ったデータを変数に変換
 		int id = loginForm.getId();
 		String name = loginForm.getName();
-		//エンティティを用意
+
 		LoginEntity loginEntity = new LoginEntity();
-		
-		//DBに検索
-		try{
+
+		try {
+			// DBに検索
 			loginEntity = loginRepostitory.Login(id, name);
-		}catch(Exception e) {
+			// 成功、失敗を判定
+			if (String.valueOf(loginEntity.getId()).equals("")) {
+				// ない場合→失敗(ログインに戻る)
+				return "redirect:/";
+			} else {
+				// ある場合→成功(ホーム画面に戻る)
+				redirectAttr.addFlashAttribute("login_error", "ログイン失敗");
+				return "redirect:home";
+			}
+		} catch (Exception e) {
 			System.out.println("ログイン処理エラー" + e);
 			redirectAttr.addFlashAttribute("login_error", "ログイン失敗");
 			return "redirect:/";
 		}
-		
-		//成功、失敗を判定
-		if(String.valueOf(loginEntity.getId()).equals("")) {
-			//入力したデータがない場合→失敗(ログインに戻る)
-			return "redirect:/";
-		}else {
-			//ある場合→成功(ホーム画面に戻る)
-			redirectAttr.addFlashAttribute("login_error", "ログイン失敗");
-			return "redirect:home";
-		}
-	}	
+	}
 }
