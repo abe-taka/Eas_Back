@@ -8,6 +8,6 @@
 ・customRepositories： CustomRepositoryインターフェース  
 ・entities：エンティティクラス  
 ・forms：フォームクラス  
-・impls：CustomRepositoryインターフェースクラス  
+・impls：CustomRepositoryインターフェース実装クラス  
 ・repositories：レポジトリクラス  
 ・rests：Restコントローラークラス   
