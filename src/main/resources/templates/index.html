@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+    <title>WebSocket Speech To Text</title>
+    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/main.css" rel="stylesheet">
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script src="/js/app.js"></script>
+</head>
+<body>
+
+<div id="main-content" class="container">
+    <div class="row">
+    	<h3>音声認識双方向通信機能(1対多)</h3>
+    	
+        <div class="col-md-6">
+            <form class="form-inline">
+                <div class="form-group">
+                	<!-- タイトル -->
+                    <label for="connect">字幕</label>
+                    <!-- ON -->
+                    <button id="connect" class="btn btn-default" type="button">開始</button>
+                    <!-- OFF -->
+                    <button id="disconnect" class="btn btn-default" type="button">停止</button>
+                </div>
+            </form>
+        </div>
+    
+	    <!-- 表示 -->
+		<div id="result-div"></div>
+	</div>
+</div>		
+	
+</body>
+</html>
