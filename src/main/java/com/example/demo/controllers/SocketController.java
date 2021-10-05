@@ -6,8 +6,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.util.HtmlUtils;
 
-import com.example.demo.getsocket.GetVoiceRecognition;
-import com.example.demo.sendsocket.SendVoiceRecognition;
+import com.example.demo.getsockets.GetVoiceRecognition;
+import com.example.demo.sendsockets.SendVoiceRecognition;
 
 //Websocketコントローラー
 @Controller

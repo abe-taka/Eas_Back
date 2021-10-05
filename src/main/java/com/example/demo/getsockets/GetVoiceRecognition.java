@@ -1,4 +1,4 @@
-package com.example.demo.getsocket;
+package com.example.demo.getsockets;
 
 //クライアントからデータを受け取るクラス(音声認識)
 public class GetVoiceRecognition {

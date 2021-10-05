@@ -1,4 +1,4 @@
-package com.example.demo.sendsocket;
+package com.example.demo.sendsockets;
 
 //クライアントに送信するデータをセットするクラス(音声認識)
 public class SendVoiceRecognition {
