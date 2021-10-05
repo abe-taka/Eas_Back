@@ -8,8 +8,8 @@
 ・customRepositories： CustomRepositoryインターフェース  
 ・entities：エンティティクラス  
 ・forms：フォームクラス  
-・getsocket : socket通信データ受信クラス  
+・getsockets : socket通信データ受信クラス  
 ・impls：CustomRepositoryインターフェース実装クラス  
 ・repositories：レポジトリクラス  
 ・rests：Restコントローラークラス  
-・sendsocket : socket通信データ送信クラス  
+・sendsockets : socket通信データ送信クラス  
