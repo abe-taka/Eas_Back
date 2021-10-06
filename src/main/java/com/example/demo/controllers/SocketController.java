@@ -23,6 +23,7 @@ public class SocketController {
         return new SendVoiceRecognition(HtmlUtils.htmlEscape(get_voice.getVoicetext()));
     }
     
+    //テスト
     @GetMapping(value="/index")
     public String Index() {
     	return "index";
