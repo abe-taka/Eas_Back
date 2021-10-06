@@ -6,5 +6,8 @@
 </head>
 <body>
 	<p>ログイン成功</p>
+	<form th:action="@{/logout}" method="post">
+		<button type="submit">ログアウト</button>
+	</form>
 </body>
 </html>

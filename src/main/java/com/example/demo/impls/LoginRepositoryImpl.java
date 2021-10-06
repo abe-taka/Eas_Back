@@ -20,12 +20,11 @@ public class LoginRepositoryImpl implements LoginCustomRepository {
 	// ログイン検索
 	@SuppressWarnings("unchecked")
 	@Override
-	public LoginEntity Login(@Param("id") int id, @Param("name") String name) {
+	public LoginEntity Login(@Param("name") String name) {
 		//SQL
-		String jpql = "SELECT * FROM login_table WHERE userid = :id AND username = :name";
-		//実装
+		String jpql = "SELECT * FROM login_table WHERE username = :name";
+		//検索
 		TypedQuery<LoginEntity> query = (TypedQuery<LoginEntity>) entityManager.createNativeQuery(jpql,LoginEntity.class);
-		query.setParameter("id", id);
 		query.setParameter("name", name);
 
 		return query.getSingleResult();

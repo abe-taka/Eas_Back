@@ -7,34 +7,34 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+//ログイン
 @Entity
 @Table(name = "login_table")
 public class LoginEntity {
 
-	// ユーザーid
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "userid")
-	private int id;
-
 	// ユーザー名
+	@Id
 	@Column(name = "username")
 	private String name;
 
+	// パスワード
+	@Column(name = "password")
+	private String password;
+
 	// ゲッター、セッター
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
 	public String getName() {
 		return name;
 	}
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 }

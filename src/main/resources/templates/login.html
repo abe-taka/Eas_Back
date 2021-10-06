@@ -7,9 +7,19 @@
 <body>
 	<div th:text="${login_error}"></div>
 	
-	<form th:action="@{/loginprocess}" th:object="${loginForm}" method="post">
-		<input type="text" th:field="*{id}">
-		<input type="text" th:field="*{name}">
+	<form th:action="@{/home}" th:object="${loginForm}" method="post">
+		<div>
+			<input type="text" th:field="*{name}">
+		</div>
+		
+		<div>
+			<input type="text" th:field="*{password}">
+		</div>
+		
+		<div>
+			<input type="checkbox" name="remember-me">  入力したログイン情報を記憶しますか?
+		</div>
+		
 		<button type="submit" th:text="ログイン"></button>
 	</form>
 </body>
