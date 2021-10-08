@@ -13,3 +13,5 @@
 ・repositories：レポジトリクラス  
 ・rests：Restコントローラークラス  
 ・sendsockets : socket通信データ送信クラス  
+
+test
