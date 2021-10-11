@@ -11,12 +11,12 @@ public class AccessDeniedController {
 	@GetMapping(value = "/access-denied")
 	public String Get_AccessDenied() {
 
-		return "/access-denied";
+		return "access-denied/access-denied";
 	}
 
 	@PostMapping(value = "/access-denied")
 	public String Post_AccessDenied() {
 
-		return "/access-denied";
+		return "access-denied/access-denied";
 	}
 }

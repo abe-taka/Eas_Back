@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 // SpringSecurity設定クラス
 @Configuration
@@ -51,11 +52,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.rememberMe()//Remember-Meの有効化
 				.and()
 				.exceptionHandling() //不正アクセスのハンドリング
-				.accessDeniedPage("/access-denied");
+				.accessDeniedPage("/access-denied/access-denied");
 	}
 
 	//認証処理
 	public void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userDetailsService);
+		auth.userDetailsService(userDetailsService).passwordEncoder(new BCryptPasswordEncoder());
 	}
 }

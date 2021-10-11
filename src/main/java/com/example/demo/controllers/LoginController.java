@@ -7,7 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import com.example.demo.components.Session_manage;
+import com.example.demo.components.SessionManage;
 import com.example.demo.entities.LoginEntity;
 import com.example.demo.forms.LoginForm;
 import com.example.demo.repositories.LoginRepository;
@@ -18,7 +18,7 @@ public class LoginController {
 	@Autowired
 	LoginRepository loginRepostitory;
 	@Autowired
-	Session_manage session_manage;
+	SessionManage session_manage;
 
 	// セッション用変数
 	private String session_name = null;
@@ -27,11 +27,11 @@ public class LoginController {
 	@GetMapping(value = "/")
 	public String Login(Model model) {
 		// セッションがあるかをチェック
-		if (!session_manage.Get_SessionName(session_name)) {
+		if (!session_manage.Get_SessionFlag(session_name)) {
 			model.addAttribute("loginForm", new LoginForm());
-			return "login";
+			return "login/login";
 		} else {
-			return "redirect:home";
+			return "redirect:home/home";
 		}
 	}
 
@@ -39,11 +39,11 @@ public class LoginController {
 	@GetMapping(value = "/signup")
 	public String Signup(Model model) {
 		// セッションがあるかをチェック
-		if (!session_manage.Get_SessionName(session_name)) {
+		if (!session_manage.Get_SessionFlag(session_name)) {
 			model.addAttribute("loginForm", new LoginForm());
-			return "signup";
+			return "login/signup";
 		} else {
-			return "redirect:home";
+			return "redirect:home/home";
 		}
 	}
 
@@ -59,10 +59,10 @@ public class LoginController {
 			loginEntity.setPassword(encoder.encode(loginForm.getPassword()));
 			// 保存
 			loginRepostitory.save(loginEntity);
-			return "redirect:login";
+			return "redirect:login/login";
 		} catch (Exception e) {
 			System.out.println(e);
-			return "redirect:signup";
+			return "redirect:login/signup";
 		}
 	}
 }

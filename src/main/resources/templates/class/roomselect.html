@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<meta th:name="${_csrf.parameterName}" th:content="${_csrf.token}"/>
+<meta charset="UTF-8">
+<title>授業選択 | Eas</title>
+</head>
+<body>
+
+	<!-- 学年選択 -->
+	<form>
+		<table>
+		    <thead>
+		        <tr>
+		        	<th colspan="3" th:text="学年">
+		            </th>	
+		        </tr>
+		    </thead>
+		    <tbody>
+		        <tr>
+		        	<th>
+		            	<button type="button" th:text="1年" th:value="1" th:data-parameter1="1" th:onclick="clickGrade(this.getAttribute('data-parameter1'))"></button>
+		            </th>
+		        	<th>
+		            	<button type="button" th:text="2年" th:value="2"></button>
+		            </th>
+		        	<th>
+		            	<button type="button" th:text="3年" th:value="3"></button>
+		            </th>
+		        </tr>
+		    </tbody>
+		</table>
+	</form>
+	
+	<!-- 組選択 -->
+	<form>
+		<table>
+		    <thead>
+		        <tr>
+		        	<th colspan="3" th:text="組">
+		            </th>	
+		        </tr>
+		    </thead>
+		    <tbody>
+		        <tr>
+		        	<th>
+		            	<button type="submit" th:text="1年"></button>
+		            </th>
+		        	<th>
+		            	<button type="submit" th:text="2年"></button>
+		            </th>
+		        	<th>
+		            	<button type="submit" th:text="3年"></button>
+		            </th>
+		        </tr>
+		    </tbody>
+		</table>
+	</form>
+	<div class="border">
+		<div id="parent-div"></div>
+	</div>
+</body>
+
+<script>
+//学年選択の処理
+function clickGrade(grade) {
+	console.log("学年",grade);
+	
+	// リロードを防ぐ
+    $("form").on('button', function (e) {
+        e.preventDefault();
+    })    
+        
+	// CSRFトークンの取得
+	const token = $("meta[name='_csrf']").attr("content");
+	
+	/// 非同期通信(機種コード)
+	$.ajax({
+		type : "POST",
+		url : "/rest/room_select",
+		headers: {"X-CSRF-TOKEN": token},
+		data : {js_grade : grade},
+		dataType : "json"
+	})
+	.then(function(response_data) {
+		// 成功時
+		console.log('clickGrade:success');
+		console.log('response_data',response_data);
+		
+		/*-- 表示処理 --*/
+		
+		//divタグ作成
+		var newTag = document.createElement("div"); 
+		var addData = document.createTextNode(response_data); // 表示する値をセット
+		newTag.appendChild(addData); //対象要素.apeendChild(追加する要素);
+		
+		//表示する場所の取得
+		var addPlace = document.getElementById("parent-div"); 
+		addPlace.appendChild(newTag); //対象要素.apeendChild(追加する要素);
+
+	}
+	, function() {
+		// 失敗時
+		console.log('clickGrade:fail');
+	});
+}
+</script>
+
+</html>
