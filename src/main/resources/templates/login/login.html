@@ -5,22 +5,9 @@
 <title>ログイン | Eas</title>
 </head>
 <body>
-	<div th:text="${login_error}"></div>
-	
-	<form th:action="@{/home}" th:object="${loginForm}" method="post">
-		<div>
-			<input type="text" th:field="*{name}">
-		</div>
-		
-		<div>
-			<input type="text" th:field="*{password}">
-		</div>
-		
-		<div>
-			<input type="checkbox" name="remember-me">  入力したログイン情報を記憶しますか?
-		</div>
-		
-		<button type="submit" th:text="ログイン"></button>
-	</form>
+	<h3>Login with:</h3>
+	<p th:each="url : ${urls}">
+    <a th:text="${url.key}" th:href="${url.value}">Client</a>
+</p>
 </body>
 </html>

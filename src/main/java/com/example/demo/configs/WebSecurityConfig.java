@@ -33,26 +33,31 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				//.authorizeRequests().mvcMatchers("/admin").hasAuthority("admin") //管理者画面　※とりあえず放置
 				.anyRequest().authenticated() //他のパスは全て認証必要
 				.and()
-			//ログイン認証に関する設定
-			.formLogin()
+				.oauth2Login()
 				.loginPage("/")
-				.loginProcessingUrl("/home")
-				.usernameParameter("name")
-				.passwordParameter("password")
-				.successForwardUrl("/home")
-				.failureUrl("/")
-				.and()
-			//ログアウトに関する設定
-			.logout()
-				.logoutUrl("/logout")
-				.logoutSuccessUrl("/")
-				.deleteCookies("JSESSIONID")// ログアウト後、Cookieに保存されているセッションIDを削除。
-				.invalidateHttpSession(true)// ログアウト後セッション無効
-				.and()
-				.rememberMe()//Remember-Meの有効化
-				.and()
-				.exceptionHandling() //不正アクセスのハンドリング
-				.accessDeniedPage("/access-denied/access-denied");
+				.defaultSuccessUrl("/home")
+				.failureUrl("/loginFailure");
+				//.and()
+//			//ログイン認証に関する設定
+//			.formLogin()
+//				.loginPage("/")
+//				.loginProcessingUrl("/home")
+//				.usernameParameter("name")
+//				.passwordParameter("password")
+//				.successForwardUrl("/home")
+//				.failureUrl("/")
+//				.and()
+//			//ログアウトに関する設定
+//			.logout()
+//				.logoutUrl("/logout")
+//				.logoutSuccessUrl("/")
+//				.deleteCookies("JSESSIONID")// ログアウト後、Cookieに保存されているセッションIDを削除。
+//				.invalidateHttpSession(true)// ログアウト後セッション無効
+//				.and()
+//				.rememberMe()//Remember-Meの有効化
+//				.and()
+//				.exceptionHandling() //不正アクセスのハンドリング
+//				.accessDeniedPage("/access-denied/access-denied");
 	}
 
 	//認証処理
