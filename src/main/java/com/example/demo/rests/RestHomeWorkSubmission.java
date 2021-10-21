@@ -12,9 +12,9 @@ import com.example.demo.entities.ClassEntity;
 import com.example.demo.repositories.ClassRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-//Restコントローラー(授業)
+//Restコントローラー(宿題提出)
 @RestController
-public class RestClassController {
+public class RestHomeWorkSubmission {
 
 	@Autowired
 	ObjectMapper objectMapper;
@@ -24,11 +24,11 @@ public class RestClassController {
 	JsonConversion jsonConversion;
 	
 	// 組データ取得処理(授業選択画面)
-	@PostMapping("/rest/room_select")
-	public String RestRoomSelect(@RequestParam("js_schoolyear") int schoolyear,@RequestParam("js_schoolcode") int schoolcode) {
-		//クラスデータを取得
-		List<ClassEntity> list_classEntity = classRepository.SearchSchoolYear(schoolcode, schoolyear);
-		
-		return jsonConversion.listToJSON(list_classEntity);
-	}
+//	@PostMapping("/rest/room_select")
+//	public String RestRoomSelect(@RequestParam("js_schoolyear") int schoolyear,@RequestParam("js_schoolcode") int schoolcode) {
+//		//宿題提出状況を取得
+//		List<ClassEntity> list_classEntity = classRepository.SearchSchoolYear(schoolcode, schoolyear);
+//		
+//		return jsonConversion.listToJSON(list_classEntity);
+//	}
 }

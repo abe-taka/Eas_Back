@@ -26,8 +26,8 @@ public class LoginController {
 	@Autowired
 	SessionManage session_manage;
 
-	// セッション用変数
-	private String session_name = null;
+	// セッションid
+	private String session_id = null;
 
 	private static String authorizationRequestBaseUri = "oauth2/authorization";
 	Map<String, String> oauth2AuthenticationUrls = new HashMap<>();
@@ -36,7 +36,7 @@ public class LoginController {
 	private ClientRegistrationRepository clientRegistrationRepository;
 
 	@GetMapping("/")
-	public String getLoginPage(Model model) {
+	public String Get_Login(Model model) {
 	    Iterable<ClientRegistration> clientRegistrations = null;
 	    ResolvableType type = ResolvableType.forInstance(clientRegistrationRepository)
 	      .as(Iterable.class);
@@ -55,9 +55,9 @@ public class LoginController {
 
 	// 新規登録画面
 	@GetMapping(value = "/signup")
-	public String Signup(Model model) {
+	public String Get_Signup(Model model) {
 		// セッションがあるかをチェック
-		if (!session_manage.Get_SessionFlag(session_name)) {
+		if (!session_manage.Check_SessionId(session_id)) {
 			model.addAttribute("loginForm", new LoginForm());
 			return "login/signup";
 		} else {

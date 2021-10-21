@@ -14,27 +14,25 @@ public class IssueController {
 	@Autowired
 	SessionManage session_manage;
 
-	// セッション用変数
-	private String session_name = null;
+	// セッションid
+	private String session_id = null;
 
 	// 問題作成
 	@GetMapping(value = "/issuecreate")
-	public String IssueCreate(Model model) {
+	public String Get_IssueCreate(Model model) {
 		// セッションがあるかをチェック
-		session_name = session_manage.Get_SessionName(session_name);
-		if (session_name.equals("anonymousUser")) {
+		if (!session_manage.Check_SessionId(session_id)) {
 			return "redirect:login/login";
 		} else {
-			model.addAttribute("session_name", session_name);
 			return "issue/issuecreate";
 		}
 	}
 
 	// 問題管理
 	@GetMapping(value = "/issuemanage")
-	public String IssueManage() {
+	public String Get_IssueManage() {
 		// セッションがあるかをチェック
-		if (!session_manage.Get_SessionFlag(session_name)) {
+		if (!session_manage.Check_SessionId(session_id)) {
 			return "redirect:login/login";
 		} else {
 			return "issue/issuemanage";

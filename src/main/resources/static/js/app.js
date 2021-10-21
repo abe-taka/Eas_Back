@@ -12,8 +12,8 @@ var second_flag = true;
 
 // connectボタンのデザイン設定
 function setConnected(connected) {
-    $("#connect").prop("disabled",connected);
-    $("#disconnect").prop("disabled",!connected);
+    $("#recog_connect").prop("disabled",connected);
+    $("#recog_disconnect").prop("disabled",!connected);
 }
 
 // 接続
@@ -32,19 +32,19 @@ function connect() {
         	console.log(i + "回目データ受け取り",JSON.parse(response_data.body).voicetext);
         	
         	//データが送られて来た場合
-//        	if(JSON.parse(response_data.body).voicetext != ""){
-//        		//1回目の表示の時
-//        		if(second_flag == true){
-//        			//表示
+        	if(JSON.parse(response_data.body).voicetext != ""){
+        		//1回目の表示の時
+        		if(second_flag == true){
+        			//表示
         			showGreeting(JSON.parse(response_data.body).voicetext);
-//        			//if(){}先生と学生の判別条件をここに書く 
-//        			second_flag = false;
-//        		}
-//        		//2回目の場合
-//        		else{
-//        			second_flag = true;
-//        		}
-//        	}
+        			//if(){}先生と学生の判別条件をここに書く 
+        			second_flag = false;
+        		}
+        		//2回目の場合
+        		else{
+        			second_flag = true;
+        		}
+        	}
         });
     });
 }
@@ -140,9 +140,9 @@ $(function () {
         e.preventDefault();
     });
     // 「connect」ボタンクリック処理
-    $( "#connect" ).click(function() { connect(); });
-    $( "#connect" ).click(function() { vr_function(); });
+    $( "#recog_connect" ).click(function() { connect(); });
+    $( "#recog_connect" ).click(function() { vr_function(); });
     // 「disconnect」ボタンクリック処理
-    $( "#disconnect" ).click(function() { disconnect(); });
+    $( "#recog_disconnect" ).click(function() { disconnect(); });
 });
 setTimeout("connect()", 3000);
