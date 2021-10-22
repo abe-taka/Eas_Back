@@ -12,7 +12,7 @@ import com.example.demo.components.SessionManage;
 import com.example.demo.forms.LoginForm;
 import com.example.demo.repositories.TeacherRepository;
 
-//ホーム111111
+//ホーム111111テスト
 @Controller
 public class HomeController {
 	@Autowired
