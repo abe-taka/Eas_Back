@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>ホーム | Eas</title>
+</head>
+<body>
+	<p>ログイン成功</p>
+	<form th:action="@{/logout}" method="post">
+		<button type="submit">ログアウト</button>
+	</form>
+	
+	<div th:if="${flag == '1'}">
+		<form th:action="@{/roomselect}" method="get">
+			<button type="submit">授業選択画面</button>
+		</form>
+	</div>
+	
+	<div th:if="${flag == '0'}">
+		<form th:action="@{/class}" method="get">
+			<button type="submit">授業画面</button>
+		</form>
+	</div>
+	
+	<div>
+		<form th:action="@{/homeworksubmi}" method="get">
+			<button type="submit">提出状況</button>
+		</form>
+	</div>
+</body>
+</html>
