@@ -1,11 +1,18 @@
 package com.example.demo.controllers;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.components.SessionManage;
 import com.example.demo.entities.ClassEntity;
@@ -16,6 +23,8 @@ import com.example.demo.repositories.TeacherRepository;
 //宿題
 @Controller
 public class HomeWorkController {
+	
+	public static String uploadDirectory = System.getProperty("user.dir")+"/uploads";
 
 	@Autowired
 	SessionManage session_manage;
@@ -35,8 +44,29 @@ public class HomeWorkController {
 			return "redirect:login/login";
 		} else {
 			model.addAttribute("session_mail", session_manage.getSession_mail());
+			System.out.println("ここ");
 			return "homework/homework";
 		}
+	}
+	
+	// 宿題
+	@RequestMapping("/homeworkupload")
+	public String upload(Model model,@RequestParam("files") MultipartFile[] files) {
+		System.out.println("１ここだと");
+		StringBuilder fileNames = new StringBuilder();
+		System.out.println("１ここだと");
+		for(MultipartFile file : files) {
+			Path fileNamePath = Paths.get(uploadDirectory,file.getOriginalFilename());
+			fileNames.append(file.getOriginalFilename());
+			try {
+				Files.write(fileNamePath, file.getBytes());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		model.addAttribute("msg","Successfully uploaded files" + fileNames.toString());
+		return "homework/homeworkupload";
 	}
 
 	// 宿題提出

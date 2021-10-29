@@ -1,10 +1,14 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
-<title>宿題 | Eas</title>
+<title>top page</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-	<p>宿題</p>
+<h2>画像アップロード</h2>
+    <form action="/homeworkupload" method="post" enctype="multipart/form-data" >
+        <input name="files" type="file" multiple="multiple" />
+        <input type="submit" value="送信する"/>
+    </form>
 </body>
 </html>
