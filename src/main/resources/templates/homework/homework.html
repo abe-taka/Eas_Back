@@ -1,14 +1,43 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<title>top page</title>
+<title>問題作成</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 <body>
-<h2>画像アップロード</h2>
-    <form action="/homeworkupload" method="post" enctype="multipart/form-data" >
-        <input name="files" type="file" multiple="multiple" />
-        <input type="submit" value="送信する"/>
-    </form>
+
+<div class="container">
+	<div class="row">
+		<!-- サイドバー -->
+		<div class="side col-lg-2">
+			<!-- サイドバー共通部品 -->
+			<div th:replace="/common/sidebar::sidebar"></div>
+		</div>
+		<!-- メイン -->
+		<div class="column col-lg-10">
+			<h1>問題作成</h1>
+		    <form th:action="@{/homeworkupload}" th:object="${HomeworkForm}" method="post" enctype="multipart/form-data" >
+		    	<div>
+		        <input name="files" type="file" multiple="multiple" />
+		    	</div>
+		    	<div>
+		        <span>解答欄の数</span>
+		        <input name="text" type="number" th:field="*{answercolumn_num}" />
+		    	</div>
+		    	<div>
+		        <input type="submit" value="アップロード"/>
+		    	</div>
+		    </form>
+		</div>
+	</div>
+</div>
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 </body>
 </html>
