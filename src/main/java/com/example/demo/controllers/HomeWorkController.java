@@ -1,21 +1,36 @@
 package com.example.demo.controllers;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.components.SessionManage;
 import com.example.demo.entities.ClassEntity;
+import com.example.demo.entities.HomeWorkManageEntity;
 import com.example.demo.entities.TeacherEntity;
+import com.example.demo.forms.HomeworkForm;
+import com.example.demo.forms.HomeworkuploadForm;
 import com.example.demo.repositories.ClassRepository;
+import com.example.demo.repositories.HomeworkRepository;
 import com.example.demo.repositories.TeacherRepository;
 
 //宿題
 @Controller
 public class HomeWorkController {
+	
+	public static String uploadDirectory = System.getProperty("user.dir")+"/uploads";
 
 	@Autowired
 	SessionManage session_manage;
@@ -23,11 +38,19 @@ public class HomeWorkController {
 	TeacherRepository teacherRepository;
 	@Autowired
 	ClassRepository classRepository;
+	
+	@Autowired
+	HomeworkRepository jdbcTestRepository;
 
 	// セッションid
 	private String session_id = null;
 
-	// 宿題
+	/**
+	 * 問題アップロード画面
+	 * @param model
+	 * @return　問題アップロード画面
+	 */
+	// 問題作成
 	@GetMapping(value = "/homework")
 	public String Get_Homework(Model model) {
 		// セッションがあるかをチェック
@@ -35,9 +58,99 @@ public class HomeWorkController {
 			return "redirect:login/login";
 		} else {
 			model.addAttribute("session_mail", session_manage.getSession_mail());
+			model.addAttribute("HomeworkForm", new HomeworkForm());
 			return "homework/homework";
 		}
 	}
+	
+	/**
+	 * アップロードしたファイル名と解答欄の数をmysqlに保存
+	 * @param model
+	 * @param files
+	 * @param homeworkform
+	 * @return アップロード確認画面
+	 */
+	// 問題のアップロード確認
+	@PostMapping(value="/homeworkupload")
+	public String upload(Model model,@RequestParam("files") MultipartFile[] files,HomeworkForm homeworkform) {
+		StringBuilder fileNames = new StringBuilder();
+		for(MultipartFile file : files) {
+			Path fileNamePath = Paths.get(uploadDirectory,file.getOriginalFilename());
+			fileNames.append(file.getOriginalFilename());
+			try {
+				Files.write(fileNamePath, file.getBytes());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		model.addAttribute("msg","Successfully uploaded files:" + fileNames.toString());
+		
+		HomeWorkManageEntity homeworkmanage = new HomeWorkManageEntity();
+		homeworkmanage.setAnswercolumnnum(homeworkform.getAnswercolumn_num());
+		homeworkmanage.setHomeworkfilename(fileNames.toString());
+		jdbcTestRepository.insertPDF(homeworkmanage);
+		
+		return "homework/homeworkupload";
+	}
+	
+	/**
+	 * アップロードした問題一覧表示
+	 * @param model
+	 * @return 問題管理画面
+	 */
+	// 問題管理
+	@GetMapping(value = "/homeworklist")
+	public String Get_HomeworkList(Model model) {
+		// セッションがあるかをチェック
+		if (!session_manage.Check_SessionId(session_id)) {
+			return "redirect:login/login";
+		} else {
+			model.addAttribute("session_mail", session_manage.getSession_mail());
+			List bookAll = jdbcTestRepository.findAll();
+			model.addAttribute("bookAll",bookAll);
+			model.addAttribute("HomeworkForm", new HomeworkForm());
+			return "homework/homeworklist";
+		}
+	}
+
+	/**
+	　* 問題情報削除
+	　* @param homework_id 宿題ID
+	　*　@param model Model
+	　*　@return 問題管理画面
+	 */
+	// 問題削除
+	@PostMapping(value = "/homeworkdelete")
+	public String Get_HomeworkDelete(Integer homework_id,Model model) {
+		// セッションがあるかをチェック
+		if (!session_manage.Check_SessionId(session_id)) {
+			return "redirect:login/login";
+		} else {
+			model.addAttribute("session_mail", session_manage.getSession_mail());
+			jdbcTestRepository.deleteHomeworkList(homework_id);
+			List bookAll = jdbcTestRepository.findAll();
+			model.addAttribute("bookAll",bookAll);
+			model.addAttribute("HomeworkForm", new HomeworkForm());
+			return "homework/homeworklist";
+		}
+	}
+	
+	// 提出状況確認
+	@GetMapping(value = "/homework_submistatus")
+	public String Get_HomeworkSubmiStatus(Model model) {
+		// セッションがあるかをチェック
+		if (!session_manage.Check_SessionId(session_id)) {
+			return "redirect:login/login";
+		} else {
+			model.addAttribute("session_mail", session_manage.getSession_mail());
+			model.addAttribute("HomeworkForm", new HomeworkForm());
+			return "homework/homework_submistatus";
+		}
+	}
+
+	
+	
 
 	// 宿題提出
 	@GetMapping(value = "/homeworksubmi")
