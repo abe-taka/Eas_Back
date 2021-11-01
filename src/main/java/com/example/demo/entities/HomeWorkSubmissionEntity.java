@@ -29,8 +29,8 @@ public class HomeWorkSubmissionEntity {
 
 	// 学生メールアドレス
 	@ManyToOne
-	@JoinColumn(name = "student_address")
-	private StudentEntity student;
+	@JoinColumn(name = "class_id")
+	private ClassEntity classid;
 
 	// ゲッター、セッター
 	public int getHomeworksubmissionid() {
@@ -49,11 +49,13 @@ public class HomeWorkSubmissionEntity {
 		this.homeworkmanage = homeworkmanage;
 	}
 
-	public StudentEntity getStudent() {
-		return student;
+	public ClassEntity getClassid() {
+		return classid;
 	}
 
-	public void setStudent(StudentEntity student) {
-		this.student = student;
+	public void setClassid(ClassEntity classid) {
+		this.classid = classid;
 	}
+
+	
 }

@@ -28,6 +28,10 @@ public class StudentEntity {
 	// 出席番号
 	@Column(name = "class_no")
 	private int classno;
+	
+	// 名前
+	@Column(name = "student_name")
+	private String studentname;
 
 	
 	// 宿題提示テーブル

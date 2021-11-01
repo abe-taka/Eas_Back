@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -41,7 +42,7 @@ public class HomeWorkController {
 	ClassRepository classRepository;
 	
 	@Autowired
-	HomeworkRepository jdbcTestRepository;
+	HomeworkRepository<?> jdbcTestRepository;
 
 	// セッションid
 	private String session_id = null;
@@ -74,25 +75,29 @@ public class HomeWorkController {
 	// 問題のアップロード確認
 	@PostMapping(value="/homeworkupload")
 	public String upload(Model model,@RequestParam("files") MultipartFile[] files,HomeworkForm homeworkform) {
-		StringBuilder fileNames = new StringBuilder();
-		for(MultipartFile file : files) {
-			Path fileNamePath = Paths.get(uploadDirectory,file.getOriginalFilename());
-			fileNames.append(file.getOriginalFilename());
-			try {
-				Files.write(fileNamePath, file.getBytes());
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		// セッションがあるかをチェック
+		if (!session_manage.Check_SessionId(session_id)) {
+			return "redirect:login/login";
+		} else {
+			model.addAttribute("session_mail", session_manage.getSession_mail());
+			StringBuilder fileNames = new StringBuilder();
+			for(MultipartFile file : files) {
+				Path fileNamePath = Paths.get(uploadDirectory,file.getOriginalFilename());
+				fileNames.append(file.getOriginalFilename());
+				try {
+					Files.write(fileNamePath, file.getBytes());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
+			model.addAttribute("msg","Successfully uploaded files:" + fileNames.toString());
+			HomeWorkManageEntity homeworkmanage = new HomeWorkManageEntity();
+			homeworkmanage.setAnswercolumnnum(homeworkform.getAnswercolumn_num());
+			homeworkmanage.setHomeworkfilename(fileNames.toString());
+			jdbcTestRepository.insertPDF(homeworkmanage);
+			return "homework/homeworkupload";
 		}
-		model.addAttribute("msg","Successfully uploaded files:" + fileNames.toString());
-		
-		HomeWorkManageEntity homeworkmanage = new HomeWorkManageEntity();
-		homeworkmanage.setAnswercolumnnum(homeworkform.getAnswercolumn_num());
-		homeworkmanage.setHomeworkfilename(fileNames.toString());
-		jdbcTestRepository.insertPDF(homeworkmanage);
-		
-		return "homework/homeworkupload";
 	}
 	
 	/**
@@ -107,7 +112,7 @@ public class HomeWorkController {
 		if (!session_manage.Check_SessionId(session_id)) {
 			return "redirect:login/login";
 		} else {
-			model.addAttribute("session_mail", session_manage.getSession_mail());
+			model.addAttribute("session_mail", "あなたのメールアドレス:" + session_manage.getSession_mail());
 			List bookAll = jdbcTestRepository.findAll();
 			model.addAttribute("bookAll",bookAll);
 			model.addAttribute("HomeworkForm", new HomeworkForm());
@@ -129,17 +134,21 @@ public class HomeWorkController {
 			return "redirect:login/login";
 		} else {
 			model.addAttribute("session_mail", session_manage.getSession_mail());
-			//指定したファイルの削除
-	        //File file = new File(uploadDirectory + "/" + book.getHomework_filename());      
-	        //System.out.println(file);
-	        //deleteメソッドを使用してファイルを削除する
-	        //file.delete();
+			
+			//homework_idからhomework_filenameを取得
+			HomeworkForm homeworkForm = jdbcTestRepository.selectFileName(homework_id);
+			//指定したローカルファイルの削除
+			File file = new File(uploadDirectory + "/" + homeworkForm.getHomework_filename());
+			file.delete();
+			
+			//一覧を取得
 			jdbcTestRepository.deleteHomeworkList(homework_id);
 			List bookAll = jdbcTestRepository.findAll();
 			model.addAttribute("bookAll",bookAll);
 			model.addAttribute("HomeworkForm", new HomeworkForm());
-
 			
+			model.addAttribute("msg", homeworkForm.getHomework_filename() + "の削除完了しました");
+
 			return "homework/homeworklist";
 		}
 	}
@@ -169,9 +178,6 @@ public class HomeWorkController {
 			return "homework/homework_submistatus";
 		}
 	}
-
-	
-	
 
 	// 宿題提出
 	@GetMapping(value = "/homeworksubmi")

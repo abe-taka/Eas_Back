@@ -19,6 +19,9 @@
 		<!-- メイン -->
 		<div class="column col-lg-10">
 			<h1>問題管理</h1>
+	        <div th:if="${session_mail}">
+	                <span th:text="${session_mail}"></span>
+	        </div>
         <table class="table table-bordered table-striped">
             <tr>
                 <th>宿題ID</th>
@@ -46,8 +49,11 @@
                 </td>
             </tr>
         </table>
-		</div>
-	</div>
+        <div th:if="${msg}">
+                <span th:text="${msg}"></span>
+        </div>
+        </div>
+    </div>
 </div>
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
