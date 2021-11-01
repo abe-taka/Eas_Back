@@ -23,6 +23,7 @@ public class HomeworkRepository<Homework> {
 		String sql ="SELECT * FROM homeworkmanage_table";
 		return jdbctemplate.queryForList(sql);
 	}
+
 	
 	public void insertPDF(HomeWorkManageEntity homeWorkManageEntity) {
 		jdbctemplate.update("INSERT INTO homeworkmanage_table(answercolumn_num,homework_filename) Values(?,?)",

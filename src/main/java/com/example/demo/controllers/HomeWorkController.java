@@ -1,5 +1,6 @@
 package com.example.demo.controllers;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,7 +31,7 @@ import com.example.demo.repositories.TeacherRepository;
 @Controller
 public class HomeWorkController {
 	
-	public static String uploadDirectory = System.getProperty("user.dir")+"/uploads";
+	public static String uploadDirectory = System.getProperty("user.dir")+"/src/main/resources/static/pdf";
 
 	@Autowired
 	SessionManage session_manage;
@@ -122,16 +123,23 @@ public class HomeWorkController {
 	 */
 	// 問題削除
 	@PostMapping(value = "/homeworkdelete")
-	public String Get_HomeworkDelete(Integer homework_id,Model model) {
+	public String Get_HomeworkDelete(Model model,Integer homework_id) {
 		// セッションがあるかをチェック
 		if (!session_manage.Check_SessionId(session_id)) {
 			return "redirect:login/login";
 		} else {
 			model.addAttribute("session_mail", session_manage.getSession_mail());
+			//指定したファイルの削除
+	        //File file = new File(uploadDirectory + "/" + book.getHomework_filename());      
+	        //System.out.println(file);
+	        //deleteメソッドを使用してファイルを削除する
+	        //file.delete();
 			jdbcTestRepository.deleteHomeworkList(homework_id);
 			List bookAll = jdbcTestRepository.findAll();
 			model.addAttribute("bookAll",bookAll);
 			model.addAttribute("HomeworkForm", new HomeworkForm());
+
+			
 			return "homework/homeworklist";
 		}
 	}
@@ -139,6 +147,19 @@ public class HomeWorkController {
 	// 提出状況確認
 	@GetMapping(value = "/homework_submistatus")
 	public String Get_HomeworkSubmiStatus(Model model) {
+		// セッションがあるかをチェック
+		if (!session_manage.Check_SessionId(session_id)) {
+			return "redirect:login/login";
+		} else {
+			model.addAttribute("session_mail", session_manage.getSession_mail());
+			model.addAttribute("HomeworkForm", new HomeworkForm());
+			return "homework/homework_submistatus";
+		}
+	}
+	
+	// 提出状況確認
+	@PostMapping(value = "/homework_submistatus")
+	public String Post_HomeworkSubmiStatus(Model model) {
 		// セッションがあるかをチェック
 		if (!session_manage.Check_SessionId(session_id)) {
 			return "redirect:login/login";
