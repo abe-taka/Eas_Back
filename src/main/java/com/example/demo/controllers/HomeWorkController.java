@@ -65,6 +65,58 @@ public class HomeWorkController {
 		}
 	}
 	
+	// 問題作成
+	@PostMapping(value = "/homework")
+	public String Post_Homework(Model model,@RequestParam("files") MultipartFile[] files,HomeworkForm homeworkform) {
+		// セッションがあるかをチェック
+		if (!session_manage.Check_SessionId(session_id)) {
+			return "redirect:login/login";
+		} else {
+			model.addAttribute("session_mail", session_manage.getSession_mail());
+			model.addAttribute("HomeworkForm", new HomeworkForm());
+			StringBuilder fileNames = new StringBuilder();
+			for(MultipartFile file : files) {
+				
+				//ファイルの選択の有無
+				if(file.getOriginalFilename() == null | file.getOriginalFilename().isEmpty()) {
+					System.out.println("ファイルが選択されてないよ");
+					model.addAttribute("msg","ファイルが選択されていません");
+					return "homework/homework";
+				}
+				
+				Path fileNamePath = Paths.get(uploadDirectory,file.getOriginalFilename());
+				//ファイル名取得
+				fileNames.append(file.getOriginalFilename());
+				//拡張子を取得
+				String extension = fileNames.substring(fileNames.lastIndexOf("."));
+				if(!file.getOriginalFilename().isEmpty() && extension.equals(".pdf")) {
+					System.out.println("出来たよ");
+					try {
+						Files.write(fileNamePath, file.getBytes());
+						model.addAttribute("msg",fileNames.toString() + "のアップロードが完了しました");
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}else if(!extension.equals(".pdf")) {
+					model.addAttribute("msg","pdfファイルのみアップロード出来ます");
+					return "homework/homework";
+				}else {
+					System.out.println("あれ?");
+					return "homework/homework";
+				}
+			}
+			
+			//宿題管理テーブル(homework_management_tbl)に追加
+			HomeWorkManageEntity homeworkmanage = new HomeWorkManageEntity();
+			homeworkmanage.setAnswercolumnnum(homeworkform.getAnswercolumn_num());
+			homeworkmanage.setHomeworkfilename(fileNames.toString());
+			jdbcTestRepository.insertPDF(homeworkmanage);
+			
+			return "homework/homework";
+		}
+	}
+	
 	/**
 	 * アップロードしたファイル名と解答欄の数をmysqlに保存
 	 * @param model
@@ -161,6 +213,8 @@ public class HomeWorkController {
 			return "redirect:login/login";
 		} else {
 			model.addAttribute("session_mail", session_manage.getSession_mail());
+			List homeworkSubmiStatusAll = jdbcTestRepository.findAllHomeworkSubmiStatus();
+			model.addAttribute("homeworkSubmiStatusAll",homeworkSubmiStatusAll);
 			model.addAttribute("HomeworkForm", new HomeworkForm());
 			return "homework/homework_submistatus";
 		}
@@ -174,6 +228,8 @@ public class HomeWorkController {
 			return "redirect:login/login";
 		} else {
 			model.addAttribute("session_mail", session_manage.getSession_mail());
+			List homeworkSubmiStatusAll = jdbcTestRepository.findAllHomeworkSubmiStatus();
+			model.addAttribute("homeworkSubmiStatusAll",homeworkSubmiStatusAll);
 			model.addAttribute("HomeworkForm", new HomeworkForm());
 			return "homework/homework_submistatus";
 		}

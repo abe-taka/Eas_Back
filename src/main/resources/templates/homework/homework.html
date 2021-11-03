@@ -19,7 +19,7 @@
 		<!-- メイン -->
 		<div class="column col-lg-10">
 			<h1>問題作成</h1>
-		    <form th:action="@{/homeworkupload}" th:object="${HomeworkForm}" method="post" enctype="multipart/form-data" >
+		    <form th:action="@{/homework}" th:object="${HomeworkForm}" method="post" enctype="multipart/form-data" >
 		    	<div>
 		        <input name="files" type="file" multiple="multiple" />
 		    	</div>
@@ -31,6 +31,9 @@
 		        <input type="submit" value="アップロード"/>
 		    	</div>
 		    </form>
+	        <div th:if="${msg}">
+	                <span th:text="${msg}"></span>
+	        </div>
 		</div>
 	</div>
 </div>

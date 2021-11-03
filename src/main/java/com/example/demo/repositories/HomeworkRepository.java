@@ -61,5 +61,11 @@ public class HomeworkRepository<Homework> {
 		homeworkForm.setHomework_filename((String) Homeworkresult.get("homework_filename"));
 		return homeworkForm;
 	}
+	
+	@SuppressWarnings("rawtypes")
+	public List findAllHomeworkSubmiStatus(){
+		String sql ="SELECT * FROM homeworkanswer_table;";
+		return jdbctemplate.queryForList(sql);
+	}
 
 }
