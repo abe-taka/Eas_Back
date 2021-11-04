@@ -64,7 +64,7 @@ public class HomeworkRepository<Homework> {
 	
 	@SuppressWarnings("rawtypes")
 	public List findAllHomeworkSubmiStatus(){
-		String sql ="SELECT * FROM homeworkanswer_table;";
+		String sql ="SELECT * FROM student_table;";
 		return jdbctemplate.queryForList(sql);
 	}
 

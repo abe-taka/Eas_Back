@@ -28,6 +28,10 @@ public class HomeWorkAnswerEntity implements Serializable{
 	// 解答内容
 	@Column(name = "answer_content")
 	private String answer_content;
+	
+	//出席番号
+	@Column(name = "class_no")
+	private int classno;
 
 	// ゲッター、セッター
 	public HomeWorkSubmissionEntity getHomeworksubmission() {
@@ -36,6 +40,14 @@ public class HomeWorkAnswerEntity implements Serializable{
 
 	public void setHomeworksubmission(HomeWorkSubmissionEntity homeworksubmission) {
 		this.homeworksubmission = homeworksubmission;
+	}
+	
+	public int getClassno() {
+		return classno;
+	}
+
+	public void setClassno(int classno) {
+		this.classno = classno;
 	}
 
 	public int getAnswerno() {

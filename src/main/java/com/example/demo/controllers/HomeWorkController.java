@@ -21,7 +21,9 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.demo.components.SessionManage;
 import com.example.demo.entities.ClassEntity;
 import com.example.demo.entities.HomeWorkManageEntity;
+import com.example.demo.entities.StudentEntity;
 import com.example.demo.entities.TeacherEntity;
+import com.example.demo.forms.ClassForm;
 import com.example.demo.forms.HomeworkForm;
 import com.example.demo.forms.HomeworkuploadForm;
 import com.example.demo.repositories.ClassRepository;
@@ -30,7 +32,7 @@ import com.example.demo.repositories.TeacherRepository;
 
 //宿題
 @Controller
-public class HomeWorkController {
+public class HomeWorkController<SelectYearCode> {
 	
 	public static String uploadDirectory = System.getProperty("user.dir")+"/src/main/resources/static/pdf";
 
@@ -42,7 +44,7 @@ public class HomeWorkController {
 	ClassRepository classRepository;
 	
 	@Autowired
-	HomeworkRepository<?> jdbcTestRepository;
+	HomeworkRepository jdbcTestRepository;
 
 	// セッションid
 	private String session_id = null;
@@ -216,18 +218,22 @@ public class HomeWorkController {
 			List homeworkSubmiStatusAll = jdbcTestRepository.findAllHomeworkSubmiStatus();
 			model.addAttribute("homeworkSubmiStatusAll",homeworkSubmiStatusAll);
 			model.addAttribute("HomeworkForm", new HomeworkForm());
+			model.addAttribute("ClassForm",new ClassForm());
 			return "homework/homework_submistatus";
 		}
 	}
 	
 	// 提出状況確認
 	@PostMapping(value = "/homework_submistatus")
-	public String Post_HomeworkSubmiStatus(Model model) {
+	public String Post_HomeworkSubmiStatus(Model model,ClassForm classform) {
 		// セッションがあるかをチェック
 		if (!session_manage.Check_SessionId(session_id)) {
 			return "redirect:login/login";
 		} else {
 			model.addAttribute("session_mail", session_manage.getSession_mail());
+			
+			System.out.println(classform.getSchool_year());
+
 			List homeworkSubmiStatusAll = jdbcTestRepository.findAllHomeworkSubmiStatus();
 			model.addAttribute("homeworkSubmiStatusAll",homeworkSubmiStatusAll);
 			model.addAttribute("HomeworkForm", new HomeworkForm());

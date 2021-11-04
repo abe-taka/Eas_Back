@@ -20,48 +20,36 @@
 		<div class="column col-lg-10">
 			<h1>提出状況確認</h1>
 			<div>
-			    <form th:action="@{/homework_submistatus}" method="post">
-				    <select>
-				      <option>1年</option>
-				      <option>2年</option>
-				      <option>3年</option>
-				      <option>4年</option>
-				      <option>5年</option>
-				      <option>6年</option>
+			    <form th:action="@{/homework_submistatus}" th:object="${ClassForm}" method="post">
+				    <select name = "school_year">
+				      <option th:value = "01" th:text="1年"></option>
+				      <option th:value = "02" th:text="2年"></option>
+				      <option th:value = "03" th:text="3年"></option>
+				      <option th:value = "04" th:text="4年"></option>
+				      <option th:value = "05" th:text="5年"></option>
+				      <option th:value = "06" th:text="6年"></option>
 				    </select>
 				    <select>
-				      <option>1組</option>
-				      <option>2組</option>
-				      <option>3組</option>
-				      <option>4組</option>
-				      <option>5組</option>
-				      <option>6組</option>
-				    </select>
-				    <select>
-				      <option>国語</option>
-				      <option>算数</option>
-				      <option>理科</option>
-				      <option>社会</option>
-				      <option>英語</option>
-				      <option>その他</option>
+				      <option th:value = "01" th:text="1組"></option>
+				      <option th:value = "02" th:text="2組"></option>
+				      <option th:value = "03" th:text="3組"></option>
+				      <option th:value = "04" th:text="4組"></option>
+				      <option th:value = "05" th:text="5組"></option>
+				      <option th:value = "06" th:text="6組"></option>
 				    </select>
 				    <input type="submit" value="表示">
 			    </form>
-			    
-            <h1>問題管理</h1>
             <div th:if="${session_mail}">
                     <span th:text="${session_mail}"></span>
             </div>
 	        <table class="table table-bordered table-striped">
 	            <tr>
-	                <th>宿題提出ID</th>
-	                <th>解答番号</th>
-	                <th>解答内容</th>
+	                <th>出席番号</th>
+	                <th>名前</th>
 	            </tr>
 	            <tr th:each="homeworkSubmiStatus:${homeworkSubmiStatusAll}">
-	                <td th:text="${homeworkSubmiStatus.homeworksubmission_id}"></td>
-	                <td th:text="${homeworkSubmiStatus.answer_no}"></td>
-	                <td th:text="${homeworkSubmiStatus.answer_content}"></td>
+	                <td th:text="${homeworkSubmiStatus.class_no}"></td>
+	                <td th:text="${homeworkSubmiStatus.student_name}"></td>
 	            </tr>
 	        </table>
 			</div>
