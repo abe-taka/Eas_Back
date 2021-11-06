@@ -23,11 +23,11 @@ public class RestClassController {
 	@Autowired
 	JsonConversion jsonConversion;
 	
-	// 組データ取得処理(授業選択画面)
+	// 組データ取得(授業選択画面)
 	@PostMapping("/rest/room_select")
 	public String RestRoomSelect(@RequestParam("js_schoolyear") int schoolyear,@RequestParam("js_schoolcode") int schoolcode) {
 		//クラスデータを取得
-		List<ClassEntity> list_classEntity = classRepository.SearchSchoolYear(schoolcode, schoolyear);
+		List<ClassEntity> list_classEntity = classRepository.SearchSchoolclassBySchoolyear(schoolcode, schoolyear);
 		
 		return jsonConversion.listToJSON(list_classEntity);
 	}

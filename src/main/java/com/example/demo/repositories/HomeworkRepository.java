@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.example.demo.components.SessionManage;
 import com.example.demo.entities.HomeWorkManageEntity;
 import com.example.demo.forms.HomeworkForm;
+import com.example.demo.forms.StudentForm;
 
 @Repository
 public class HomeworkRepository<Homework> {
@@ -62,10 +63,16 @@ public class HomeworkRepository<Homework> {
 		return homeworkForm;
 	}
 	
-	@SuppressWarnings("rawtypes")
-	public List findAllHomeworkSubmiStatus(){
-		String sql ="SELECT * FROM student_table;";
-		return jdbctemplate.queryForList(sql);
+	
+	public List studentListfindAll(Integer schoolCode){
+		String sql ="SELECT * FROM student_table WHERE class_id = ? ORDER BY class_no ASC;";
+		return jdbctemplate.queryForList(sql,schoolCode);
 	}
+	
+	public List homeworkListfindAll(Integer schoolCode){
+		String sql ="SELECT * FROM homeworksubmission_table JOIN homeworkmanage_table ON homeworksubmission_table.homework_id = homeworkmanage_table.homework_id WHERE homeworksubmission_table.class_id = ?;";
+		return jdbctemplate.queryForList(sql,schoolCode);
+	}
+
 
 }

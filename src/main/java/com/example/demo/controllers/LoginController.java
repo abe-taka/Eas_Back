@@ -14,15 +14,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.example.demo.components.SessionManage;
-import com.example.demo.entities.LoginEntity;
-import com.example.demo.forms.LoginForm;
-import com.example.demo.repositories.LoginRepository;
 
 //ログイン
 @Controller
 public class LoginController {
-	@Autowired
-	LoginRepository loginRepostitory;
 	@Autowired
 	SessionManage session_manage;
 
@@ -38,6 +33,8 @@ public class LoginController {
 	@GetMapping("/")
 	public String Get_Login(Model model) {
 	    Iterable<ClientRegistration> clientRegistrations = null;
+	    SessionManage session_manage = new SessionManage();
+	    System.out.println("####クラスid####" + session_manage.getSession_classid());
 	    ResolvableType type = ResolvableType.forInstance(clientRegistrationRepository)
 	      .as(Iterable.class);
 	    if (type != ResolvableType.NONE &&
@@ -51,36 +48,5 @@ public class LoginController {
 	    model.addAttribute("urls", oauth2AuthenticationUrls);
 
 	    return "/login/login";
-	}
-
-	// 新規登録画面
-	@GetMapping(value = "/signup")
-	public String Get_Signup(Model model) {
-		// セッションがあるかをチェック
-		if (!session_manage.Check_SessionId(session_id)) {
-			model.addAttribute("loginForm", new LoginForm());
-			return "login/signup";
-		} else {
-			return "redirect:home/home";
-		}
-	}
-
-	// 新規登録処理
-	@PostMapping(value = "/signupprocess")
-	public String SignupProcess(Model model, LoginForm loginForm) {
-		// パスワードのハッシュ化
-		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-
-		try {
-			LoginEntity loginEntity = new LoginEntity();
-			loginEntity.setName(loginForm.getName());
-			loginEntity.setPassword(encoder.encode(loginForm.getPassword()));
-			// 保存
-			loginRepostitory.save(loginEntity);
-			return "redirect:login/login";
-		} catch (Exception e) {
-			System.out.println(e);
-			return "redirect:login/signup";
-		}
 	}
 }

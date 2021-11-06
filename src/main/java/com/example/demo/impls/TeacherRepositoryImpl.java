@@ -19,10 +19,10 @@ public class TeacherRepositoryImpl implements TeacherCustomRepository {
 	@Autowired
 	EntityManager entityManager;
 
-	// ログイン検索
+	// メールアドレスを基に先生データを取得
 	@SuppressWarnings("unchecked")
 	@Override
-	public TeacherEntity SearchSchoolCode(String teacheraddress) {
+	public TeacherEntity SearchTeacher(String teacheraddress) {
 		// SQL
 		String jpql = "SELECT * FROM teacher_table WHERE teacher_address = :teacheraddress";
 		// 検索
@@ -33,10 +33,10 @@ public class TeacherRepositoryImpl implements TeacherCustomRepository {
 		return query.getSingleResult();
 	}
 
-	//メールアドレス検索
+	// 検索ユーザーの存在有無
 	@SuppressWarnings("unchecked")
 	@Override
-	public Boolean SearchMailAddress(String teacheraddress) {
+	public Boolean CheckTeacher(String teacheraddress) {
 		// SQL
 		String jpql = "SELECT * FROM teacher_table WHERE teacher_address = :teacheraddress";
 		// 検索

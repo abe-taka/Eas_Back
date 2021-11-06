@@ -4,8 +4,12 @@ import java.util.List;
 
 import com.example.demo.entities.ClassEntity;
 
-//教師
+//クラス
 public interface ClassCustomRepository {
-	//学年検索
-	public List<ClassEntity> SearchSchoolYear(int school_code,int school_year);
+	
+	// 所属学校の学年データを取得
+	public List<String> SearchSchoolyearBySchoolcode(int school_code);
+	
+	// 学年ごとの組データを取得
+	public List<ClassEntity> SearchSchoolclassBySchoolyear(int school_code, int school_year);
 }

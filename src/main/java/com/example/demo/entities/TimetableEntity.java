@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -12,7 +13,10 @@ import javax.persistence.Table;
 //時間割テーブル
 @Entity
 @Table(name = "timetable_table")
+@IdClass(value= TimetablePrimary.class)
 public class TimetableEntity implements Serializable{
+	
+	private static final long serialVersionUID = 1L;
 
 	// 時間割ID
 	@Id
@@ -33,7 +37,7 @@ public class TimetableEntity implements Serializable{
 	@Column(name = "subject_name")
 	private String subjectname;
 
-	// 担当教師
+	// 担当先生
 	@ManyToOne
 	@JoinColumn(name = "teacher_address")
 	private TeacherEntity teacher;

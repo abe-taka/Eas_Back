@@ -9,7 +9,7 @@ import com.example.demo.sendsockets.SocketMessage;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-//JSON変換クラス
+//JSON変換コーポネント
 @Component
 public class JsonConversion {
 

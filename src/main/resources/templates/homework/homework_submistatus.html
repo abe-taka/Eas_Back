@@ -8,7 +8,11 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 <body>
+<div th:text="${session_name} + さん"></div>
 
+<form th:action="@{/logout}" method="post">
+	<button type="submit">ログアウト</button>
+</form>
 <div class="container">
 	<div class="row">
 		<!-- サイドバー -->
@@ -29,7 +33,7 @@
 				      <option th:value = "05" th:text="5年"></option>
 				      <option th:value = "06" th:text="6年"></option>
 				    </select>
-				    <select>
+				    <select name = "school_class">
 				      <option th:value = "01" th:text="1組"></option>
 				      <option th:value = "02" th:text="2組"></option>
 				      <option th:value = "03" th:text="3組"></option>
@@ -45,11 +49,13 @@
 	        <table class="table table-bordered table-striped">
 	            <tr>
 	                <th>出席番号</th>
+	                <th>メールアドレス</th>
 	                <th>名前</th>
 	            </tr>
-	            <tr th:each="homeworkSubmiStatus:${homeworkSubmiStatusAll}">
-	                <td th:text="${homeworkSubmiStatus.class_no}"></td>
-	                <td th:text="${homeworkSubmiStatus.student_name}"></td>
+	            <tr th:each="studentList:${studentList}">
+	                <td th:text="${studentList.class_no}"></td>
+	                <td th:text="${studentList.student_address}"></td>
+	                <td><a th:text="${studentList.student_name}" th:href="@{'homeworkdetails/' + ${studentList.student_name}}"></a></td>
 	            </tr>
 	        </table>
 			</div>

@@ -1,57 +1,137 @@
 package com.example.demo.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.example.demo.components.DateTimeComponent;
 import com.example.demo.components.SessionManage;
-import com.example.demo.forms.LoginForm;
+import com.example.demo.entities.StudentEntity;
+import com.example.demo.entities.TeacherEntity;
+import com.example.demo.entities.TimetableEntity;
+import com.example.demo.repositories.StudentRepository;
 import com.example.demo.repositories.TeacherRepository;
+import com.example.demo.repositories.TimetableRepository;
 
-//ホーム111111テスト
+//ホーム
 @Controller
+@RequestMapping(value = "/home")
 public class HomeController {
 	@Autowired
 	SessionManage session_manage;
 	@Autowired
 	TeacherRepository teacherRepository;
+	@Autowired
+	DateTimeComponent datetime;
+	@Autowired
+	TimetableRepository timetableRepository;
+	@Autowired
+	StudentRepository studentRepository;
 
 	// セッションid
 	private String session_id = null;
-			
-	// ホーム画面(ログイン成功時の画面)
-	@GetMapping(value = "/home")
-	public String Get_Home(Model model,@AuthenticationPrincipal OidcUser user) {
-		System.out.println("認証メールアドレス" + user.getEmail());
+
+	// 判別処理
+	@GetMapping(value = "/identification")
+	public String Get_HomeIdentification(Model model, @AuthenticationPrincipal OidcUser user) {
+		// メールアドレスを取得
 		String session_mail = user.getEmail();
-		//セッションにメールアドレスを格納
-		session_manage.setSession_mail(session_mail);
-		// セッションがあるかをチェック
-		if (!session_manage.Check_SessionId(session_id)) {
-			model.addAttribute("loginForm", new LoginForm());
-			return "redirect:login/login";
+
+		// 先生か学生かを判別
+		if (teacherRepository.CheckTeacher(session_mail)) {
+			// 先生
+			TeacherEntity teacherEntity = new TeacherEntity();
+			teacherEntity = teacherRepository.SearchTeacher(session_mail);
+			// セッションにメールアドレス、名前を格納
+			session_manage.setSession_mail(session_mail);
+			session_manage.setSession_name(teacherEntity.getTeachername());
+			
+			return "redirect:/home/teacherhome";
+		}
+		else if(studentRepository.CheckStudent(session_mail)){
+			// 学生
+			StudentEntity studentEntity = new StudentEntity();
+			studentEntity = studentRepository.SearchStudent(session_mail);
+			// セッションにメールアドレス、名前、クラスIDを格納
+			session_manage.setSession_mail(session_mail);
+			session_manage.setSession_name(studentEntity.getStudentname());
+			session_manage.setSession_classid(studentEntity.getClassentity().getClassid());
+			System.out.println("####クラスid####" + session_manage.getSession_classid());
+			return "redirect:/home/studenthome";
 		}
 		else {
-			//教師か生徒かを調べる
-			if(teacherRepository.SearchMailAddress(session_mail)) {
-				//教師
-				model.addAttribute("flag", "1");
-			}else {
-				//生徒
-				model.addAttribute("flag", "0");
-			}
-			
-			return "home/home";
+			// DBに存在しない
+			return "redirect:/login/login";
 		}
 	}
 
-	// ホーム画面
-	@PostMapping(value = "/home")
-	public String Post_Home() {
-		return "home/home";
+	// 先生ホーム画面
+	@GetMapping(value = "/teacherhome")
+	public String Get_TeacherHome(Model model) {
+		// セッションがあるかをチェック
+		if (!(session_manage.Check_SessionId(session_id))) {
+			return "redirect:login/login";
+		} else {
+			// 現在日付を取得
+			String date = null;
+			date = datetime.Get_Monthdate(date);
+			model.addAttribute("date", date);
+
+			// 曜日を取得
+			String dayofweek = null;
+			dayofweek = datetime.getDayOfTheWeekShort();
+
+			// メールドレスを取得
+			String mailaddress = null;
+			mailaddress = session_manage.getSession_mail();
+
+			// スケジュールを取得
+			List<TimetableEntity> timetableentity = timetableRepository.SearchTodayTeacherSchedule(dayofweek,mailaddress);
+			model.addAttribute("TimetableList", timetableentity);
+			
+			//名前を取得
+			String session_name = session_manage.getSession_name();
+			model.addAttribute("session_name", session_name);
+
+			return "home/teacherhome";
+		}
+	}
+
+	// 学生ホーム画面
+	@GetMapping(value = "/studenthome")
+	public String Get_StudentHome(Model model) {
+		// セッションがあるかをチェック
+		if (!(session_manage.Check_SessionId(session_id))) {
+			return "redirect:login/login";
+		} else {
+			// 現在日付を取得
+			String date = null;
+			date = datetime.Get_Monthdate(date);
+			model.addAttribute("date", date);
+
+			// 曜日を取得
+			String dayofweek = null;
+			dayofweek = datetime.getDayOfTheWeekShort();
+
+			// クラスidを取得
+			String classid = session_manage.getSession_classid();
+			model.addAttribute("classid", classid);
+
+			// スケジュールを取得
+			List<TimetableEntity> timetableentity = timetableRepository.SearchTodayStudentSchedule(dayofweek, classid);
+			model.addAttribute("TimetableList", timetableentity);
+			
+			//名前を取得
+			String session_name = session_manage.getSession_name();
+			model.addAttribute("session_name", session_name);
+			
+			return "home/studenthome";
+		}
 	}
 }

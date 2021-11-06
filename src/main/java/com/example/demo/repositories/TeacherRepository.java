@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import com.example.demo.customRepositories.TeacherCustomRepository;
 import com.example.demo.entities.TeacherEntity;
 
-//教師
+//先生
 @Repository
 public interface TeacherRepository extends JpaRepository<TeacherEntity,String>,TeacherCustomRepository{
 

@@ -22,12 +22,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		//アクセス許可
 		http.authorizeRequests()
-				.antMatchers("/","/signup","/signupprocess").permitAll() //記述したパスのみログイン認証無しでもアクセス可
+				.antMatchers("/").permitAll() //記述したパスのみログイン認証無しでもアクセス可
 				.anyRequest().authenticated(); //他のパスは全て認証必要
 		//Googleログイン認証
 		http.oauth2Login()
 				.loginPage("/")
-				.defaultSuccessUrl("/home")
+				.defaultSuccessUrl("/home/identification")
 				.failureUrl("/loginFailure");
 		//ログアウト
 		http.logout()

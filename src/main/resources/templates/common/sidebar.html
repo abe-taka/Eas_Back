@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 	<div th:fragment="sidebar">
-			<div><a href="/home">ホーム</a></div>
-			<div><a href="/homework">問題作成</a></div>
-			<div><a href="/homeworklist">問題管理</a></div>
-			<div><a href="/homework_submistatus">提出状況確認</a></div>
+			<div><a th:href="@{/home/teacherhome}">ホーム</a></div>
+			<div><a th:href="@{/homework}">問題作成</a></div>
+			<div><a th:href="@{/homeworklist}">問題管理</a></div>
+			<div><a th:href="@{/homework_submistatus}">提出状況確認</a></div>
+			<div><a th:href="@{/class/roomselect}">授業選択</a></div>
 	</div>
 </html>

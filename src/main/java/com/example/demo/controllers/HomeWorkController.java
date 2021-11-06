@@ -5,10 +5,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.session.Session;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +31,7 @@ import com.example.demo.entities.TeacherEntity;
 import com.example.demo.forms.ClassForm;
 import com.example.demo.forms.HomeworkForm;
 import com.example.demo.forms.HomeworkuploadForm;
+import com.example.demo.forms.StudentForm;
 import com.example.demo.repositories.ClassRepository;
 import com.example.demo.repositories.HomeworkRepository;
 import com.example.demo.repositories.TeacherRepository;
@@ -43,11 +49,21 @@ public class HomeWorkController<SelectYearCode> {
 	@Autowired
 	ClassRepository classRepository;
 	
+	 @Autowired
+	 HttpSession session;  
+	
 	@Autowired
 	HomeworkRepository jdbcTestRepository;
 
 	// セッションid
 	private String session_id = null;
+	
+	/**
+	 * HomeControllで後日変更
+	 * 後で消す
+	 */
+	// クラスID
+    private Integer session_classId = 100020;
 
 	/**
 	 * 問題アップロード画面
@@ -61,7 +77,14 @@ public class HomeWorkController<SelectYearCode> {
 		if (!session_manage.Check_SessionId(session_id)) {
 			return "redirect:login/login";
 		} else {
-			model.addAttribute("session_mail", session_manage.getSession_mail());
+			// メールドレスを取得
+			String mailaddress = null;
+			mailaddress = session_manage.getSession_mail();
+			model.addAttribute("session_mail", mailaddress);
+			//名前を取得
+			String session_name = session_manage.getSession_name();
+			model.addAttribute("session_name", session_name);
+			
 			model.addAttribute("HomeworkForm", new HomeworkForm());
 			return "homework/homework";
 		}
@@ -74,8 +97,16 @@ public class HomeWorkController<SelectYearCode> {
 		if (!session_manage.Check_SessionId(session_id)) {
 			return "redirect:login/login";
 		} else {
-			model.addAttribute("session_mail", session_manage.getSession_mail());
+			// メールドレスを取得
+			String mailaddress = null;
+			mailaddress = session_manage.getSession_mail();
+			model.addAttribute("session_mail", mailaddress);
+			//名前を取得
+			String session_name = session_manage.getSession_name();
+			model.addAttribute("session_name", session_name);
+			
 			model.addAttribute("HomeworkForm", new HomeworkForm());
+			
 			StringBuilder fileNames = new StringBuilder();
 			for(MultipartFile file : files) {
 				
@@ -120,41 +151,6 @@ public class HomeWorkController<SelectYearCode> {
 	}
 	
 	/**
-	 * アップロードしたファイル名と解答欄の数をmysqlに保存
-	 * @param model
-	 * @param files
-	 * @param homeworkform
-	 * @return アップロード確認画面
-	 */
-	// 問題のアップロード確認
-	@PostMapping(value="/homeworkupload")
-	public String upload(Model model,@RequestParam("files") MultipartFile[] files,HomeworkForm homeworkform) {
-		// セッションがあるかをチェック
-		if (!session_manage.Check_SessionId(session_id)) {
-			return "redirect:login/login";
-		} else {
-			model.addAttribute("session_mail", session_manage.getSession_mail());
-			StringBuilder fileNames = new StringBuilder();
-			for(MultipartFile file : files) {
-				Path fileNamePath = Paths.get(uploadDirectory,file.getOriginalFilename());
-				fileNames.append(file.getOriginalFilename());
-				try {
-					Files.write(fileNamePath, file.getBytes());
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			model.addAttribute("msg","Successfully uploaded files:" + fileNames.toString());
-			HomeWorkManageEntity homeworkmanage = new HomeWorkManageEntity();
-			homeworkmanage.setAnswercolumnnum(homeworkform.getAnswercolumn_num());
-			homeworkmanage.setHomeworkfilename(fileNames.toString());
-			jdbcTestRepository.insertPDF(homeworkmanage);
-			return "homework/homeworkupload";
-		}
-	}
-	
-	/**
 	 * アップロードした問題一覧表示
 	 * @param model
 	 * @return 問題管理画面
@@ -166,7 +162,14 @@ public class HomeWorkController<SelectYearCode> {
 		if (!session_manage.Check_SessionId(session_id)) {
 			return "redirect:login/login";
 		} else {
-			model.addAttribute("session_mail", "あなたのメールアドレス:" + session_manage.getSession_mail());
+			// メールドレスを取得
+			String mailaddress = null;
+			mailaddress = session_manage.getSession_mail();
+			model.addAttribute("session_mail", mailaddress);
+			//名前を取得
+			String session_name = session_manage.getSession_name();
+			model.addAttribute("session_name", session_name);
+			
 			List bookAll = jdbcTestRepository.findAll();
 			model.addAttribute("bookAll",bookAll);
 			model.addAttribute("HomeworkForm", new HomeworkForm());
@@ -187,7 +190,13 @@ public class HomeWorkController<SelectYearCode> {
 		if (!session_manage.Check_SessionId(session_id)) {
 			return "redirect:login/login";
 		} else {
-			model.addAttribute("session_mail", session_manage.getSession_mail());
+			// メールドレスを取得
+			String mailaddress = null;
+			mailaddress = session_manage.getSession_mail();
+			model.addAttribute("session_mail", mailaddress);
+			//名前を取得
+			String session_name = session_manage.getSession_name();
+			model.addAttribute("session_name", session_name);
 			
 			//homework_idからhomework_filenameを取得
 			HomeworkForm homeworkForm = jdbcTestRepository.selectFileName(homework_id);
@@ -214,11 +223,18 @@ public class HomeWorkController<SelectYearCode> {
 		if (!session_manage.Check_SessionId(session_id)) {
 			return "redirect:login/login";
 		} else {
-			model.addAttribute("session_mail", session_manage.getSession_mail());
-			List homeworkSubmiStatusAll = jdbcTestRepository.findAllHomeworkSubmiStatus();
-			model.addAttribute("homeworkSubmiStatusAll",homeworkSubmiStatusAll);
+			// メールドレスを取得
+			String mailaddress = null;
+			mailaddress = session_manage.getSession_mail();
+			model.addAttribute("session_mail", mailaddress);
+			//名前を取得
+			String session_name = session_manage.getSession_name();
+			model.addAttribute("session_name", session_name);
+			
 			model.addAttribute("HomeworkForm", new HomeworkForm());
+			
 			model.addAttribute("ClassForm",new ClassForm());
+			
 			return "homework/homework_submistatus";
 		}
 	}
@@ -230,58 +246,70 @@ public class HomeWorkController<SelectYearCode> {
 		if (!session_manage.Check_SessionId(session_id)) {
 			return "redirect:login/login";
 		} else {
-			model.addAttribute("session_mail", session_manage.getSession_mail());
+			// メールドレスを取得
+			String mailaddress = null;
+			mailaddress = session_manage.getSession_mail();
+			model.addAttribute("session_mail", mailaddress);
+			//名前を取得
+			String session_name = session_manage.getSession_name();
+			model.addAttribute("session_name", session_name);
 			
-			System.out.println(classform.getSchool_year());
-
-			List homeworkSubmiStatusAll = jdbcTestRepository.findAllHomeworkSubmiStatus();
-			model.addAttribute("homeworkSubmiStatusAll",homeworkSubmiStatusAll);
-			model.addAttribute("HomeworkForm", new HomeworkForm());
+			//selectタグから取得した学年　組
+			String getSchoolYear = String.valueOf(classform.getSchool_year());
+			String getSchoolClass = String.valueOf(classform.getSchool_class());
+			model.addAttribute("SchoolYear ", getSchoolYear);
+			model.addAttribute("SchoolClass ", getSchoolClass);
+			/**
+			 * 後で消す
+			 */
+			//学校コード生成
+			int schoolCode = Integer.parseInt(session_classId.toString() + getSchoolYear.format("%2s", getSchoolYear).replace(" ", "0") + getSchoolClass.format("%2s", getSchoolClass).replace(" ", "0"));
+			
+			//セッションに追加
+			session.setAttribute("classID", schoolCode);
+			
+			//学校コードから学生情報テーブル(student_table)の一覧を取得
+			List studentList = jdbcTestRepository.studentListfindAll(schoolCode);
+			model.addAttribute("studentList",studentList);
+			
 			return "homework/homework_submistatus";
+			
 		}
 	}
-
-	// 宿題提出
-	@GetMapping(value = "/homeworksubmi")
-	public String Get_HomeworkSubmission(Model model) {
+	
+	// 生徒個別提出状況確認
+	@GetMapping(value = "/homeworkdetails/{student_name}")
+	public String Get_HomeworkDetails(@PathVariable String student_name, Model model) {
 		// セッションがあるかをチェック
 		if (!session_manage.Check_SessionId(session_id)) {
 			return "redirect:login/login";
 		} else {
-			Boolean teacher_flag;
-			// 教師か生徒かを判別
-			if (!(teacherRepository.SearchMailAddress(session_manage.getSession_mail()))) {
-				//生徒
-				teacher_flag = false;
-				System.out.println("生徒");
-			} else {
-				//教師
-				teacher_flag = true;
-				System.out.println("教師");
-				// 所属学校コード取得
-				TeacherEntity teacherEntity = new TeacherEntity();
-				teacherEntity = teacherRepository.SearchSchoolCode(session_manage.getSession_mail());
-				int school_code = teacherEntity.getSchool().getSchoolcode();
-				// 1年のクラスデータを取得
-				List<ClassEntity> list_classEntity = classRepository.SearchSchoolYear(school_code, 1);
-				model.addAttribute("list_classEntity", list_classEntity);
-				model.addAttribute("session_mail", session_manage.getSession_mail());
-				model.addAttribute("school_code", school_code);
-			}
-			model.addAttribute("flag", teacher_flag);
-			model.addAttribute("session_id", session_manage.Get_SessionId(session_id));
-			return "homework/homeworksubmi";
+			// メールドレスを取得
+			String mailaddress = null;
+			mailaddress = session_manage.getSession_mail();
+			model.addAttribute("session_mail", mailaddress);
+			//名前を取得
+			String session_name = session_manage.getSession_name();
+			model.addAttribute("session_name", session_name);
+			
+			int schoolCode = (int) session.getAttribute("classID");
+			
+			//学校コードからクラス別の宿題一覧を取得
+			List homeworkDetailsList = jdbcTestRepository.homeworkListfindAll(schoolCode);
+			model.addAttribute("homeworkDetailsList",homeworkDetailsList);
+			
+			model.addAttribute("student_name",student_name);
+			
+			 // 現在日時情報で初期化されたインスタンスの生成
+			 Date dateObj = new Date();
+			 SimpleDateFormat format = new SimpleDateFormat( "yyyy/MM/dd HH:mm:ss" );
+			 // 日時情報を指定フォーマットの文字列で取得
+			 String display = format.format( dateObj );
+			 model.addAttribute("display",display);
+			 
+			
+			model.addAttribute("HomeworkForm", new HomeworkForm());
+			return "homework/homeworkdetails";
 		}
 	}
-
-//	// 提出状況
-//	@GetMapping(value = "/homework_submistatus")
-//	public String Get_HomeworkSubmissionStatus() {
-//		// セッションがあるかをチェック
-//		if (!session_manage.Check_SessionId(session_id)) {
-//			return "redirect:login/login";
-//		} else {
-//			return "homework/homework_submistatus";
-//		}
-//	}
 }
