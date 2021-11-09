@@ -32,6 +32,17 @@
 		        <input name="text" type="number" th:field="*{answercolumn_num}" />
 		    	</div>
 		    	<div>
+		        <span>科目名</span>
+		        <select name = "homework_subject">
+				      <option th:value = "国語" th:text="国語"></option>
+				      <option th:value = "算数" th:text="算数"></option>
+				      <option th:value = "理科" th:text="理科"></option>
+				      <option th:value = "社会" th:text="社会"></option>
+				      <option th:value = "英語" th:text="英語"></option>
+				      <option th:value = "その他" th:text="その他"></option>
+		        </select>
+		    	</div>
+		    	<div>
 		        <input type="submit" value="アップロード"/>
 		    	</div>
 		    </form>

@@ -8,6 +8,9 @@ public class HomeworkForm {
 	// 解答欄の数
 	private int answercolumn_num;
 	
+	//科目名
+	private String homework_subject;
+	
 	//宿題id
 	private int homework_id;
 	
@@ -33,6 +36,14 @@ public class HomeworkForm {
 
 	public void setAnswercolumn_num(int answercolumn_num) {
 		this.answercolumn_num = answercolumn_num;
+	}
+
+	public String getHomework_subject() {
+		return homework_subject;
+	}
+
+	public void setHomework_subject(String homework_subject) {
+		this.homework_subject = homework_subject;
 	}
 
 }

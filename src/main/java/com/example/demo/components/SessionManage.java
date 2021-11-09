@@ -33,7 +33,11 @@ public class SessionManage {
 	private String session_name;
 	//セッション情報(クラスID)
 	private String session_classid;
-	
+	//セッション情報(学校コード)
+	private int session_schoolcode;
+	//セッション情報(出席番号)
+	private int session_calss_no;
+
 	// ゲッター、セッター
 	public String getSession_mail() {
 		return session_mail;
@@ -58,5 +62,22 @@ public class SessionManage {
 	public void setSession_classid(String session_classid) {
 		this.session_classid = session_classid;
 	}
+
+	public int getSession_schoolcode() {
+		return session_schoolcode;
+	}
+
+	public void setSession_schoolcode(int session_schoolcode) {
+		this.session_schoolcode = session_schoolcode;
+	}
+	
+	public int getSession_calss_no() {
+		return session_calss_no;
+	}
+
+	public void setSession_calss_no(int session_calss_no) {
+		this.session_calss_no = session_calss_no;
+	}
+	
 	
 }

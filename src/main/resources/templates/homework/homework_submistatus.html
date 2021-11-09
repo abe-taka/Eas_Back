@@ -55,7 +55,7 @@
 	            <tr th:each="studentList:${studentList}">
 	                <td th:text="${studentList.class_no}"></td>
 	                <td th:text="${studentList.student_address}"></td>
-	                <td><a th:text="${studentList.student_name}" th:href="@{'homeworkdetails/' + ${studentList.student_name}}"></a></td>
+	                <td><a th:text="${studentList.student_name}" th:href="@{'homeworkdetails/' + ${studentList.student_name} + '/' + ${studentList.class_no}}"></a></td>
 	            </tr>
 	        </table>
 			</div>

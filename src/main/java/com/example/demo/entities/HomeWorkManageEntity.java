@@ -40,7 +40,19 @@ public class HomeWorkManageEntity {
 	// 宿題提示テーブル
 	@OneToMany(mappedBy = "homeworkmanage")
 	private List<HomeWorkSubmissionEntity> homeworksubmission;
+	
+	// 科目名
+	@Column(name = "homework_subject")
+	private String homeworksubject;
 
+
+	public String getHomeworksubject() {
+		return homeworksubject;
+	}
+
+	public void setHomeworksubject(String homeworksubject) {
+		this.homeworksubject = homeworksubject;
+	}
 
 	// ゲッター、セッター
 	public int getHomeworkid() {

@@ -9,8 +9,8 @@ import org.springframework.stereotype.Repository;
 
 import com.example.demo.components.SessionManage;
 import com.example.demo.entities.HomeWorkManageEntity;
+import com.example.demo.entities.SubmissionFlgEntity;
 import com.example.demo.forms.HomeworkForm;
-import com.example.demo.forms.StudentForm;
 
 @Repository
 public class HomeworkRepository<Homework> {
@@ -36,8 +36,10 @@ public class HomeworkRepository<Homework> {
 	 * @param homeWorkManageEntity
 	 */
 	public void insertPDF(HomeWorkManageEntity homeWorkManageEntity) {
-		jdbctemplate.update("INSERT INTO homeworkmanage_table(answercolumn_num,homework_filename,teacher_address) Values(?,?,?)",
-				homeWorkManageEntity.getAnswercolumnnum(),homeWorkManageEntity.getHomeworkfilename(),session_manage.getSession_mail());
+		jdbctemplate.update("INSERT INTO homeworkmanage_table"
+				+ "(answercolumn_num,homework_filename,teacher_address,homework_subject) Values(?,?,?,?)",
+				homeWorkManageEntity.getAnswercolumnnum(),homeWorkManageEntity.getHomeworkfilename(),
+				session_manage.getSession_mail(),homeWorkManageEntity.getHomeworksubject());
 	}
 	
 	/**
@@ -69,9 +71,65 @@ public class HomeworkRepository<Homework> {
 		return jdbctemplate.queryForList(sql,schoolCode);
 	}
 	
-	public List homeworkListfindAll(Integer schoolCode){
-		String sql ="SELECT * FROM homeworksubmission_table JOIN homeworkmanage_table ON homeworksubmission_table.homework_id = homeworkmanage_table.homework_id WHERE homeworksubmission_table.class_id = ?;";
-		return jdbctemplate.queryForList(sql,schoolCode);
+	/**
+	 * homework_submistatus(宿題提出確認画面)で生徒個別の提出状況確認
+	 * @param schoolCode
+	 * @param classNo
+	 * @return
+	 */
+	public List homeworkListfindAll(Integer schoolCode,Integer classNo){
+		String sql ="SELECT \r\n"
+				+ "	homeworkmanage_table.homework_filename,\r\n"
+				+ "	homeworkmanage_table.homework_subject,\r\n"
+				+ "	submission_flg_table.submission_flg,\r\n"
+				+ "	submission_flg_table.submission_id,\r\n"
+				+ "	homeworkmanage_table.answercolumn_num\r\n"
+				+ "FROM \r\n"
+				+ "	homeworkmanage_table\r\n"
+				+ "	JOIN \r\n"
+				+ "	submission_flg_table\r\n"
+				+ "	ON homeworkmanage_table.homework_id = submission_flg_table.homework_id\r\n"
+				+ "WHERE \r\n"
+				+ "	submission_flg_table.class_id = ?\r\n"
+				+ "	AND \r\n"
+				+ "	submission_flg_table.class_no = ?"
+				+ ";";
+		return jdbctemplate.queryForList(sql,schoolCode,classNo);
+	}
+	
+	public HomeworkForm selectInputText(Integer schoolCode,Integer classNo,Integer submission_id) {
+		String sql ="SELECT \r\n"
+				+ "	homeworkmanage_table.homework_filename,\r\n"
+				+ "	homeworkmanage_table.homework_subject,\r\n"
+				+ "	submission_flg_table.submission_flg,\r\n"
+				+ "	submission_flg_table.submission_id,\r\n"
+				+ "	homeworkmanage_table.answercolumn_num\r\n"
+				+ "FROM \r\n"
+				+ "	homeworkmanage_table\r\n"
+				+ "	JOIN \r\n"
+				+ "	submission_flg_table\r\n"
+				+ "	ON homeworkmanage_table.homework_id = submission_flg_table.homework_id\r\n"
+				+ "WHERE \r\n"
+				+ "	submission_flg_table.class_id = ?\r\n"
+				+ "	AND \r\n"
+				+ "	submission_flg_table.class_no = ?\r\n"
+				+ "	AND \r\n"
+				+ "	submission_flg_table.submission_id = ?"
+				+ ";";
+		Map<String, Object> selectInputTextresult = jdbctemplate.queryForMap(sql, schoolCode,classNo,submission_id);
+		HomeworkForm homeworkForm= new HomeworkForm();
+		homeworkForm.setAnswercolumn_num((Integer) selectInputTextresult.get("answercolumn_num"));
+		homeworkForm.setHomework_filename((String) selectInputTextresult.get("homework_filename"));
+		return homeworkForm;
+	}
+	
+	public void insertHomework(Integer session_classno,Integer session_classId,Integer submission_id) {
+		jdbctemplate.update("UPDATE submission_flg_table\r\n"
+							+ "SET submission_flg = 1\r\n"
+							+ "WHERE class_no = ?\r\n"
+							+ "AND class_id = ?\r\n"
+							+ "AND submission_id = ?;",
+							session_classno,session_classId,submission_id);
 	}
 
 

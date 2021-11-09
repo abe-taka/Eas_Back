@@ -51,6 +51,7 @@ public class HomeController {
 			// セッションにメールアドレス、名前を格納
 			session_manage.setSession_mail(session_mail);
 			session_manage.setSession_name(teacherEntity.getTeachername());
+			session_manage.setSession_schoolcode(teacherEntity.getSchool().getSchoolcode());
 			
 			return "redirect:/home/teacherhome";
 		}
@@ -62,7 +63,8 @@ public class HomeController {
 			session_manage.setSession_mail(session_mail);
 			session_manage.setSession_name(studentEntity.getStudentname());
 			session_manage.setSession_classid(studentEntity.getClassentity().getClassid());
-			System.out.println("####クラスid####" + session_manage.getSession_classid());
+			session_manage.setSession_calss_no(studentEntity.getClassno());
+			System.out.println("####クラスid####" + session_manage.getSession_classid() + "出席番号:" + session_manage.getSession_calss_no());
 			return "redirect:/home/studenthome";
 		}
 		else {

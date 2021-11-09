@@ -4,123 +4,33 @@
 <meta charset="UTF-8">
 <meta th:name="${_csrf.parameterName}" th:content="${_csrf.token}" />
 <title>宿題提出確認 | Eas</title>
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 <body>
-	<!-- 先生用 -->
-	<div th:if="${flag}">
-	<form>
-		<table>
-			<thead>
-				<tr>
-					<th colspan="3" th:text="学年"></th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<th>
-						<button type="button" th:text="1年" th:value="1"
-							th:data-parameter1="1" th:data-parameter2="${school_code}"
-							th:onclick="clickGrade(this.getAttribute('data-parameter1'),this.getAttribute('data-parameter2'))"></button>
-					</th>
-					<th>
-						<button type="button" th:text="2年" th:value="2"
-							th:data-parameter1="2" th:data-parameter2="${school_code}"
-							th:onclick="clickGrade(this.getAttribute('data-parameter1'),this.getAttribute('data-parameter2'))"></button>
-					</th>
-					<th>
-						<button type="button" th:text="3年" th:value="3"
-							th:data-parameter1="3" th:data-parameter2="${school_code}"
-							th:onclick="clickGrade(this.getAttribute('data-parameter1'),this.getAttribute('data-parameter2'))"></button>
-					</th>
-				</tr>
-			</tbody>
-		</table>
+	<div th:text="${session_name} + さん"></div>
+	
+	<form th:action="@{/logout}" method="post">
+		<button type="submit">ログアウト</button>
 	</form>
-
-	<!-- 組選択 -->
-		<table>
-			<thead>
-				<tr>
-					<th colspan="3" th:text="組"></th>
-				</tr>
-			</thead>
-			<tbody id="list_id">
-				<tr th:each="list_classEntity : ${list_classEntity}" th:object="${list_classEntity}">
-					<form th:action="@{/class}" method="get">
-						<th>
-							<button type="submit" th:text="*{schoolclass} + 組" class="list_class"></button>
-						</th>
-					</form>
-				</tr>
-			</tbody>
-		</table>
-	</div>
-	
-	<!-- 学生用 -->
-	
+	<p>宿題提出確認</p>
+        <table class="table table-bordered table-striped">
+            <tr>
+                <th>宿題ファイル名</th>
+                <th>科目名</th>
+                <th>提出状況</th>
+            </tr>
+            <tr th:each="homeworkDetailsList:${homeworkDetailsList}">
+                <td th:text="${homeworkDetailsList.homework_filename}"></td>
+                <td th:text="${homeworkDetailsList.homework_subject}"></td>
+                <td th:if="${homeworkDetailsList.submission_flg == 1}" th:text="提出"></td>
+                <td th:if="${homeworkDetailsList.submission_flg == 0}"><a th:text="未提出" th:href="@{'/homeworkstudent/' + ${homeworkDetailsList.submission_id}}"></a></td>
+            </tr>
+        </table>
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 </body>
-
-<script>
-	var flag = "0";
-
-	//学年ごとの「組」情報の取得
-	function clickGrade(school_year, school_code) {
-		// リロードを防ぐ
-		$("form").on('button', function(e) {
-			e.preventDefault();
-		})
-		// CSRFトークンの取得
-		const token = $("meta[name='_csrf']").attr("content");
-
-		/// 非同期通信
-		$.ajax({
-			type : "POST",
-			url : "/rest/room_select",
-			headers : {
-				"X-CSRF-TOKEN" : token
-			},
-			data : {
-				js_schoolyear : school_year,
-				js_schoolcode : school_code
-			},
-			dataType : "json"
-		})
-		.then(function(response_data) {
-			// 成功時
-			console.log("response_data",response_data);
-			
-			if(flag == "0"){
-				flag = "1";
-				//Get時の組を消す
-				var delete_element = document.getElementById('list_id'); 
-				delete_element.remove('list_class');
-			}
-			else if(flag == "1"){
-				//Rest取得の組を消す
-				var delete_element2 = document.querySelectorAll('disp_data');
-				$("#disp_data").empty();
-			}
-			
-			/*-- 表示処理 --*/
-			for(var i = 0; i<response_data.length; i++){
-				//組を取得
-				var schoolclass = response_data[i]["schoolclass"] + "組";
-				//ボタンタグ生成
-				var newTag = document.createElement("button");
-				// 表示する値をセット
-				var addData = document.createTextNode(schoolclass);
-				//対象要素.apeendChild(追加する要素);
-				newTag.appendChild(addData);
-	
-				//表示する場所の取得
-				var addPlace = document.getElementById("disp_data");
-				addPlace.appendChild(newTag); //対象要素.apeendChild(追加する要素);
-			}
-
-		}, function() {
-			// 失敗時
-			console.log('clickGrade:fail');
-		});
-	}
-</script>
 </html>
