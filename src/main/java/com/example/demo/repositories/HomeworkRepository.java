@@ -8,7 +8,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.example.demo.components.SessionManage;
+import com.example.demo.entities.HomeWorkAnswerEntity;
 import com.example.demo.entities.HomeWorkManageEntity;
+import com.example.demo.entities.HomeWorkSubmissionEntity;
 import com.example.demo.entities.SubmissionFlgEntity;
 import com.example.demo.forms.HomeworkForm;
 
@@ -130,6 +132,15 @@ public class HomeworkRepository<Homework> {
 							+ "AND class_id = ?\r\n"
 							+ "AND submission_id = ?;",
 							session_classno,session_classId,submission_id);
+	}
+	
+	public void insertAnswerContent(HomeWorkAnswerEntity homeWorkAnswerEntity,HomeWorkSubmissionEntity homeWorkSubmissionEntity) {
+		jdbctemplate.update("INSERT INTO homeworkanswer_table \r\n"
+						  + "(answer_content,homeworksubmission_id,class_no) \r\n"
+						  + "VALUE \r\n"
+						  + "(?,?,?)",
+				homeWorkAnswerEntity.getAnswer_content(),homeWorkSubmissionEntity.getHomeworksubmissionid(),
+				homeWorkAnswerEntity.getClassno());
 	}
 
 

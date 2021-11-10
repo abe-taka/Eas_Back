@@ -31,10 +31,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.components.SessionManage;
 import com.example.demo.entities.ClassEntity;
+import com.example.demo.entities.HomeWorkAnswerEntity;
 import com.example.demo.entities.HomeWorkManageEntity;
+import com.example.demo.entities.HomeWorkSubmissionEntity;
 import com.example.demo.entities.StudentEntity;
 import com.example.demo.entities.TeacherEntity;
 import com.example.demo.forms.ClassForm;
+import com.example.demo.forms.HomeworkAnswerForm;
 import com.example.demo.forms.HomeworkForm;
 import com.example.demo.forms.HomeworkuploadForm;
 import com.example.demo.forms.StudentForm;
@@ -147,6 +150,9 @@ public class HomeWorkController<SelectYearCode> {
 			
 			//宿題管理テーブル(homework_management_tbl)に追加
 			HomeWorkManageEntity homeworkmanage = new HomeWorkManageEntity();
+			
+			System.out.println("カラム数" + homeworkform.getAnswercolumn_num());
+			
 			homeworkmanage.setAnswercolumnnum(homeworkform.getAnswercolumn_num());
 			homeworkmanage.setHomeworkfilename(fileNames.toString());
 			//選択した科目取得
@@ -403,7 +409,7 @@ public class HomeWorkController<SelectYearCode> {
 	
 	// 宿題提出
 	@PostMapping(value = "/homeworksubmi")
-	public String Post_HomeworkSubmission(Model model) {
+	public String Post_HomeworkSubmission(Model model,HomeworkAnswerForm homeworkAnswerForm,@RequestParam("content") String content) {
 		// セッションがあるかをチェック
 		if (!session_manage.Check_SessionId(session_id)) {
 			return "redirect:login/login";
@@ -426,7 +432,22 @@ public class HomeWorkController<SelectYearCode> {
 			
 			int submission_id = (int) session.getAttribute("submission_id");
 			
+			HomeWorkSubmissionEntity homeWorkSubmissionEntity = new HomeWorkSubmissionEntity();
+			homeWorkSubmissionEntity.setHomeworksubmissionid(submission_id);
+			
 			jdbcTestRepository.insertHomework(session_classno, session_classid,submission_id);
+			
+			HomeWorkAnswerEntity homeWorkAnswerEntity = new HomeWorkAnswerEntity();
+			homeWorkAnswerEntity.setAnswer_content(content);
+			homeWorkAnswerEntity.setClassno(session_classno);
+			
+			System.out.println("解答内容" + content);
+			System.out.println("出席番号" + session_classno);
+			System.out.println("課題番号" + homeWorkSubmissionEntity.getHomeworksubmissionid());
+			
+			jdbcTestRepository.insertAnswerContent(homeWorkAnswerEntity,homeWorkSubmissionEntity);
+			
+			
 			
 			//学校コードからクラス別の宿題一覧を取得
 			List homeworkDetailsList = jdbcTestRepository.homeworkListfindAll(session_classid,session_classno);

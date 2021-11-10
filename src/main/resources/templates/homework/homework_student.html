@@ -15,7 +15,7 @@
 	</form>
 	<p>生徒宿題</p>
 	<iframe th:src="'/pdf/' + ${homework_filename}" width="600px" height="600px"></iframe>
-	<form th:action="@{/homeworksubmi}" th:object="${HomeworkForm}" method="post">
+	<form th:action="@{/homeworksubmi}" th:object="${HomeworkAnswerForm}" method="post">
 	<div id="div2"></div>
 	<script th:inline="javascript">
 	
@@ -28,7 +28,8 @@
 	    for (let step = 0; step < answercolumn_num; step++) {
 		const input1 = document.createElement("input");
 		input1.setAttribute("type", "text");
-    	input1.setAttribute("type", "text");
+		input1.setAttribute("th:field","*{answer_content}");
+		input1.setAttribute("name","content");
     	div2.appendChild(input1);
     	}
 	</script>
