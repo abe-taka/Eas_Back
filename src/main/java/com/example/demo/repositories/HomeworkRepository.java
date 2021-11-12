@@ -68,13 +68,18 @@ public class HomeworkRepository<Homework> {
 	}
 	
 	
+	/**
+	 * homework_submistatus(宿題提出確認画面)でクラス別の生徒一覧取得
+	 * @param schoolCode
+	 * @return
+	 */
 	public List studentListfindAll(Integer schoolCode){
 		String sql ="SELECT * FROM student_table WHERE class_id = ? ORDER BY class_no ASC;";
 		return jdbctemplate.queryForList(sql,schoolCode);
 	}
 	
 	/**
-	 * homework_submistatus(宿題提出確認画面)で生徒個別の提出状況確認
+	 * homeworkdetails(宿題提出生徒個別提出状況確認画面)で生徒個別の提出状況確認
 	 * @param schoolCode
 	 * @param classNo
 	 * @return
@@ -83,6 +88,7 @@ public class HomeworkRepository<Homework> {
 		String sql ="SELECT \r\n"
 				+ "	homeworkmanage_table.homework_filename,\r\n"
 				+ "	homeworkmanage_table.homework_subject,\r\n"
+				+ "	homeworkmanage_table.homework_id,\r\n"
 				+ "	submission_flg_table.submission_flg,\r\n"
 				+ "	submission_flg_table.submission_id,\r\n"
 				+ "	homeworkmanage_table.answercolumn_num\r\n"
@@ -99,6 +105,13 @@ public class HomeworkRepository<Homework> {
 		return jdbctemplate.queryForList(sql,schoolCode,classNo);
 	}
 	
+	/**
+	 * homeworksubmi(生徒側の宿題提出確認)とhomeworkstudent(生徒宿題)で宿題の名前、宿題の科目、提出したかの有無、宿題ID、解答欄の数の取得
+	 * @param schoolCode
+	 * @param classNo
+	 * @param submission_id
+	 * @return
+	 */
 	public HomeworkForm selectInputText(Integer schoolCode,Integer classNo,Integer submission_id) {
 		String sql ="SELECT \r\n"
 				+ "	homeworkmanage_table.homework_filename,\r\n"
@@ -116,7 +129,7 @@ public class HomeworkRepository<Homework> {
 				+ "	AND \r\n"
 				+ "	submission_flg_table.class_no = ?\r\n"
 				+ "	AND \r\n"
-				+ "	submission_flg_table.submission_id = ?"
+				+ "	homeworkmanage_table.homework_id = ?"
 				+ ";";
 		Map<String, Object> selectInputTextresult = jdbctemplate.queryForMap(sql, schoolCode,classNo,submission_id);
 		HomeworkForm homeworkForm= new HomeworkForm();
@@ -125,6 +138,12 @@ public class HomeworkRepository<Homework> {
 		return homeworkForm;
 	}
 	
+	/**
+	 * homeworkstudent(生徒宿題)で宿題を提出した場合宿題提出確認テーブルが提出済みになる
+	 * @param session_classno
+	 * @param session_classId
+	 * @param submission_id
+	 */
 	public void insertHomework(Integer session_classno,Integer session_classId,Integer submission_id) {
 		jdbctemplate.update("UPDATE submission_flg_table\r\n"
 							+ "SET submission_flg = 1\r\n"
@@ -134,14 +153,28 @@ public class HomeworkRepository<Homework> {
 							session_classno,session_classId,submission_id);
 	}
 	
-	public void insertAnswerContent(HomeWorkAnswerEntity homeWorkAnswerEntity,HomeWorkSubmissionEntity homeWorkSubmissionEntity) {
+	/**
+	 * 生徒が宿題を提出した場合解答内容がhomework_answer_tblに保存される
+	 * @param homeWorkAnswerEntity
+	 * @param homeWorkSubmissionEntity
+	 */
+	public void insertAnswerContent(HomeWorkAnswerEntity homeWorkAnswerEntity,Integer homework_id) {
 		jdbctemplate.update("INSERT INTO homeworkanswer_table \r\n"
 						  + "(answer_content,homeworksubmission_id,class_no) \r\n"
 						  + "VALUE \r\n"
 						  + "(?,?,?)",
-				homeWorkAnswerEntity.getAnswer_content(),homeWorkSubmissionEntity.getHomeworksubmissionid(),
+				homeWorkAnswerEntity.getAnswer_content(),homework_id,
 				homeWorkAnswerEntity.getClassno());
 	}
+	
+	public void insertHomeworksubmission(HomeWorkAnswerEntity homeWorkAnswerEntity,HomeWorkSubmissionEntity homeWorkSubmissionEntity) {
+		jdbctemplate.update("INSERT INTO homeworksubmission_table\r\n"
+						  + "(class_id,homework_id) \r\n"
+						  + "VALUE\r\n"
+						  + "(1000200501,3)",
+				homeWorkAnswerEntity.getAnswer_content(),homeWorkSubmissionEntity.getHomeworksubmissionid(),
+				homeWorkAnswerEntity.getClassno());
+	}	
 
 
 }

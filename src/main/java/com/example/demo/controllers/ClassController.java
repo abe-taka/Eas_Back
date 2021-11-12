@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.example.demo.components.SessionManage;
 import com.example.demo.entities.ClassEntity;
+import com.example.demo.entities.StudentEntity;
 import com.example.demo.entities.TeacherEntity;
 import com.example.demo.repositories.ClassRepository;
+import com.example.demo.repositories.StudentRepository;
 import com.example.demo.repositories.TeacherRepository;
 
 //授業
@@ -25,6 +27,8 @@ public class ClassController {
 	TeacherRepository teacherRepository;
 	@Autowired
 	ClassRepository classRepository;
+	@Autowired
+	StudentRepository studentRepository;
 
 	// セッションid
 	private String session_id = null;
@@ -40,11 +44,12 @@ public class ClassController {
 				// 所属学校コード取得
 				TeacherEntity teacherEntity = new TeacherEntity();
 				teacherEntity = teacherRepository.SearchTeacher(session_manage.getSession_mail());
-				int school_code = 2;
+				int school_code = teacherEntity.getSchool().getSchoolcode();
 				
 				//所属学校の学年のデータを取得
 				System.out.println("学校コード" + school_code);
 				List<String> list_object = classRepository.findBySchoolyear(school_code);
+				//System.out.println(list_object.get(0));
 				for (int i=0; i < list_object.size(); i++) {
 					System.out.println("####" + list_object.get(i).toString());
 				}
@@ -82,6 +87,12 @@ public class ClassController {
 			String session_name = session_manage.getSession_name();
 			model.addAttribute("session_name", session_name);
 			
+			//フラグ生成
+			model.addAttribute("flag", true);
+			
+			//クラスid
+			model.addAttribute("classid", classid);
+			
 			return "class/teacherclass";
 		}
 	}
@@ -100,6 +111,17 @@ public class ClassController {
 			//名前を取得
 			String session_name = session_manage.getSession_name();
 			model.addAttribute("session_name", session_name);
+			
+			//フラグ生成
+			model.addAttribute("flag", false);
+			
+			//クラスid
+			model.addAttribute("classid", classid);
+			
+			//出席番号を取得
+			StudentEntity studentEntity = new StudentEntity();
+			studentEntity = studentRepository.SearchStudent(session_manage.getSession_mail());
+			model.addAttribute("student_classno", studentEntity.getClassno());
 			
 			return "class/studentclass";
 		}

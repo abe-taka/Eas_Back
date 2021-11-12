@@ -4,9 +4,29 @@
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="crossorigin="anonymous"></script>
 <meta th:name="${_csrf.parameterName}" th:content="${_csrf.token}" />
 <meta charset="UTF-8">
+<link href="/css/main.css" rel="stylesheet">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 <title>授業選択 | Eas</title>
 </head>
 <body>
+
+	<div id="log_session">
+		<div th:text="${session_name} + さん"></div>
+		<form th:action="@{/logout}" method="post">
+			<button type="submit" class="btn btn-outline-dark">ログアウト</button>
+		</form>
+	</div>
+	
+	<nav>
+    	<ul>
+			<form th:action="@{/homeworksubmi}" method="get">
+				<button type="submit"class="btn btn-outline-dark">提出状況</button>
+			</form>
+			<form th:action="@{/class/roomselect}" method="get">
+				<button type="submit" class="btn btn-outline-dark">授業選択</button>
+			</form>
+		</ul>
+	</nav>	
 	<!-- 学年選択 -->
 	<form>
 		<table>
@@ -16,21 +36,9 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr>
+				<tr th:each="list_schoolyear : ${list_schoolyear}" id="list_schoolyear">
 					<th>
-						<button type="button" th:text="1年" th:value="1"
-							th:data-parameter1="1" th:data-parameter2="${school_code}"
-							th:onclick="clickGrade(this.getAttribute('data-parameter1'),this.getAttribute('data-parameter2'))"></button>
-					</th>
-					<th>
-						<button type="button" th:text="2年" th:value="2"
-							th:data-parameter1="2" th:data-parameter2="${school_code}"
-							th:onclick="clickGrade(this.getAttribute('data-parameter1'),this.getAttribute('data-parameter2'))"></button>
-					</th>
-					<th>
-						<button type="button" th:text="3年" th:value="3"
-							th:data-parameter1="3" th:data-parameter2="${school_code}"
-							th:onclick="clickGrade(this.getAttribute('data-parameter1'),this.getAttribute('data-parameter2'))"></button>
+						<button type="button" class="btn btn-outline-dark btn-sm" th:text="${list_schoolyear} + 年" th:value="${list_schoolyear}"  th:data-parameter1="${list_schoolyear}" th:onclick="clickGrade(this.getAttribute('data-parameter1'))"></button>
 					</th>
 				</tr>
 			</tbody>
@@ -46,16 +54,18 @@
 			</thead>
 			<tbody id="list_id">
 				<tr th:each="list_classEntity : ${list_classEntity}" th:object="${list_classEntity}">
-					<form th:action="@{/class}" method="get">
+					<form th:action="@{/class/teacherclass/classid}" method="get">
 						<th>
-							<button type="submit" th:text="*{schoolclass} + 組" class="list_class"></button>
+							<button type="submit" th:text="*{schoolclass} + 組" class="list_class btn btn-outline-dark btn-sm"></button>
+							<input type="hidden" th:value="*{classid}" name="classid">
 						</th>
 					</form>
 				</tr>
 			</tbody>
 		</table>
 	<div class="border" id="disp">
-		<form id="disp_data"></form>
+		<form id="disp_data" th:action="@{/class/teacherclass/classid}" method="get">
+		</form>
 	</div>
 </body>
 
@@ -63,7 +73,8 @@
 	var flag = "0";
 
 	//学年ごとの「組」情報の取得
-	function clickGrade(school_year, school_code) {
+	function clickGrade(school_year) {
+		console.log("学年",school_year);
 		// リロードを防ぐ
 		$("form").on('button', function(e) {
 			e.preventDefault();
@@ -80,7 +91,6 @@
 			},
 			data : {
 				js_schoolyear : school_year,
-				js_schoolcode : school_code
 			},
 			dataType : "json"
 		})
@@ -110,6 +120,7 @@
 				var addData = document.createTextNode(schoolclass);
 				//対象要素.apeendChild(追加する要素);
 				newTag.appendChild(addData);
+				//newTag.classList.add();
 	
 				//表示する場所の取得
 				var addPlace = document.getElementById("disp_data");

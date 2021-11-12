@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.example.demo.sendsockets.SocketMessage;
+import com.example.demo.sendsockets.SendIssue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -16,7 +16,7 @@ public class JsonConversion {
 	@Autowired
 	ObjectMapper objectMapper;
 
-	// リストをJSON形式で変換する
+	// リストをJSON形式で変換
 	public String listToJSON(List<?> list) {
 		// json変換取得変数
 		String json = null;
@@ -31,8 +31,8 @@ public class JsonConversion {
 		return json;
 	}
 
-	// SocketMessageオブジェクトをJSON形式で変換する
-	public String SocketToJSON(SocketMessage socketMessage) {
+	// オブジェクトをJSON形式に変換
+	public String ObjectToJSON(Object socketMessage) {
 		// json変換取得変数
 		String json = null;
 
@@ -41,8 +41,9 @@ public class JsonConversion {
 			json = objectMapper.writeValueAsString(socketMessage);
 		} catch (JsonProcessingException e) {
 			System.err.println(e);
-			System.out.println("SocketToJSON():fail");
+			System.out.println("ObjectToJSON():fail");
 		}
 		return json;
 	}
+
 }

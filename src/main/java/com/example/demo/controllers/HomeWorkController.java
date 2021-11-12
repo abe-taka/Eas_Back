@@ -39,6 +39,7 @@ import com.example.demo.entities.TeacherEntity;
 import com.example.demo.forms.ClassForm;
 import com.example.demo.forms.HomeworkAnswerForm;
 import com.example.demo.forms.HomeworkForm;
+import com.example.demo.forms.HomeworkSubmiForm;
 import com.example.demo.forms.HomeworkuploadForm;
 import com.example.demo.forms.StudentForm;
 import com.example.demo.repositories.ClassRepository;
@@ -196,7 +197,35 @@ public class HomeWorkController<SelectYearCode> {
 	
 	// 宿題提示テーブルへ移動
 	@GetMapping(value = "/homeworkmovesubmission/{homework_id}")
-	public String Get_HomeworkMoveSubmission(Model model,Integer homework_id, ClassForm classform,HomeworkForm homeworkform) {
+	public String Get_HomeworkMoveSubmission(Model model,Integer homework_id) {
+		// セッションがあるかをチェック
+		if (!session_manage.Check_SessionId(session_id)) {
+			return "redirect:login/login";
+		} else {
+			// メールドレスを取得
+			String mailaddress = null;
+			mailaddress = session_manage.getSession_mail();
+			model.addAttribute("session_mail", mailaddress);
+			//名前を取得
+			String session_name = session_manage.getSession_name();
+			model.addAttribute("session_name", session_name);
+			//学校コードを取得
+			int session_schoolCode = session_manage.getSession_schoolcode();
+			model.addAttribute("session_schoolcode",session_schoolCode);
+
+			//一覧を取得
+			List bookAll = jdbcTestRepository.findAll();
+			model.addAttribute("bookAll",bookAll);
+			model.addAttribute("HomeworkForm", new HomeworkForm());
+
+			return "homework/homeworklist";
+		}
+	}
+	
+	@PostMapping(value = "/homeworkmovesubmission")
+	public String Post_HomeworkMoveSubmission(
+			Model model, HomeworkSubmiForm homeworkSubmiForm,Integer homework_id,@ModelAttribute("HomeworkSubmiForm") HomeworkSubmiForm form
+			) {
 		// セッションがあるかをチェック
 		if (!session_manage.Check_SessionId(session_id)) {
 			return "redirect:login/login";
@@ -216,14 +245,18 @@ public class HomeWorkController<SelectYearCode> {
 			String session_schoolcode = String.valueOf(session_manage.getSession_schoolcode());
 			
 			//selectタグから取得した学年　組
-			String getSchoolYear = String.valueOf(classform.getSchool_year());
-			String getSchoolClass = String.valueOf(classform.getSchool_class());
+			String getSchoolYear = String.valueOf(homeworkSubmiForm.getSchool_year());
+			String getSchoolClass = String.valueOf(homeworkSubmiForm.getSchool_class());
 			
 			//宿題提示テーブルに追加するためのクラスIDを生成
 			String schoolID = session_schoolcode + getSchoolYear + getSchoolClass;
 			
-			System.out.println(homework_id);
+			System.out.println("学校ID" + schoolID);
 			
+			System.out.println("学年組" + getSchoolYear + getSchoolClass);
+			
+			System.out.println("宿題ID" + homework_id);
+
 			//一覧を取得
 			List bookAll = jdbcTestRepository.findAll();
 			model.addAttribute("bookAll",bookAll);
@@ -431,6 +464,9 @@ public class HomeWorkController<SelectYearCode> {
 			System.out.println("session_classid:" + session_classid + "session_classno" +session_classno);
 			
 			int submission_id = (int) session.getAttribute("submission_id");
+			int homework_id = (int) session.getAttribute("homework_id");
+			
+			System.out.println("submission_id" + submission_id);
 			
 			HomeWorkSubmissionEntity homeWorkSubmissionEntity = new HomeWorkSubmissionEntity();
 			homeWorkSubmissionEntity.setHomeworksubmissionid(submission_id);
@@ -442,12 +478,11 @@ public class HomeWorkController<SelectYearCode> {
 			homeWorkAnswerEntity.setClassno(session_classno);
 			
 			System.out.println("解答内容" + content);
+			System.out.println("学校ID" + session_classid);
 			System.out.println("出席番号" + session_classno);
-			System.out.println("課題番号" + homeWorkSubmissionEntity.getHomeworksubmissionid());
+			System.out.println("課題番号" + homework_id);
 			
-			jdbcTestRepository.insertAnswerContent(homeWorkAnswerEntity,homeWorkSubmissionEntity);
-			
-			
+			jdbcTestRepository.insertAnswerContent(homeWorkAnswerEntity,homework_id);
 			
 			//学校コードからクラス別の宿題一覧を取得
 			List homeworkDetailsList = jdbcTestRepository.homeworkListfindAll(session_classid,session_classno);
@@ -458,8 +493,8 @@ public class HomeWorkController<SelectYearCode> {
 	}
 	
 	// 宿題する画面
-	@GetMapping(value = "/homeworkstudent/{submission_id}")
-	public String Get_HomeworkStudent(@PathVariable Integer submission_id,Model model,HttpServletResponse response) throws IOException {
+	@GetMapping(value = "/homeworkstudent/{homework_id}/{submission_id}")
+	public String Get_HomeworkStudent(@PathVariable Integer homework_id,@PathVariable Integer submission_id,Model model,HttpServletResponse response) throws IOException {
 		// セッションがあるかをチェック
 		if (!session_manage.Check_SessionId(session_id)) {
 			return "redirect:login/login";
@@ -479,12 +514,15 @@ public class HomeWorkController<SelectYearCode> {
 			model.addAttribute("session_classno", session_classno);
 			
 			//クラスID(session_classid),出席番号(session_classno),宿題確認ID(submission_id)から解答欄の数を取得
-			HomeworkForm homeworkForm = jdbcTestRepository.selectInputText(session_classid,session_classno,submission_id);
+			HomeworkForm homeworkForm = jdbcTestRepository.selectInputText(session_classid,session_classno,homework_id);
 			System.out.println("解答欄の数は" + homeworkForm.getAnswercolumn_num());
 			System.out.println("課題名は" + homeworkForm.getHomework_filename());
 
 			//宿題確認ID(submission_id)をセッションに追加
 			session.setAttribute("submission_id", submission_id);
+			
+			//宿題確認ID(homework_id)をセッションに追加
+			session.setAttribute("homework_id", homework_id);
 			
 			model.addAttribute("answercolumn_num",homeworkForm.getAnswercolumn_num());
 			model.addAttribute("homework_filename",homeworkForm.getHomework_filename());

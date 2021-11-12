@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.demo.components.DateTimeComponent;
 import com.example.demo.components.SessionManage;
@@ -39,7 +40,7 @@ public class HomeController {
 
 	// 判別処理
 	@GetMapping(value = "/identification")
-	public String Get_HomeIdentification(Model model, @AuthenticationPrincipal OidcUser user) {
+	public String Get_HomeIdentification(Model model, @AuthenticationPrincipal OidcUser user,RedirectAttributes redir) {
 		// メールアドレスを取得
 		String session_mail = user.getEmail();
 
@@ -51,6 +52,7 @@ public class HomeController {
 			// セッションにメールアドレス、名前を格納
 			session_manage.setSession_mail(session_mail);
 			session_manage.setSession_name(teacherEntity.getTeachername());
+			session_manage.setSession_schoolcode(teacherEntity.getSchool().getSchoolcode());
 			session_manage.setSession_schoolcode(teacherEntity.getSchool().getSchoolcode());
 			
 			return "redirect:/home/teacherhome";
@@ -69,7 +71,8 @@ public class HomeController {
 		}
 		else {
 			// DBに存在しない
-			return "redirect:/login/login";
+			redir.addFlashAttribute("loginerror", "ログイン失敗");
+			return "redirect:/";
 		}
 	}
 

@@ -24,7 +24,7 @@
                 <td th:text="${homeworkDetailsList.homework_filename}"></td>
                 <td th:text="${homeworkDetailsList.homework_subject}"></td>
                 <td th:if="${homeworkDetailsList.submission_flg == 1}" th:text="提出"></td>
-                <td th:if="${homeworkDetailsList.submission_flg == 0}"><a th:text="未提出" th:href="@{'/homeworkstudent/' + ${homeworkDetailsList.submission_id}}"></a></td>
+                <td th:if="${homeworkDetailsList.submission_flg == 0}"><a th:text="未提出" th:href="@{'/homeworkstudent/' + ${homeworkDetailsList.homework_id} + '/' + ${homeworkDetailsList.submission_id}}"></a></td>
             </tr>
         </table>
 <!-- Optional JavaScript -->
