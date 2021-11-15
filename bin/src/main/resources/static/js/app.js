@@ -1,53 +1,29 @@
-// Websocket接続用変数
-var stompClient = null;
-// 確定した認識結果変数
-let finalTranscript = '';
-// 音声認識実装クラス変数
-let recognition = '';
-// 音声認識最中かを判断するフラグ
-var flag_speech = '';
-var i = 0;
-var j = 0;
-var second_flag = true;
+/* 音声認識 + socket通信 */
 
-// connectボタンのデザイン設定
-function setConnected(connected) {
-    $("#recog_connect").prop("disabled",connected);
-    $("#recog_disconnect").prop("disabled",!connected);
-}
+var stompClient = null; // Websocket接続変数
+let recognition = ''; //音声認識クラス変数
+let finalTranscript = ''; // 確定した認識結果
+var flag_speech = ''; // 音声認識最中かを判断するフラグ
+var i = 0; //認識数
 
 // 接続
-function connect() {
+$(document).ready(() => {
 	// アクセスするエンドポイントを設定
     var socket = new SockJS('/socket_endpoint');
     stompClient = Stomp.over(socket);
+    
     // エンドポイントに対して接続
     stompClient.connect({}, function (frame) {
-        setConnected(true);
-        console.log('Websocket接続: ' + frame);
+    	//音声認識
+        vr_function();
         // 受信
         stompClient.subscribe('/topic/voice_recog', function (response_data) {
-        	//ログ
         	i++;
-        	console.log(i + "回目データ受け取り",JSON.parse(response_data.body).voicetext);
-        	
-        	//データが送られて来た場合
-        	if(JSON.parse(response_data.body).voicetext != ""){
-        		//1回目の表示の時
-        		if(second_flag == true){
-        			//表示
-        			showGreeting(JSON.parse(response_data.body).voicetext);
-        			//if(){}先生と学生の判別条件をここに書く 
-        			second_flag = false;
-        		}
-        		//2回目の場合
-        		else{
-        			second_flag = true;
-        		}
-        	}
+        	console.log(i + "回目データ受け取り",JSON.parse(response_data.body).voicetext);	
+        	showGreeting(JSON.parse(response_data.body).voicetext);
         });
     });
-}
+})
 
 // 接続の遮断
 function disconnect() {
@@ -55,17 +31,13 @@ function disconnect() {
     if (stompClient !== null) {
         stompClient.disconnect();
     }
-    // ボタンクリック無効の切り替え
-    setConnected(false);
     // 音声認識を停止
     recognition.stop();
-    
-    console.log("Websocket遮断");
+    console.log("音声認識、Websocket遮断");
 }
 
 //音声認識
 function vr_function(){
-	  
 	// Chromeの音声認識の対応付け、オブジェクト生成
 	SpeechRecognition = webkitSpeechRecognition || SpeechRecognition;
 	recognition = new SpeechRecognition();
@@ -74,7 +46,7 @@ function vr_function(){
 	recognition.lang = 'ja-JP';
 	// 認識している途中にも結果を得るよう設定
 	recognition.interimResults = true;
-	// 認識しっぱなしにする(1分ぐらいの沈黙で終了?)
+	// 認識しっぱなしにする
 	recognition.continuous = true;
 	//音声認識開始
 	recognition.start();
@@ -94,6 +66,7 @@ function vr_function(){
     // 音声認識検出終了
     recognition.onsoundend = function() {
     	console.log("停止中");
+    	//繰り返す
     	vr_function();
     };
     
@@ -128,21 +101,7 @@ function vr_function(){
   	
 }
 
-// 表示
+// 字幕表示
 function showGreeting(message) {
 	$("#result-div").append("<tr><td>" + message + "</td></tr>");
 }
-
-// クリック処理
-$(function () {
-	// リロードを防ぐ
-    $("form").on('button', function (e) {
-        e.preventDefault();
-    });
-    // 「connect」ボタンクリック処理
-    $( "#recog_connect" ).click(function() { connect(); });
-    $( "#recog_connect" ).click(function() { vr_function(); });
-    // 「disconnect」ボタンクリック処理
-    $( "#recog_disconnect" ).click(function() { disconnect(); });
-});
-setTimeout("connect()", 3000);

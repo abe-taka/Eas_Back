@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>学生ホーム | Eas</title>
+</head>
+<body>
+
+	<div th:text="${session_name} + さん"></div>
+	
+	<form th:action="@{/logout}" method="post">
+		<button type="submit">ログアウト</button>
+	</form>
+
+	
+	<div>
+		<form th:action="@{/class/studentclass/classid}" method="get">
+			<button type="submit">授業画面</button>
+			<input type="text" th:value="${classid}" name="classid">
+		</form>
+	</div>
+
+	<div>
+		<form th:action="@{/homeworksubmi}" method="get">
+			<button type="submit">提出状況</button>
+		</form>
+	</div>
+	
+	<h3>スケジュール</h3>
+	<div th:text=" 【 +${date}+】"></div>
+	<div th:each="TimetableList : ${TimetableList}" th:object="${TimetableList}">
+		<div th:text="*{timetabletime.timeperiod} + 限目"></div>
+		<nobr th:text="*{subjectname}"></nobr>
+	</div>
+</body>
+</html>

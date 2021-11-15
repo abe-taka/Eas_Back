@@ -1,10 +1,71 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
-<title>提出状況 | Eas</title>
+<title>提出状況確認</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 <body>
-	<p>提出状況</p>
+<div th:text="${session_name} + さん"></div>
+
+<form th:action="@{/logout}" method="post">
+	<button type="submit">ログアウト</button>
+</form>
+<div class="container">
+	<div class="row">
+		<!-- サイドバー -->
+		<div class="side col-lg-2">
+			<!-- サイドバー共通部品 -->
+			<div th:replace="/common/sidebar::sidebar"></div>
+		</div>
+		<!-- メイン -->
+		<div class="column col-lg-10">
+			<h1>提出状況確認</h1>
+			<div>
+			    <form th:action="@{/homework_submistatus}" th:object="${ClassForm}" method="post">
+				    <select name = "school_year">
+				      <option th:value = "01" th:text="1年"></option>
+				      <option th:value = "02" th:text="2年"></option>
+				      <option th:value = "03" th:text="3年"></option>
+				      <option th:value = "04" th:text="4年"></option>
+				      <option th:value = "05" th:text="5年"></option>
+				      <option th:value = "06" th:text="6年"></option>
+				    </select>
+				    <select name = "school_class">
+				      <option th:value = "01" th:text="1組"></option>
+				      <option th:value = "02" th:text="2組"></option>
+				      <option th:value = "03" th:text="3組"></option>
+				      <option th:value = "04" th:text="4組"></option>
+				      <option th:value = "05" th:text="5組"></option>
+				      <option th:value = "06" th:text="6組"></option>
+				    </select>
+				    <input type="submit" value="表示">
+			    </form>
+            <div th:if="${session_mail}">
+                    <span th:text="${session_mail}"></span>
+            </div>
+	        <table class="table table-bordered table-striped">
+	            <tr>
+	                <th>出席番号</th>
+	                <th>メールアドレス</th>
+	                <th>名前</th>
+	            </tr>
+	            <tr th:each="studentList:${studentList}">
+	                <td th:text="${studentList.class_no}"></td>
+	                <td th:text="${studentList.student_address}"></td>
+	                <td><a th:text="${studentList.student_name}" th:href="@{'homeworkdetails/' + ${studentList.student_name} + '/' + ${studentList.class_no}}"></a></td>
+	            </tr>
+	        </table>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 </body>
 </html>
