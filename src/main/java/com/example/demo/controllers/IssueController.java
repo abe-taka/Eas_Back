@@ -21,8 +21,8 @@ public class IssueController {
 	@GetMapping(value = "/issuecreate")
 	public String Get_IssueCreate(Model model) {
 		// セッションがあるかをチェック
-		if (!session_manage.Check_SessionId(session_id)) {
-			return "redirect:login/login";
+		if (session_manage.getSession_mail() == null) {
+			return "redirect:/";
 		} else {
 			return "issue/issuecreate";
 		}
@@ -32,8 +32,8 @@ public class IssueController {
 	@GetMapping(value = "/issuemanage")
 	public String Get_IssueManage() {
 		// セッションがあるかをチェック
-		if (!session_manage.Check_SessionId(session_id)) {
-			return "redirect:login/login";
+		if (session_manage.getSession_mail() == null) {
+			return "redirect:/";
 		} else {
 			return "issue/issuemanage";
 		}

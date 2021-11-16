@@ -37,8 +37,8 @@ public class ClassController {
 	@GetMapping(value = "/roomselect")
 	public String Get_RoomSelect(Model model) {
 		// セッションがあるかをチェック
-		if (!(session_manage.Check_SessionId(session_id))) {
-			return "redirect:login/login";
+		if (session_manage.getSession_mail() == null) {
+			return "redirect:/";
 		} else {
 			try {
 				// 所属学校コード取得
@@ -77,8 +77,8 @@ public class ClassController {
 	@GetMapping(value = "/teacherclass/{classid}")
 	public String Get_TeacherClass(Model model,@PathVariable("classid") String classid) {
 		// セッションがあるかをチェック
-		if (!(session_manage.Check_SessionId(session_id))) {
-			return "redirect:login/login";
+		if (session_manage.getSession_mail() == null) {
+			return "redirect:/";
 		} else {
 			//セッションidをthymeleafに渡す
 			model.addAttribute("session_id", session_manage.Get_SessionId(session_id));
@@ -102,8 +102,8 @@ public class ClassController {
 	@GetMapping(value = "/studentclass/{classid}")
 	public String Get_StudentClass(Model model,@PathVariable("classid") String classid) {
 		// セッションがあるかをチェック
-		if (!(session_manage.Check_SessionId(session_id))) {
-			return "redirect:login/login";
+		if (session_manage.getSession_mail() == null) {
+			return "redirect:/";
 		} else {
 			//セッションidをthymeleafに渡す
 			model.addAttribute("session_id", session_manage.Get_SessionId(session_id));

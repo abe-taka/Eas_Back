@@ -32,20 +32,25 @@ public class LoginController {
 
 	@GetMapping("/")
 	public String Get_Login(Model model) {
-	    Iterable<ClientRegistration> clientRegistrations = null;
-	    SessionManage session_manage = new SessionManage();
-	    ResolvableType type = ResolvableType.forInstance(clientRegistrationRepository)
-	      .as(Iterable.class);
-	    if (type != ResolvableType.NONE &&
-	      ClientRegistration.class.isAssignableFrom(type.resolveGenerics()[0])) {
-	        clientRegistrations = (Iterable<ClientRegistration>) clientRegistrationRepository;
-	    }
-
-	    clientRegistrations.forEach(registration ->
-	      oauth2AuthenticationUrls.put(registration.getClientName(),
-	      authorizationRequestBaseUri + "/" + registration.getRegistrationId()));
-	    model.addAttribute("urls", oauth2AuthenticationUrls);
-
-	    return "/login/login";
+		if (session_manage.getSession_mail() == null) {
+		    Iterable<ClientRegistration> clientRegistrations = null;
+		    SessionManage session_manage = new SessionManage();
+		    ResolvableType type = ResolvableType.forInstance(clientRegistrationRepository)
+		      .as(Iterable.class);
+		    if (type != ResolvableType.NONE &&
+		      ClientRegistration.class.isAssignableFrom(type.resolveGenerics()[0])) {
+		        clientRegistrations = (Iterable<ClientRegistration>) clientRegistrationRepository;
+		    }
+	
+		    clientRegistrations.forEach(registration ->
+		      oauth2AuthenticationUrls.put(registration.getClientName(),
+		      authorizationRequestBaseUri + "/" + registration.getRegistrationId()));
+		    model.addAttribute("urls", oauth2AuthenticationUrls);
+	
+		    return "/login/login";
+		}
+		else {
+			return "redirect:/home/identification";
+		}
 	}
 }

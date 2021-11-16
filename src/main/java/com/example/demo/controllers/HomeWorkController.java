@@ -65,8 +65,6 @@ public class HomeWorkController<SelectYearCode> {
 	@Autowired
 	HomeworkRepository jdbcTestRepository;
 
-	// セッションid
-	private String session_id = null;
 
 	/**
 	 * 問題アップロード画面
@@ -77,8 +75,8 @@ public class HomeWorkController<SelectYearCode> {
 	@GetMapping(value = "/homework")
 	public String Get_Homework(Model model) {
 		// セッションがあるかをチェック
-		if (!(session_manage.Check_SessionId(session_id))) {
-			return "redirect:login/login";
+		if (session_manage.getSession_mail() == null) {
+			return "redirect:/";
 		} else {
 			// メールドレスを取得
 			String mailaddress = null;
@@ -100,8 +98,8 @@ public class HomeWorkController<SelectYearCode> {
 	@PostMapping(value = "/homework")
 	public String Post_Homework(Model model,@RequestParam("files") MultipartFile[] files,HomeworkForm homeworkform) {
 		// セッションがあるかをチェック
-		if (!session_manage.Check_SessionId(session_id)) {
-			return "redirect:login/login";
+		if (session_manage.getSession_mail() == null) {
+			return "redirect:/";
 		} else {
 			// メールドレスを取得
 			String mailaddress = null;
@@ -174,8 +172,8 @@ public class HomeWorkController<SelectYearCode> {
 	@GetMapping(value = "/homeworklist")
 	public String Get_HomeworkList(Model model) {
 		// セッションがあるかをチェック
-		if (!session_manage.Check_SessionId(session_id)) {
-			return "redirect:login/login";
+		if (session_manage.getSession_mail() == null) {
+			return "redirect:/";
 		} else {
 			// メールドレスを取得
 			String mailaddress = null;
@@ -199,8 +197,8 @@ public class HomeWorkController<SelectYearCode> {
 	@GetMapping(value = "/homeworkmovesubmission/{homework_id}")
 	public String Get_HomeworkMoveSubmission(Model model,Integer homework_id) {
 		// セッションがあるかをチェック
-		if (!session_manage.Check_SessionId(session_id)) {
-			return "redirect:login/login";
+		if (session_manage.getSession_mail() == null) {
+			return "redirect:/";
 		} else {
 			// メールドレスを取得
 			String mailaddress = null;
@@ -227,8 +225,8 @@ public class HomeWorkController<SelectYearCode> {
 			Model model, HomeworkSubmiForm homeworkSubmiForm,Integer homework_id,@ModelAttribute("HomeworkSubmiForm") HomeworkSubmiForm form
 			) {
 		// セッションがあるかをチェック
-		if (!session_manage.Check_SessionId(session_id)) {
-			return "redirect:login/login";
+		if (session_manage.getSession_mail() == null) {
+			return "redirect:/";
 		} else {
 			// メールドレスを取得
 			String mailaddress = null;
@@ -276,8 +274,8 @@ public class HomeWorkController<SelectYearCode> {
 	@PostMapping(value = "/homeworkdelete")
 	public String Get_HomeworkDelete(Model model,Integer homework_id) {
 		// セッションがあるかをチェック
-		if (!session_manage.Check_SessionId(session_id)) {
-			return "redirect:login/login";
+		if (session_manage.getSession_mail() == null) {
+			return "redirect:/";
 		} else {
 			// メールドレスを取得
 			String mailaddress = null;
@@ -312,8 +310,8 @@ public class HomeWorkController<SelectYearCode> {
 	@GetMapping(value = "/homework_submistatus")
 	public String Get_HomeworkSubmiStatus(Model model) {
 		// セッションがあるかをチェック
-		if (!session_manage.Check_SessionId(session_id)) {
-			return "redirect:login/login";
+		if (session_manage.getSession_mail() == null) {
+			return "redirect:/";
 		} else {
 			// メールドレスを取得
 			String mailaddress = null;
@@ -338,8 +336,8 @@ public class HomeWorkController<SelectYearCode> {
 	@PostMapping(value = "/homework_submistatus")
 	public String Post_HomeworkSubmiStatus(Model model,ClassForm classform) {
 		// セッションがあるかをチェック
-		if (!session_manage.Check_SessionId(session_id)) {
-			return "redirect:login/login";
+		if (session_manage.getSession_mail() == null) {
+			return "redirect:/";
 		} else {
 			// メールドレスを取得
 			String mailaddress = null;
@@ -379,8 +377,8 @@ public class HomeWorkController<SelectYearCode> {
 	@GetMapping(value = "/homeworkdetails/{student_name}/{class_no}")
 	public String Get_HomeworkDetails(@PathVariable String student_name,@PathVariable Integer class_no, Model model) {
 		// セッションがあるかをチェック
-		if (!session_manage.Check_SessionId(session_id)) {
-			return "redirect:login/login";
+		if (session_manage.getSession_mail() == null) {
+			return "redirect:/";
 		} else {
 			// メールドレスを取得
 			String mailaddress = null;
@@ -415,8 +413,8 @@ public class HomeWorkController<SelectYearCode> {
 	@GetMapping(value = "/homeworksubmi")
 	public String Get_HomeworkSubmission(Model model) {
 		// セッションがあるかをチェック
-		if (!session_manage.Check_SessionId(session_id)) {
-			return "redirect:login/login";
+		if (session_manage.getSession_mail() == null) {
+			return "redirect:/";
 		} else {
 			// メールドレスを取得
 			String mailaddress = null;
@@ -444,8 +442,8 @@ public class HomeWorkController<SelectYearCode> {
 	@PostMapping(value = "/homeworksubmi")
 	public String Post_HomeworkSubmission(Model model,HomeworkAnswerForm homeworkAnswerForm,@RequestParam("content") String content) {
 		// セッションがあるかをチェック
-		if (!session_manage.Check_SessionId(session_id)) {
-			return "redirect:login/login";
+		if (session_manage.getSession_mail() == null) {
+			return "redirect:/";
 		} else {
 			// メールドレスを取得
 			String mailaddress = null;
@@ -496,8 +494,8 @@ public class HomeWorkController<SelectYearCode> {
 	@GetMapping(value = "/homeworkstudent/{homework_id}/{submission_id}")
 	public String Get_HomeworkStudent(@PathVariable Integer homework_id,@PathVariable Integer submission_id,Model model,HttpServletResponse response) throws IOException {
 		// セッションがあるかをチェック
-		if (!session_manage.Check_SessionId(session_id)) {
-			return "redirect:login/login";
+		if (session_manage.getSession_mail() == null) {
+			return "redirect:/";
 		} else {
 			// メールドレスを取得
 			String mailaddress = null;

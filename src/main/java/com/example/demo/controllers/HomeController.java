@@ -35,9 +35,6 @@ public class HomeController {
 	@Autowired
 	StudentRepository studentRepository;
 
-	// セッションid
-	private String session_id = null;
-
 	// 判別処理
 	@GetMapping(value = "/identification")
 	public String Get_HomeIdentification(Model model, @AuthenticationPrincipal OidcUser user,RedirectAttributes redir) {
@@ -76,8 +73,8 @@ public class HomeController {
 	@GetMapping(value = "/teacherhome")
 	public String Get_TeacherHome(Model model) {
 		// セッションがあるかをチェック
-		if (!(session_manage.Check_SessionId(session_id))) {
-			return "redirect:login/login";
+		if (session_manage.getSession_mail() == null) {
+			return "redirect:/";
 		}
 		else {
 			// 現在日付を取得
@@ -113,8 +110,8 @@ public class HomeController {
 	@GetMapping(value = "/studenthome")
 	public String Get_StudentHome(Model model) {
 		// セッションがあるかをチェック
-		if (!(session_manage.Check_SessionId(session_id))) {
-			return "redirect:login/login";
+		if (session_manage.getSession_mail() == null) {
+			return "redirect:/";
 		} else {
 			// 現在日付を取得
 			String date = null;
