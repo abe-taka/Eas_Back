@@ -34,7 +34,6 @@ public class LoginController {
 	public String Get_Login(Model model) {
 	    Iterable<ClientRegistration> clientRegistrations = null;
 	    SessionManage session_manage = new SessionManage();
-	    System.out.println("####クラスid####" + session_manage.getSession_classid());
 	    ResolvableType type = ResolvableType.forInstance(clientRegistrationRepository)
 	      .as(Iterable.class);
 	    if (type != ResolvableType.NONE &&

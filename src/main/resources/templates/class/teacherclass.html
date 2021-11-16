@@ -7,8 +7,6 @@
 	<script src="/webjars/sockjs-client/sockjs.min.js"></script>
 	<script src="/webjars/stomp-websocket/stomp.min.js"></script>
 	<script src="/js/ready.js"></script>
-	<script src="/js/queue.js"></script>
-	<script src="/js/app.js"></script>
 	<!-- bootstrap -->
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
@@ -118,25 +116,11 @@
 								<input type="text" id="answer" class="form-control">
 							</div>
 						</form>
-						
-						<!-- Websocketとの接続のON/OFF -->
-						<div class="col-md-6">
-							<form class="form-inline">
-								<div class="form-group">
-									<!-- タイトル -->
-									<label for="connect">WebSocket connection:</label>
-									<!-- ON -->
-									<button id="connect" class="btn btn-default" type="submit">Connect</button>
-									<!-- OFF -->
-									<button id="disconnect" class="btn btn-default" type="submit" disabled="disabled">Disconnect</button>
-								</div>
-							</form>
-						</div>
 					</div>
 
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">閉じる</button>
-						<button id="send" class="btn btn-default" type="submit">送信</button>
+						<button id="send" class="btn btn-default" type="submit" th:onclick="sendMessage();">送信</button>
 					</div>
 				</div>
 

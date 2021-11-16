@@ -44,7 +44,7 @@ public class SocketController {
 		// 送信データをJson形式に変換、SocketMessageクラスにセット
 		String response_message = json.ObjectToJSON(new SendIssue(getIssue.getIssue(),getIssue.getAnswer()));	
 		// 送信先ユーザーに送信
-		messagingTemplate.convertAndSendToUser("101825939669419593829", "/queue/greetings", response_message);
+		messagingTemplate.convertAndSendToUser("117230623162655569582", "/queue/greetings", response_message);
 	}
 	
 	//セッションid送信

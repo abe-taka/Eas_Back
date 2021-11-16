@@ -46,4 +46,14 @@ public class DateTimeComponent {
 
 		return date;
 	}
+
+	// 現在時刻を取得
+	public String Get_RealTime(String real_time) {
+		Date dateObj = new Date();
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		// 日時情報を指定フォーマットの文字列で取得
+		real_time = format.format(dateObj);
+
+		return real_time;
+	}
 }

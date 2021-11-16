@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<meta charset="UTF-8">
+	<meta th:name="${_csrf.parameterName}" th:content="${_csrf.token}" />
     <title>学生授業 | Eas</title>
     <script src="/webjars/jquery/jquery.min.js"></script>
     <script src="/webjars/sockjs-client/sockjs.min.js"></script>
     <script src="/webjars/stomp-websocket/stomp.min.js"></script>
     <script src="/js/student_ready.js"></script>
-    <script src="/js/queue.js"></script>
     <!-- bootstrap -->
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
@@ -36,6 +36,10 @@
                 </div>
             </form>
         </div>
+        
+        <form th:action="@{/home/studenthome}" method="get">
+			<button>退出</button>
+		</form>	
     
 	    <!-- 表示 -->
 	    <form name="session_form">
@@ -50,20 +54,6 @@
 
 <div id="main-content" class="container">
     <div class="row">
-    	
-    	<!-- Websocketとの接続のON/OFF -->
-        <div class="col-md-6">
-            <form class="form-inline">
-                <div class="form-group">
-                	<!-- タイトル -->
-                    <label for="connect">WebSocket connection:</label>
-                    <!-- ON -->
-                    <button id="connect" class="btn btn-default" type="submit">Connect</button>
-                    <!-- OFF -->
-                    <button id="disconnect" class="btn btn-default" type="submit" disabled="disabled">Disconnect</button>
-                </div>
-            </form>
-        </div>
         
         <!-- 送信するデータ -->
         <div class="col-md-6">
@@ -134,26 +124,11 @@
 								<input type="text" id="answer" class="form-control">
 							</div>
 						</form>
-						
-						<!-- Websocketとの接続のON/OFF -->
-						<div class="col-md-6">
-							<form class="form-inline">
-								<div class="form-group">
-									<!-- タイトル -->
-									<label for="connect">WebSocket connection:</label>
-									<!-- ON -->
-									<button id="connect" class="btn btn-default" type="submit">Connect</button>
-									<!-- OFF -->
-									<button id="disconnect" class="btn btn-default" type="submit"
-										disabled="disabled">Disconnect</button>
-								</div>
-							</form>
-						</div>
 					</div>
 
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">閉じる</button>
-						<a href="#" id="send_answer" class="btn btn-default btnNext">確認</a>
+						<a href="#" id="send_answer" class="btn btn-default btnNext" th:onclick="sendAnswer();">送信</a>
 					</div>
 				</div>
 
@@ -174,9 +149,6 @@
 		</div>
 	</div>
 
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-		integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-		crossorigin="anonymous"></script>
 	<script
 		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
 		integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
@@ -185,42 +157,6 @@
 		src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
 		integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
 		crossorigin="anonymous"></script>
-	<script>
-		// 表示中のページと最終ページ番号
-		var page, max = 2;
-	
-		$(function() {
-			
-			// Modalオープンボタン
-			$("#onModal").click(function() {
-				page = 1;
-				drawModal();
-				$("#myModal").modal("show");
-			});
-			
-			// 次へボタン
-			$(".btnNext").click(function() {
-				page++;
-				drawModal();
-			});
-	
-			// 前へボタン
-			$(".btnPrev").click(function() {
-				page--;
-				drawModal();
-			});
-	
-			// Modal内表示
-			function drawModal() {
-				for (var i = 1; i <= max; i++) {
-					if (i == page)
-						$("#modal-page" + i).show()
-					else
-						$("#modal-page" + i).hide()
-				}
-			}
-		});
-	</script>
 
 </body>
 </html>
