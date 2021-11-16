@@ -53,23 +53,19 @@ public class HomeController {
 			session_manage.setSession_mail(session_mail);
 			session_manage.setSession_name(teacherEntity.getTeachername());
 			session_manage.setSession_schoolcode(teacherEntity.getSchool().getSchoolcode());
-			session_manage.setSession_schoolcode(teacherEntity.getSchool().getSchoolcode());
-			
+
 			return "redirect:/home/teacherhome";
-		}
-		else if(studentRepository.CheckStudent(session_mail)){
+		} else if (studentRepository.CheckStudent(session_mail)) {
 			// 学生
 			StudentEntity studentEntity = new StudentEntity();
 			studentEntity = studentRepository.SearchStudent(session_mail);
-			// セッションにメールアドレス、名前、クラスIDを格納
+			// セッションにメールアドレス、名前、クラスID、出席番号を格納
 			session_manage.setSession_mail(session_mail);
 			session_manage.setSession_name(studentEntity.getStudentname());
 			session_manage.setSession_classid(studentEntity.getClassentity().getClassid());
 			session_manage.setSession_calss_no(studentEntity.getClassno());
-			System.out.println("####クラスid####" + session_manage.getSession_classid() + "出席番号:" + session_manage.getSession_calss_no());
 			return "redirect:/home/studenthome";
-		}
-		else {
+		} else {
 			// DBに存在しない
 			redir.addFlashAttribute("loginerror", "ログイン失敗");
 			return "redirect:/";
@@ -82,7 +78,8 @@ public class HomeController {
 		// セッションがあるかをチェック
 		if (!(session_manage.Check_SessionId(session_id))) {
 			return "redirect:login/login";
-		} else {
+		}
+		else {
 			// 現在日付を取得
 			String date = null;
 			date = datetime.Get_Monthdate(date);
@@ -98,9 +95,13 @@ public class HomeController {
 
 			// スケジュールを取得
 			List<TimetableEntity> timetableentity = timetableRepository.SearchTodayTeacherSchedule(dayofweek,mailaddress);
+			//クラスidを「○年○組」の形式に切り替える
+			for (int i = 0; i < timetableentity.size(); i++) {
+				timetableentity.get(i).getClassentity().setClassid(String.valueOf(timetableentity.get(i).getClassentity().getSchoolyear()) + "年" + String.valueOf(timetableentity.get(i).getClassentity().getSchoolclass()) + "組");
+			}
 			model.addAttribute("TimetableList", timetableentity);
-			
-			//名前を取得
+
+			// 名前を取得
 			String session_name = session_manage.getSession_name();
 			model.addAttribute("session_name", session_name);
 
@@ -131,11 +132,11 @@ public class HomeController {
 			// スケジュールを取得
 			List<TimetableEntity> timetableentity = timetableRepository.SearchTodayStudentSchedule(dayofweek, classid);
 			model.addAttribute("TimetableList", timetableentity);
-			
-			//名前を取得
+
+			// 名前を取得
 			String session_name = session_manage.getSession_name();
 			model.addAttribute("session_name", session_name);
-			
+
 			return "home/studenthome";
 		}
 	}

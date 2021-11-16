@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta th:name="${_csrf.parameterName}" th:content="${_csrf.token}" />
+<title>生徒宿題 | Eas</title>
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+	<div th:text="${session_name} + さん"></div>
+	
+	<form th:action="@{/logout}" method="post">
+		<button type="submit">ログアウト</button>
+	</form>
+	<p>生徒宿題</p>
+	<iframe th:src="'/pdf/' + ${homework_filename}" width="600px" height="600px"></iframe>
+	<form th:action="@{/homeworksubmi}" th:object="${HomeworkAnswerForm}" method="post">
+	<div id="div2"></div>
+	<script th:inline="javascript">
+	
+		console.log(/*[[${answercolumn_num}]]*/);
+		const answercolumn_num = [[${answercolumn_num}]];
+		console.log(answercolumn_num);
+		
+		const div2 = document.getElementById("div2");
+	
+	    for (let step = 0; step < answercolumn_num; step++) {
+		const input1 = document.createElement("input");
+		input1.setAttribute("type", "text");
+		input1.setAttribute("th:field","*{answer_content}");
+		input1.setAttribute("name","content");
+    	div2.appendChild(input1);
+    	}
+	</script>
+	<input type="submit" method = "post">
+	</form>
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+</html>

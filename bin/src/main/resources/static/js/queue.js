@@ -1,5 +1,6 @@
-// Websocket接続変数
-var stompClient = null;
+/* 授業内問題 */
+var stompClient = null;　// Websocket接続変数
+var issue_answer = null;　//授業内問題解答の保持変数
 
 // connectボタンのデザイン設定
 function setConnected(connected) {
@@ -18,7 +19,6 @@ function setConnected(connected) {
 	}
 }
 
-// 「1」
 // 接続
 function connect() {
 	// エンドポイントに接続
@@ -28,19 +28,13 @@ function connect() {
 	// エンドポイントに対して接続
 	stompClient.connect({}, function(frame) {
 		setConnected(true);
-		console.log('接続しました ' + frame);
 		//受信
-		// ここで、「1P1」か「1対多」かの指定を行っている
 		stompClient.subscribe('/user/queue/greetings', function(response_message) {
-			// 結果を受け取り、表示機能に渡す
-			// 最後の「.message」がSocketMessageクラスのgetMessage()だと思われる
-			console.log("##受信データ##", JSON.parse(response_message.body).message);
-			showMessage(JSON.parse(response_message.body).message);
+			showMessage(JSON.parse(response_message.body).issue,JSON.parse(response_message.body).answer);
 		});
 	});
 }
 
-// 「2」
 // 接続の遮断
 function disconnect() {
 	// 接続中なら切断する
@@ -52,40 +46,114 @@ function disconnect() {
 	console.log("通信遮断");
 }
 
-// 「3」
 // 送信(送信先のパス、データの設定)
 function sendMessage() {
 	stompClient.send("/socket_prefix/send_answer", {}, JSON.stringify({
-		'name' : $("#name").val(),
-		'message' : $("#message").val(),
-		'sendtoname' : $("#send_username").val()
+		'issue' : $("#issue").val(),
+		'answer' : $("#answer").val(),
 	}));
-	// 送信後、id「show」に対して中身を空にする
-	$("#message").val('');
+	
+	//ボタンタグ生成
+	var newTag = document.createElement('button');
+	newTag.value= 'SYNCER';
+	newTag.id= 'situation_button';
+	newTag.onclick = 'situation_Answer()';
+	//let innerTag = `<button id="situation_button" th:onclick="situation_Answer();">test</button>`;
+	//$("#situation_buttonlist").append(innerTag);
+	var addData = document.createTextNode("1");
+//	//対象要素.apeendChild(追加する要素);
+//	console.log('333');
+	newTag.appendChild(addData);
+//	//newTag.classList.add();
+//	//表示する場所の取得
+//	console.log('444');
+	var addPlace = document.getElementById("situation_buttonlist");
+	addPlace.appendChild(newTag);
+//	//document.getElementById('situation_button').value = "SYNCER" ;
+//	console.log('$$$$', document.getElementById('situation_button').value); 
 }
 
-// 表示
-function showMessage(message) {
+// modal表示
+function showMessage(issue,answer) {
 	// id「show」に対して変数「message」をセットする
-	$("#show").append("<tr><td>" + message + "</td></tr>");
+	
+	$("#show").append("<tr><td>" + issue + "</td></tr>");
+	issue_answer = answer
+	// Modalオープンボタン
+	// 表示中のページと最終ページ番号
+	var page, max = 2;
+	page = null;
+	page = 1;
+	
+	// 次へボタン
+	$(".btnNext").click(function() {
+		page++;
+		drawModal();
+	});
+
+	// 前へボタン
+	$(".btnPrev").click(function() {
+		page--;
+		drawModal();
+	});
+
+	// Modal内表示
+	function drawModal() {
+		for (var i = 1; i <= max; i++) {
+			if (i == page)
+				$("#modal-page" + i).show()
+			else
+				$("#modal-page" + i).hide()
+		}
+	}
+	
+	$("#myModal").modal("show");
+}
+
+// 解答送信
+function sendAnswer() {
+	const answer_value = document.getElementById('answer').value;
+	console.log("answer_value" + answer_value);
+	console.log("issue_answer" + issue_answer);
+	if(answer_value == issue_answer){
+		console.log("正しい");
+		$("#answer_result").append("正解");
+	}else{
+		console.log("不正解");
+		$("#answer_result").append("不正解");
+		$("#result_value").append("正解は" + issue_answer + "です。");
+	}
+}
+
+function situation_Answer() {
+	console.log("解答状況閲覧　「到達」");
+	$("#myModal").modal("show");
 }
 
 //ボタンクリック処理
 $(function() {
-	// formの機能である、「遷移先のURLを定義していない場合にその場のページをリロードする」これを無効化する → 非同期処理を可能にする
+	// リロード無効化
 	$("form").on('submit', function(e) {
 		e.preventDefault();
 	});
-	// 「1」の処理が走る
+	// 接続
 	$("#connect").click(function() {
 		connect();
 	});
-	// 「2」の処理が走る
+	// 遮断
 	$("#disconnect").click(function() {
 		disconnect();
 	});
-	// 「3」の処理が走る
+	// 授業内問題送信
 	$("#send").click(function() {
 		sendMessage();
+	});
+	// 解答送信
+	$("#send_answer").click(function() {
+		sendAnswer();
+	});
+	//解答状況閲覧
+	$("#situation_button").click(function() {
+		situation_Answer();
 	});
 });

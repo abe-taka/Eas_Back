@@ -38,11 +38,11 @@
 			<!-- メイン -->
 			<div class="column col-lg-10">
 				<h3>スケジュール</h3>
-				<div th:text=" 【 +${date}+】"></div>
 				<div th:each="TimetableList : ${TimetableList}" th:object="${TimetableList}">
+					<div th:text=" 【 +${date}+】"></div>
 					<div th:text="*{timetabletime.timeperiod} + 限目"></div>
-					<nobr th:text="*{subjectname}"></nobr>
 					<nobr th:text="*{classentity.classid}"></nobr>
+					<nobr th:text="*{subjectname}"></nobr>
 				</div>
 			</div>
 		</div>

@@ -26,7 +26,8 @@
 				<button type="submit" class="btn btn-outline-dark">授業選択</button>
 			</form>
 		</ul>
-	</nav>	
+	</nav>
+	
 	<!-- 学年選択 -->
 	<form>
 		<table>
@@ -46,26 +47,27 @@
 	</form>
 
 	<!-- 組選択 -->
-		<table>
-			<thead>
-				<tr>
-					<th colspan="3" th:text="組"></th>
-				</tr>
-			</thead>
-			<tbody id="list_id">
-				<tr th:each="list_classEntity : ${list_classEntity}" th:object="${list_classEntity}">
-					<form th:action="@{/class/teacherclass/classid}" method="get">
-						<th>
-							<button type="submit" th:text="*{schoolclass} + 組" class="list_class btn btn-outline-dark btn-sm"></button>
-							<input type="hidden" th:value="*{classid}" name="classid">
-						</th>
-					</form>
-				</tr>
-			</tbody>
-		</table>
+	<table>
+		<thead>
+			<tr>
+				<th colspan="3" th:text="組"></th>
+			</tr>
+		</thead>
+		<tbody id="list_id">
+			<tr th:each="list_classEntity : ${list_classEntity}" th:object="${list_classEntity}">
+				<form th:action="@{/class/teacherclass/classid}" method="get">
+					<th>
+						<button type="submit" th:text="*{schoolclass} + 組" class="list_class btn btn-outline-dark btn-sm"></button>
+						<input type="hidden" th:value="*{classid}" name="classid">
+					</th>
+				</form>
+			</tr>
+		</tbody>
+	</table>
+	
+	<!-- 非同期表示 -->
 	<div class="border" id="disp">
-		<form id="disp_data" th:action="@{/class/teacherclass/classid}" method="get">
-		</form>
+		<form id="disp_data" th:action="@{/class/teacherclass/classid}" method="get"></form>
 	</div>
 </body>
 
@@ -74,7 +76,6 @@
 
 	//学年ごとの「組」情報の取得
 	function clickGrade(school_year) {
-		console.log("学年",school_year);
 		// リロードを防ぐ
 		$("form").on('button', function(e) {
 			e.preventDefault();
@@ -120,15 +121,22 @@
 				var addData = document.createTextNode(schoolclass);
 				//対象要素.apeendChild(追加する要素);
 				newTag.appendChild(addData);
-				//newTag.classList.add();
 	
 				//表示する場所の取得
 				var addPlace = document.getElementById("disp_data");
 				addPlace.appendChild(newTag); //対象要素.apeendChild(追加する要素);
+				
+				//URLパス用のクラスidを設定
+				const input = document.createElement("input");
+			    input.setAttribute("type", "hidden");
+			    input.setAttribute("name", "classid");
+			    input.setAttribute("value", response_data[i]["classid"]);
+			    addPlace.appendChild(input);
 			}
-
 		}, function() {
 			// 失敗時
+			var delete_element2 = document.querySelectorAll('disp_data');
+			$("#disp_data").empty();
 			console.log('clickGrade:fail');
 		});
 	}

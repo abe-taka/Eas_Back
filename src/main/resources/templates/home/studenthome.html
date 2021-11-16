@@ -28,8 +28,8 @@
 	</div>
 	
 	<h3>スケジュール</h3>
-	<div th:text=" 【 +${date}+】"></div>
 	<div th:each="TimetableList : ${TimetableList}" th:object="${TimetableList}">
+		<div th:text=" 【 +${date}+】"></div>
 		<div th:text="*{timetabletime.timeperiod} + 限目"></div>
 		<nobr th:text="*{subjectname}"></nobr>
 	</div>
