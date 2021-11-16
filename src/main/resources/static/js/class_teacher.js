@@ -77,7 +77,7 @@ function GetNotice(){
 		});
 }
 
-//音声認識処理
+// 音声認識処理
 function vr_function(){
 	// Chromeの音声認識の対応付け、オブジェクト生成
 	SpeechRecognition = webkitSpeechRecognition || SpeechRecognition;
@@ -143,41 +143,38 @@ function vr_function(){
 }
 
 /* 表示 */
-// 授業内問題modal表示
-function showMessage(issue,answer) {
-	// id「show」に対して変数「message」をセットする
-	
-	$("#show").append("<tr><td>" + issue + "</td></tr>");
-	issue_answer = answer
-	// Modalオープンボタン
+function ShowModal(){
 	// 表示中のページと最終ページ番号
 	var page, max = 2;
-	page = null;
-	page = 1;
-	
-	// 次へボタン
-	$(".btnNext").click(function() {
-		page++;
-		drawModal();
-	});
 
-	// 前へボタン
-	$(".btnPrev").click(function() {
-		page--;
+	$(function() {
+		// Modalオープンボタン
+		page = 1;
 		drawModal();
-	});
+		$("#myModal").modal("show");
 
-	// Modal内表示
-	function drawModal() {
-		for (var i = 1; i <= max; i++) {
-			if (i == page)
-				$("#modal-page" + i).show()
-			else
-				$("#modal-page" + i).hide()
+		// 次へボタン
+		$(".btnNext").click(function() {
+			page++;
+			drawModal();
+		});
+
+		// 前へボタン
+		$(".btnPrev").click(function() {
+			page--;
+			drawModal();
+		});
+
+		// Modal内表示
+		function drawModal() {
+			for (var i = 1; i <= max; i++) {
+				if (i == page)
+					$("#modal-page" + i).show()
+				else
+					$("#modal-page" + i).hide()
+			}
 		}
-	}
-	
-	$("#myModal").modal("show");
+	});
 }
 
 // 解答状況表示

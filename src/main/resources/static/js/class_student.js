@@ -245,8 +245,6 @@ function showMessage(issue,answer) {
 	var page, max = 2;
 	
 	$(function() {
-		
-		
 		// Modalオープンボタン
 		page = 1;
 		drawModal();
