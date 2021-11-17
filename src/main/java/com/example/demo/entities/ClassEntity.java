@@ -25,7 +25,7 @@ public class ClassEntity {
 	// 学校コード
 	@ManyToOne
 	@JoinColumn(name = "school_code")
-	@JsonBackReference("json_school_code")
+	@JsonBackReference("json_school_class")
 	private SchoolEntity school;
 
 	// 学年
@@ -39,6 +39,7 @@ public class ClassEntity {
 	
 	//時間割テーブル
 	@OneToMany(mappedBy="classentity")
+	@JsonBackReference("json_class_timetable")
 	private List<TimetableEntity> timetable;
 	
 	

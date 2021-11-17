@@ -6,14 +6,16 @@ public class GetIssue {
 	//変数
     private String issue;
     private String answer;
+    private String classid;
 
     //コンストラクタとオーバーロード
     public GetIssue() {
     }
 
-    public GetIssue(String issue,String answer) {
+    public GetIssue(String issue,String answer,String classid) {
         this.issue = issue;
         this.answer = answer;
+        this.classid = classid;
     }
 
     //ゲッター、セッター
@@ -31,5 +33,13 @@ public class GetIssue {
 
 	public void setAnswer(String answer) {
 		this.answer = answer;
+	}
+
+	public String getClassid() {
+		return classid;
+	}
+
+	public void setClassid(String classid) {
+		this.classid = classid;
 	}
 }

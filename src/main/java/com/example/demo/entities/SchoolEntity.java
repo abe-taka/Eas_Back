@@ -38,15 +38,17 @@ public class SchoolEntity {
 	
 	// 先生テーブル
 	@OneToMany(mappedBy = "school")
+	@JsonBackReference("json_school_teacher")
 	private List<TeacherEntity> teacher;
 
 	// クラステーブル
 	@OneToMany(mappedBy = "school")
-	@JsonBackReference("json_school_code")
+	@JsonBackReference("json_school_class")
 	private List<ClassEntity> classentity;
 
 	// 時間割時間テーブル
 	@OneToMany(mappedBy = "school")
+	@JsonBackReference("json_school_timetabletime")
 	private List<TimetabletimeEntity> timetabletime;
 
 	

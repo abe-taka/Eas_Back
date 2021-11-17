@@ -74,8 +74,8 @@ public class ClassController {
 	}
 
 	// 授業(先生側)
-	@GetMapping(value = "/teacherclass/{classid}")
-	public String Get_TeacherClass(Model model,@PathVariable("classid") String classid) {
+	@GetMapping(value = "/teacherclass")
+	public String Get_TeacherClass(Model model,String classid) {
 		// セッションがあるかをチェック
 		if (session_manage.getSession_mail() == null) {
 			return "redirect:/";
@@ -99,8 +99,8 @@ public class ClassController {
 	
 
 	// 授業(学生側)
-	@GetMapping(value = "/studentclass/{classid}")
-	public String Get_StudentClass(Model model,@PathVariable("classid") String classid) {
+	@GetMapping(value = "/studentclass")
+	public String Get_StudentClass(Model model,String classid) {
 		// セッションがあるかをチェック
 		if (session_manage.getSession_mail() == null) {
 			return "redirect:/";

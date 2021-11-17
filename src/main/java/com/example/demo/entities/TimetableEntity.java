@@ -10,6 +10,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 //時間割テーブル
 @Entity
 @Table(name = "timetable_table")
@@ -21,6 +23,7 @@ public class TimetableEntity implements Serializable{
 	// 時間割ID
 	@Id
 	@ManyToOne
+	@JsonBackReference("json_timetabletime_timetable")
 	@JoinColumn(name = "timetable_id")
 	private TimetabletimeEntity timetabletime;
 
@@ -30,6 +33,7 @@ public class TimetableEntity implements Serializable{
 
 	// クラスID
 	@ManyToOne
+	@JsonBackReference("json_class_timetable")
 	@JoinColumn(name = "class_id")
 	private ClassEntity classentity;
 
@@ -39,6 +43,7 @@ public class TimetableEntity implements Serializable{
 
 	// 担当先生
 	@ManyToOne
+	@JsonBackReference("json_teacher_timetable")
 	@JoinColumn(name = "teacher_address")
 	private TeacherEntity teacher;
 

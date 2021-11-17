@@ -10,6 +10,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 //先生ユーザーテーブル
 @Entity
 @Table(name = "teacher_table")
@@ -18,6 +20,7 @@ public class TeacherEntity {
 	// メールアドレス
 	@Id
 	@Column(name = "teacher_address")
+	@JsonBackReference("json_school_teacher")
 	private String teacheraddress;
 
 	// 先生名
@@ -32,6 +35,7 @@ public class TeacherEntity {
 	
 	//時間割テーブル
 	@OneToMany(mappedBy="teacher")
+	@JsonBackReference("json_teacher_timetable")
 	private List<TimetableEntity> timetable;
 	
 	//宿題管理テーブル

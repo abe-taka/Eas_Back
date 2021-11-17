@@ -19,21 +19,11 @@
 		<button id="situation_button">1</button>
 	</div>
 	
+	<div>
+		<input type="hidden" th:value="${classid}" id="classid">
+	</div>
+	
 	<div id="main-content" class="container">
-		<div class="row">
-
-			<div class="col-md-6">
-				<form class="form-inline">
-					<div class="form-group">
-						<!-- ON -->
-						<!-- <button id="recog_connect" class="btn btn-dark" type="button">字幕開始</button>-->
-						<!-- OFF -->
-						<!--<button id="recog_disconnect" class="btn btn-dark" type="button">字幕停止</button>-->
-					</div>
-				</form>
-			</div>
-		</div>
-		<br>
 		<!-- 表示 -->
 		<div id="result-div"></div>
 		<div class="scroll_box"></div>

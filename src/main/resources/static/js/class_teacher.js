@@ -34,9 +34,11 @@ $(document).ready(() => {
 /* 処理 */
 // 授業内問題送信処理
 function sendMessage() {
+	//問題の送信
 	stompClient.send("/socket_prefix/send_answer", {}, JSON.stringify({
 		'issue' : $("#issue").val(),
 		'answer' : $("#answer").val(),
+		'classid' : $("#classid").val()
 	}));
 	
 	// ボタンタグ生成

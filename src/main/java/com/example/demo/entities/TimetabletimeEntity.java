@@ -12,6 +12,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 //時間割時間テーブル
 @Entity
 @Table(name = "timetabletime_table")
@@ -20,6 +22,7 @@ public class TimetabletimeEntity {
 	// 時間割時間ID
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@JsonBackReference("json_school_timetabletime")
 	@Column(name = "timetable_id")
 	private int timetable_id;
 
@@ -43,6 +46,7 @@ public class TimetabletimeEntity {
 	
 	// 時間割テーブル
 	@OneToMany(mappedBy = "timetabletime")
+	@JsonBackReference("json_timetabletime_timetable")
 	private List<TimetableEntity> timetable;
 	
 

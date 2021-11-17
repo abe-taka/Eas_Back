@@ -37,30 +37,29 @@ function clickGrade(school_year) {
 
 		/*-- 表示処理 --*/
 		for (var i = 0; i < response_data.length; i++) {
-			// 組を取得
-			var schoolclass = response_data[i]["schoolclass"] + "組";
-			// ボタンタグ生成
-			var newTag = document.createElement("button");
-			// 表示する値をセット
-			var addData = document.createTextNode(schoolclass);
-			// 対象要素.apeendChild(追加する要素);
-			newTag.appendChild(addData);
-
-			// 表示する場所の取得
-			var addPlace = document.getElementById("disp_data");
-			addPlace.appendChild(newTag); // 対象要素.apeendChild(追加する要素);
-
 			// URLパス用のクラスidを設定
-			const input = document.createElement("input");
-			input.setAttribute("type", "hidden");
+			const input = document.createElement("button");
+			input.setAttribute("type", "button");
+			input.setAttribute("text", "button");
 			input.setAttribute("name", "classid");
 			input.setAttribute("value", response_data[i]["classid"]);
+			input.setAttribute("data-parameter1", response_data[i]["classid"]);
+			input.setAttribute('onclick', "GetAction_Class(this.getAttribute('data-parameter1'))");
+			var addPlace = document.getElementById("disp_data");
 			addPlace.appendChild(input);
 		}
 	}, function() {
 		// 失敗時
+		var delete_element = document.getElementById('list_id');
+		delete_element.remove('list_class');
 		var delete_element2 = document.querySelectorAll('disp_data');
 		$("#disp_data").empty();
+		
 		console.log('clickGrade:fail');
 	});
+}
+
+//授業画面に遷移
+function GetAction_Class(classid){
+	window.location.href = '/class/teacherclass?classid=' +  encodeURIComponent(classid);
 }
