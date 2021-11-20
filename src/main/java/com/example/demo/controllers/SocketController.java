@@ -11,11 +11,13 @@ import org.springframework.web.util.HtmlUtils;
 
 import com.example.demo.components.JsonConversion;
 import com.example.demo.entities.SessionEntity;
+import com.example.demo.getsockets.GetBulkExit;
 import com.example.demo.getsockets.GetIssue;
 import com.example.demo.getsockets.GetNotice;
 import com.example.demo.getsockets.GetSession;
 import com.example.demo.getsockets.GetVoiceRecognition;
 import com.example.demo.repositories.SessionRepository;
+import com.example.demo.sendsockets.SendBulkExit;
 import com.example.demo.sendsockets.SendIssue;
 import com.example.demo.sendsockets.SendNotice;
 import com.example.demo.sendsockets.SendSession;
@@ -41,52 +43,71 @@ public class SocketController {
 		return new SendVoiceRecognition(HtmlUtils.htmlEscape(get_voice.getVoicetext()));
 	}
 
-	//授業内問題解答
+	// 授業内問題解答
 	@MessageMapping("/send_answer")
-	@SendTo("/queue/greetings")
 	public void SocketManage_Issue(GetIssue getIssue) throws Exception {
 		// マルチスレッド処理中のCPUの負荷の抑え
 		Thread.sleep(1000);
 		try {
 			// 送信データをJson形式に変換、SocketMessageクラスにセット
-			String response_message = json.ObjectToJSON(new SendIssue(getIssue.getIssue(),getIssue.getAnswer()));
-			
-			//授業中のクラスの学生セッションidを取得
+			String response_message = json.ObjectToJSON(new SendIssue(getIssue.getIssue(), getIssue.getAnswer()));
+
+			// 授業中のクラスの学生セッションidを取得
 			String classid = getIssue.getClassid();
-			System.out.println("クラス" + classid);
 			List<SessionEntity> list_sessionEntity = sessionRepository.SearchStudentInClass(classid);
-			for(int i=0; i<list_sessionEntity.size(); i++) {
+			for (int i = 0; i < list_sessionEntity.size(); i++) {
 				String session_id = null;
 				session_id = list_sessionEntity.get(i).getSessionid();
 				// 送信
-				messagingTemplate.convertAndSendToUser(session_id, "/queue/greetings", response_message);
+				messagingTemplate.convertAndSendToUser(session_id, "/queue/send_answer", response_message);
 			}
-		}catch(Exception e) {
-			System.out.println("SocketManage_Issue：fail" + e);
+		} catch (Exception e) {
+			System.out.println("[Websocket]SocketManage_Issue　：　" + e);
 		}
 	}
-	
-	//セッションid送信
-	@MessageMapping(value="/send_sessionid")
+
+	// セッションid送信
+	@MessageMapping(value = "/send_sessionid")
 	@SendTo("/topic/send_sessionid")
-	public SendSession SocketManage_SessionId(GetSession getsession) throws Exception{
+	public SendSession SocketManage_SessionId(GetSession getsession) throws Exception {
 		// マルチスレッド処理中のCPUの負荷の抑え
 		Thread.sleep(1000);
-		
-		System.out.println("送信するセッションid" + getsession.getSession_id());
 		return new SendSession(HtmlUtils.htmlEscape(getsession.getSession_id()));
 	}
-	
-	//通知取得、表示クラス
+
+	// 通知取得、表示クラス
 	@MessageMapping("/send_notice")
-	@SendTo("/queue/notice")
 	public void SocketManage_Notice(GetNotice getNotice) throws Exception {
 		// マルチスレッド処理中のCPUの負荷の抑え
 		Thread.sleep(1000);
 
 		// 送信データをJson形式に変換、SocketNoticeクラスにセット
-		String response_message = json.ObjectToJSON(new SendNotice(getNotice.getStudent_name(),getNotice.getStudent_classno()));
+		String response_message = json.ObjectToJSON(new SendNotice(getNotice.getStudent_name(), getNotice.getStudent_classno()));
 		// 送信先ユーザーに送信
 		messagingTemplate.convertAndSendToUser(getNotice.getTeacher_sessionid(), "/queue/notice", response_message);
 	}
+
+	// 一括退出
+	@MessageMapping("/bulkexit")
+	public void SocketManage_BulkExit(GetBulkExit getBulkExit) throws Exception {
+		try {
+			// マルチスレッド処理中のCPUの負荷の抑え
+			Thread.sleep(1000);
+			
+			// 送信データをJson形式に変換、SocketMessageクラスにセット
+			String response_message = json.ObjectToJSON(new SendBulkExit("1"));
+			//クラスidを取得
+			String classid = getBulkExit.getClass_id();
+			List<SessionEntity> list_sessionEntity = sessionRepository.SearchStudentInClass(classid);
+			for (int i = 0; i < list_sessionEntity.size(); i++) {
+				String session_id = null;
+				session_id = list_sessionEntity.get(i).getSessionid();
+				// 送信
+				messagingTemplate.convertAndSendToUser(session_id, "/queue/bulkexit", response_message);
+			}
+		} catch (Exception e) {
+			System.out.println("[Websocket]SocketManage_BulkExit　：　" + e);
+		}	
+	}
+
 }

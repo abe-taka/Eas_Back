@@ -1,7 +1,5 @@
 package com.example.demo.customRepositories;
 
-import java.util.List;
-
 import com.example.demo.entities.TeacherEntity;
 
 //先生

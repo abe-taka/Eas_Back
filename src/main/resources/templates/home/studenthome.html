@@ -1,23 +1,26 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml"xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
-<title>学生ホーム | Eas</title>
+	<meta charset="UTF-8">
+	<meta th:name="${_csrf.parameterName}" th:content="${_csrf.token}" />
+	<title>学生ホーム | Eas</title>
+	<!-- bootstrap -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+	<!-- ajax -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<script src="/js/home_student.js"></script>
 </head>
 <body>
-
-	<div th:text="${session_name} + さん"></div>
 	
+	<!-- セッション名、ログアウト -->
+	<div th:text="${session_name} + さん"></div>
 	<form th:action="@{/logout}" method="post">
 		<button type="submit">ログアウト</button>
 	</form>
-
 	
 	<div>
-		<form th:action="@{/class/studentclass}" method="get">
-			<button type="submit">授業画面</button>
-			<input type="text" th:value="${classid}" name="classid">
+		<form>
+			<button type="button" th:data-parameter1="${classid}" th:onclick="ConfirmEnterTime(this.getAttribute('data-parameter1'));">授業画面</button>
 		</form>
 	</div>
 
@@ -33,5 +36,43 @@
 		<div th:text="*{timetabletime.timeperiod} + 限目"></div>
 		<nobr th:text="*{subjectname}"></nobr>
 	</div>
+	
+	<!-- modal(授業参加) -->
+	<div id="myModal" class="modal fade bd-example-modal-xl" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-xl" role="document">
+			<div class="modal-content">
+
+				<!-- ページ1 -->
+
+				<div id="modal-page1">
+					<div class="modal-header">以下の授業に参加しますか</div>
+
+					<div class="modal-body">
+							<div>
+								<div id="subject"></div>
+								<div id="time"></div>
+							</div>
+					</div>
+
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">閉じる</button>
+						<form th:action="@{/class/enterprocess}" method="post">
+							<button id="send" class="btn btn-default" type="submit">参加する</button>
+							<input type="hidden" th:value="${classid}" name="classid">
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+		integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+		integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+		crossorigin="anonymous"></script>
 </body>
 </html>

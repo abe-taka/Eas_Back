@@ -9,6 +9,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 //入退出テーブル
 @Entity
 @Table(name = "enterexit_table")
@@ -22,6 +24,7 @@ public class EnterExitEntity {
 
 	// 学生メールアドレス
 	@ManyToOne
+	@JsonBackReference("json_student_enterexit")
 	@JoinColumn(name = "student_address")
 	private StudentEntity student;
 

@@ -1,42 +1,15 @@
 /*　生徒側　*/
 var stompClient = null; // Websocket接続用変数
-const class_id = null; // クラスid
 
 /* ロード処理 */
-$(document).ready(() => {
+$(document).ready(() => {	
+	const session_id =  $("#student_sessionid").val();
 	
-	//入室ログ
 	// CSRFトークンの取得
 	const token = $("meta[name='_csrf']").attr("content");
+	
 	// 非同期通信
-	$.ajax({
-		type : "POST",
-		url : "/rest/enter",
-		headers : {
-			"X-CSRF-TOKEN" : token
-		},
-		dataType : "json"
-	})
-	.then(function(response_data) {
-		// 成功時
-		console.log("response_data",response_data);
-		if(response_data == 1){
-			//登録成功
-		}
-		else{
-			//登録失敗
-		}
-	}, function() {
-		// 失敗時
-		console.log('/rest/enter：fail');
-	});
-	
-	
-	const session_id = document.socket_form.sendername.value;
-	console.log("セッションididiididid",session_id);
-	
 	//セッションidの一時保存
-	// 非同期通信
 	$.ajax({
 		type : "POST",
 		url : "/rest/session",
@@ -59,7 +32,7 @@ $(document).ready(() => {
 		}
 	}, function() {
 		// 失敗時
-		console.log('/rest/enter：fail');
+		console.log('[$.ajax]"/rest/session" Fail');
 	});
   
 	// アクセスするエンドポイントを設定
@@ -75,16 +48,21 @@ $(document).ready(() => {
 	    });
 	    
 	    // 授業内問題の取得
-		stompClient.subscribe('/user/queue/greetings', function(response_message) {
+		stompClient.subscribe('/user/queue/send_answer', function(response_message) {
 			//modal表示処理
-			showMessage(JSON.parse(response_message.body).issue,JSON.parse(response_message.body).answer);
+			ShowModal(JSON.parse(response_message.body).issue,JSON.parse(response_message.body).answer);
+		});
+		
+		// 一括退出
+		stompClient.subscribe('/user/queue/bulkexit', function(response_message) {
+			//ホームページに遷移
+			window.location.href = '/home/studenthome';
 		});
 	}) 
 })
 
-/* ページに離れた時 */
+/* 授業画面退出時 */
 window.onload = function(){
- 
 	window.onunload = function(){
 		//退出ログ
 		ExitRog();
@@ -92,10 +70,11 @@ window.onload = function(){
 }
 
 
-
 /* 処理 */
 //退出ログの保存
 function ExitRog(){
+	const enter_id =  $("#enterid").val();
+	
 	// CSRFトークンの取得
 	const token = $("meta[name='_csrf']").attr("content");
 	// 非同期通信
@@ -104,6 +83,9 @@ function ExitRog(){
 		url : "/rest/exit",
 		headers : {
 			"X-CSRF-TOKEN" : token
+		},
+		data : {
+			js_enter_id : enter_id
 		},
 		dataType : "json"
 	})
@@ -118,7 +100,7 @@ function ExitRog(){
 		}
 	}, function() {
 		// 失敗時
-		console.log('/rest/exit：fail');
+		console.log('[$.ajax]"/rest/exit" Fail');
 	});
 }
 
@@ -134,45 +116,27 @@ function SendToNotice(teacher_sessionid){
 	// エンドポイントに対して接続
 	stompClient.connect({}, function (frame) {
 		stompClient.send("/socket_prefix/send_notice", {}, JSON.stringify({'student_name':student_name,'student_classno':student_classno,'teacher_sessionid':teacher_sessionid}));
-	    console.log("先生側に通知しました");
 	})
 }
 
 // 音声認識取得処理
-function get_voice_recog(){
+function GetVoiceRecog(){
 	var socket = new SockJS('/socket_endpoint');
 	stompClient = Stomp.over(socket);
 	// エンドポイントに対して接続
 	stompClient.connect({}, function (frame) {
 	    // 受信
 	    stompClient.subscribe('/topic/voice_recog', function (response_data) {
-	    	// ログ
-	    	// データが送られて来た場合
-// if(JSON.parse(response_data.body).voicetext != ""){
-// //1回目の表示の時
-// if(second_flag == true){
-	    			// 表示
-	    			showGreeting(JSON.parse(response_data.body).voicetext);
-// //if(){}先生と学生の判別条件をここに書く
-// second_flag = false;
-// }
-// //2回目の場合
-// else{
-// second_flag = true;
-// }
-// }
+	    	// 表示
+	    	ShowVoiceRecognition(JSON.parse(response_data.body).voicetext);
 	    });
 	});
 }
 
 // 問題の解答送信処理
-function sendAnswer() {
+function SendAnswer() {
 	const answer_value = document.getElementById('answer').value;
 	
-	// リロードを防ぐ
-	$("form").on('button', function(e) {
-		e.preventDefault();
-	})
 	// CSRFトークンの取得
 	const token = $("meta[name='_csrf']").attr("content");
 	// 非同期通信
@@ -198,7 +162,7 @@ function sendAnswer() {
 		}
 	}, function() {
 		// 失敗時
-		console.log('sendAnswer():fail');
+		console.log('[$.ajax]"/rest/issue_answer" Fail');
 	});
 	
 	//解答正解チェック
@@ -220,18 +184,17 @@ function sendAnswer() {
 /* 表示 */
 // 先生側セッションid表示
 function ShowTeacherSession(teacher_sessionid){
-	$("#send_username").append(teacher_sessionid);
 	// 出席処理
 	SendToNotice(teacher_sessionid);
 }
 
 // 字幕表示
-function showGreeting(message) {
+function ShowVoiceRecognition(message) {
 	$("#result-div").append("<tr><td>" + message + "</td></tr>");
 }
 
 // modal表示
-function showMessage(issue,answer) {
+function ShowModal(issue,answer) {
 	//問題と解答を空にする
 	$("#show").empty();
 	var input = document.getElementById("answer");

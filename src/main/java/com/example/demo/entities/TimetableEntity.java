@@ -1,11 +1,10 @@
 package com.example.demo.entities;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -15,20 +14,21 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 //時間割テーブル
 @Entity
 @Table(name = "timetable_table")
-@IdClass(value= TimetablePrimary.class)
-public class TimetableEntity implements Serializable{
-	
-	private static final long serialVersionUID = 1L;
+public class TimetableEntity {
 
-	// 時間割ID
+	//時間ID
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name="time_id")
+	private int timeid;
+	
+	// 時間割ID
 	@ManyToOne
 	@JsonBackReference("json_timetabletime_timetable")
 	@JoinColumn(name = "timetable_id")
 	private TimetabletimeEntity timetabletime;
 
 	// 曜日
-	@Id
 	private String dayofweek;
 
 	// クラスID
@@ -47,7 +47,16 @@ public class TimetableEntity implements Serializable{
 	@JoinColumn(name = "teacher_address")
 	private TeacherEntity teacher;
 
+	
 	// ゲッター、セッター
+	public int getTimeid() {
+		return timeid;
+	}
+
+	public void setTimeid(int timeid) {
+		this.timeid = timeid;
+	}	
+	
 	public TimetabletimeEntity getTimetabletime() {
 		return timetabletime;
 	}

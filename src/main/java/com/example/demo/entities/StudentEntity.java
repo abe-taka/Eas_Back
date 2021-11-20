@@ -7,6 +7,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 //学生ユーザーテーブル
 @Entity
 @Table(name = "student_table")
@@ -29,6 +31,7 @@ public class StudentEntity {
 	
 	// 入退出テーブル
 	@OneToMany(mappedBy = "student")
+	@JsonBackReference("json_student_enterexit")
 	private List<EnterExitEntity> enterexit;
 	
 	// ゲッター、セッター

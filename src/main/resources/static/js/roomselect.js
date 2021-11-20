@@ -1,15 +1,11 @@
-var flag = "0";
+/* 授業選択 */
 
-// 学年ごとの「組」情報の取得
+// 学年ごとの組データの取得
 function clickGrade(school_year) {
-	// リロードを防ぐ
-	$("form").on('button', function(e) {
-		e.preventDefault();
-	})
 	// CSRFトークンの取得
 	const token = $("meta[name='_csrf']").attr("content");
 
-	// / 非同期通信
+	// 非同期通信
 	$.ajax({
 		type : "POST",
 		url : "/rest/room_select",
@@ -20,10 +16,14 @@ function clickGrade(school_year) {
 			js_schoolyear : school_year,
 		},
 		dataType : "json"
-	}).then(function(response_data) {
+	})
+	.then(function(response_data) {
 		// 成功時
 		console.log("response_data", response_data);
-
+		
+		//組データ削除判別フラグ
+		var flag = "0";
+		
 		if (flag == "0") {
 			flag = "1";
 			// Get時の組を消す
@@ -37,16 +37,15 @@ function clickGrade(school_year) {
 
 		/*-- 表示処理 --*/
 		for (var i = 0; i < response_data.length; i++) {
-			// URLパス用のクラスidを設定
-			const input = document.createElement("button");
-			input.setAttribute("type", "button");
-			input.setAttribute("text", "button");
-			input.setAttribute("name", "classid");
-			input.setAttribute("value", response_data[i]["classid"]);
-			input.setAttribute("data-parameter1", response_data[i]["classid"]);
-			input.setAttribute('onclick', "GetAction_Class(this.getAttribute('data-parameter1'))");
+			const btn = document.createElement("button");
+			btn.setAttribute("type", "button");
+			btn.setAttribute("text", "button");
+			btn.setAttribute("name", "classid");
+			btn.setAttribute("value", response_data[i]["classid"]);
+			btn.setAttribute("data-parameter1", response_data[i]["classid"]);
+			btn.setAttribute('onclick', "GetAction_Class(this.getAttribute('data-parameter1'))");
 			var addPlace = document.getElementById("disp_data");
-			addPlace.appendChild(input);
+			addPlace.appendChild(btn);
 		}
 	}, function() {
 		// 失敗時
@@ -55,7 +54,7 @@ function clickGrade(school_year) {
 		var delete_element2 = document.querySelectorAll('disp_data');
 		$("#disp_data").empty();
 		
-		console.log('clickGrade:fail');
+		console.log('[$.ajax]"/rest/room_select" Fail');
 	});
 }
 

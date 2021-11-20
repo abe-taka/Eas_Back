@@ -11,4 +11,7 @@ public interface TimetableCustomRepository {
 	
 	//今日のスケジュールを取得(学生)
 	public List<TimetableEntity> SearchTodayStudentSchedule(String dayofweek,String classid);
+
+	// 授業に参加できるかの確認
+	public TimetableEntity CheckClassJoin(String dayofweek, String classid, String current_time, String tenafter_time);
 }

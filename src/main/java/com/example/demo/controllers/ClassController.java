@@ -6,14 +6,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.demo.components.DateTimeComponent;
 import com.example.demo.components.SessionManage;
 import com.example.demo.entities.ClassEntity;
+import com.example.demo.entities.EnterExitEntity;
 import com.example.demo.entities.StudentEntity;
 import com.example.demo.entities.TeacherEntity;
 import com.example.demo.repositories.ClassRepository;
+import com.example.demo.repositories.EnterExitRepository;
 import com.example.demo.repositories.StudentRepository;
 import com.example.demo.repositories.TeacherRepository;
 
@@ -29,46 +33,45 @@ public class ClassController {
 	ClassRepository classRepository;
 	@Autowired
 	StudentRepository studentRepository;
-
-	// セッションid
-	private String session_id = null;
+	@Autowired
+	DateTimeComponent datetime;
+	@Autowired
+	EnterExitRepository enterexitRepository;
 
 	// 授業選択
 	@GetMapping(value = "/roomselect")
-	public String Get_RoomSelect(Model model) {
+	public String Get_RoomSelect(Model model,RedirectAttributes redir) {
 		// セッションがあるかをチェック
 		if (session_manage.getSession_mail() == null) {
 			return "redirect:/";
-		} else {
+		}
+		else {
 			try {
 				// 所属学校コード取得
 				TeacherEntity teacherEntity = new TeacherEntity();
 				teacherEntity = teacherRepository.SearchTeacher(session_manage.getSession_mail());
 				int school_code = teacherEntity.getSchool().getSchoolcode();
+				model.addAttribute("school_code", school_code);
 				
 				//所属学校の学年のデータを取得
-				System.out.println("学校コード" + school_code);
-				List<String> list_object = classRepository.findBySchoolyear(school_code);
-				//System.out.println(list_object.get(0));
-				for (int i=0; i < list_object.size(); i++) {
-					System.out.println("####" + list_object.get(i).toString());
-				}
-				model.addAttribute("list_schoolyear", list_object);
+				List<String> list_schoolyear = classRepository.findBySchoolyear(school_code);
+				model.addAttribute("list_schoolyear", list_schoolyear);
 				
 				// 1年のクラスデータを取得
 				List<ClassEntity> list_classEntity = classRepository.SearchSchoolclassBySchoolyear(school_code, 1);
 				model.addAttribute("list_classEntity", list_classEntity);
-				model.addAttribute("session_mail", session_manage.getSession_mail());
-				model.addAttribute("school_code", school_code);
 				
-				//名前を取得
+				//名前、メールアドレスを取得
 				String session_name = session_manage.getSession_name();
+				String session_mail = session_manage.getSession_mail();
 				model.addAttribute("session_name", session_name);
-
+				model.addAttribute("session_mail", session_mail);
+				
 				return "class/roomselect";
 			} catch (Exception e) {
-				System.out.println(e);
-				return "access-denied/access-denied";
+				//エラーハンドリング
+				System.out.println("[ClassController]Get_RoomSelect ： " + e);
+				return "redirect:/error/error";
 			}
 		}
 	}
@@ -79,16 +82,15 @@ public class ClassController {
 		// セッションがあるかをチェック
 		if (session_manage.getSession_mail() == null) {
 			return "redirect:/";
-		} else {
-			//セッションidをthymeleafに渡す
-			model.addAttribute("session_id", session_manage.Get_SessionId(session_id));
+		}
+		else {
+			//セッションidを取得
+			String session_id = session_manage.Get_SessionId();
+			model.addAttribute("session_id", session_id);
 			
 			//名前を取得
 			String session_name = session_manage.getSession_name();
 			model.addAttribute("session_name", session_name);
-			
-			//フラグ生成
-			model.addAttribute("flag", true);
 			
 			//クラスid
 			model.addAttribute("classid", classid);
@@ -100,23 +102,25 @@ public class ClassController {
 
 	// 授業(学生側)
 	@GetMapping(value = "/studentclass")
-	public String Get_StudentClass(Model model,String classid) {
+	public String Get_StudentClass(Model model,String classid,String enterid) {
 		// セッションがあるかをチェック
 		if (session_manage.getSession_mail() == null) {
 			return "redirect:/";
-		} else {
-			//セッションidをthymeleafに渡す
-			model.addAttribute("session_id", session_manage.Get_SessionId(session_id));
+		}
+		else {
+			//セッションidを取得
+			String session_id = session_manage.Get_SessionId();
+			model.addAttribute("session_id", session_id);
 			
 			//名前を取得
 			String session_name = session_manage.getSession_name();
 			model.addAttribute("session_name", session_name);
 			
-			//フラグ生成
-			model.addAttribute("flag", false);
-			
 			//クラスid
 			model.addAttribute("classid", classid);
+			
+			//入室ログのid
+			model.addAttribute("enterid", enterid);
 			
 			//出席番号を取得
 			StudentEntity studentEntity = new StudentEntity();
@@ -124,6 +128,40 @@ public class ClassController {
 			model.addAttribute("student_classno", studentEntity.getClassno());
 			
 			return "class/studentclass";
+		}
+	}
+	
+	
+	//入室ログ、授業画面に遷移
+	@PostMapping(value="/enterprocess")
+	public String Post_EnterProcess(String classid,RedirectAttributes redir) {
+		try {
+			// 学生情報を取得
+			String session_mail = session_manage.getSession_mail();
+			StudentEntity studentEntity = new StudentEntity();
+			studentEntity = studentRepository.SearchStudent(session_mail);
+			
+			// 年月日を取得
+			String real_time = datetime.Get_YearMonthDate();
+			
+			// Entityにセット
+			EnterExitEntity enterexitEntity = new EnterExitEntity();
+			enterexitEntity.setStudent(studentEntity);
+			enterexitEntity.setEntertime(real_time);
+			// 保存
+			enterexitRepository.save(enterexitEntity);
+			
+			//退出ログ用に保存したidを取得
+			enterexitEntity = enterexitRepository.SearchIdAndTimeForEnterTime(session_mail);
+			String enterid = String.valueOf(enterexitEntity.getEnterexitid());
+			
+			redir.addAttribute("classid", classid);
+			redir.addAttribute("enterid", enterid);
+			return "redirect:/class/studentclass";
+		} catch (Exception e) {
+			//エラーハンドリング
+			System.out.println("[ClassController]Post_EnterProcess ： " + e);
+			return "redirect:/error/error";
 		}
 	}
 }

@@ -79,12 +79,12 @@ public class HomeController {
 		else {
 			// 現在日付を取得
 			String date = null;
-			date = datetime.Get_Monthdate(date);
+			date = datetime.Get_MonthDate();
 			model.addAttribute("date", date);
 
 			// 曜日を取得
 			String dayofweek = null;
-			dayofweek = datetime.getDayOfTheWeekShort();
+			dayofweek = datetime.Get_DayOfTheWeekShort();
 
 			// メールドレスを取得
 			String mailaddress = null;
@@ -115,12 +115,12 @@ public class HomeController {
 		} else {
 			// 現在日付を取得
 			String date = null;
-			date = datetime.Get_Monthdate(date);
+			date = datetime.Get_MonthDate();
 			model.addAttribute("date", date);
 
 			// 曜日を取得
 			String dayofweek = null;
-			dayofweek = datetime.getDayOfTheWeekShort();
+			dayofweek = datetime.Get_DayOfTheWeekShort();
 
 			// クラスidを取得
 			String classid = session_manage.getSession_classid();

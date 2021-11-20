@@ -15,12 +15,12 @@ $(document).ready(() => {
     // エンドポイントに対して接続
     stompClient.connect({}, function (frame) {
     	// 音声認識、送信
-        vr_function();
+    	VoiceRecognition();
         // 受信
         stompClient.subscribe('/topic/voice_recog', function (response_data) {
         	i++;
         	console.log(i + "回目データ受け取り",JSON.parse(response_data.body).voicetext);	
-        	showGreeting(JSON.parse(response_data.body).voicetext);
+        	ShowSubtitles(JSON.parse(response_data.body).voicetext);
         });
         
         // 自信のセッションidを取得
@@ -33,7 +33,7 @@ $(document).ready(() => {
 
 /* 処理 */
 // 授業内問題送信処理
-function sendMessage() {
+function SendIssue() {
 	//問題の送信
 	stompClient.send("/socket_prefix/send_answer", {}, JSON.stringify({
 		'issue' : $("#issue").val(),
@@ -45,7 +45,7 @@ function sendMessage() {
 	var newTag = document.createElement('button');
 	newTag.value= 'SYNCER';
 	newTag.id= 'situation_button';
-	newTag.onclick = 'situation_Answer()';
+	newTag.onclick = 'ShowSituationAnswer()';
 	// let innerTag = `<button id="situation_button"
 	// th:onclick="situation_Answer();">test</button>`;
 	// $("#situation_buttonlist").append(innerTag);
@@ -64,23 +64,23 @@ function sendMessage() {
 
 // 通知受け取り処理
 function GetNotice(){
-		// エンドポイントに接続
-		var socket = new SockJS('/socket_endpoint');
-		stompClient = Stomp.over(socket);
+	// エンドポイントに接続
+	var socket = new SockJS('/socket_endpoint');
+	stompClient = Stomp.over(socket);
 		
-		// エンドポイントに対して接続
-		stompClient.connect({}, function(frame) {
-			// 受信
-			// ここで、「1P1」か「1対多」かの指定を行っている
-			stompClient.subscribe('/user/queue/notice', function(response_data) {
-				// 表示メソッドにデータを渡す
-		    	  ShowStudent(JSON.parse(response_data.body).student_name,JSON.parse(response_data.body).student_classno);
-			});
+	// エンドポイントに対して接続
+	stompClient.connect({}, function(frame) {
+		// 受信
+		// ここで、「1P1」か「1対多」かの指定を行っている
+		stompClient.subscribe('/user/queue/notice', function(response_data) {
+			// 表示メソッドにデータを渡す
+		    ShowStudent(JSON.parse(response_data.body).student_name,JSON.parse(response_data.body).student_classno);
 		});
+	});
 }
 
 // 音声認識処理
-function vr_function(){
+function VoiceRecognition(){
 	// Chromeの音声認識の対応付け、オブジェクト生成
 	SpeechRecognition = webkitSpeechRecognition || SpeechRecognition;
 	recognition = new SpeechRecognition();
@@ -103,14 +103,14 @@ function vr_function(){
     recognition.onerror = function() {
     	// 音声認識中なら関数を呼び出す
         if(flag_speech == 0){
-          vr_function();
+        	VoiceRecognition();
         }  
     };
     // 音声認識検出終了
     recognition.onsoundend = function() {
     	console.log("停止中");
     	// 繰り返す
-    	vr_function();
+    	VoiceRecognition();
     };
     
 	// 音声認識開始
@@ -123,7 +123,7 @@ function vr_function(){
       		if (event.results[i].isFinal)
             {
       			finalTranscript += transcript;
-      			vr_function();
+      			VoiceRecognition();
             }
             else
             {
@@ -142,6 +142,19 @@ function vr_function(){
     	flag_speech = 0;
   	}
   	
+}
+
+//一括退出
+function Bulkexit(class_id){
+	// アクセスするエンドポイントを設定
+	var socket = new SockJS('/socket_endpoint');
+	stompClient = null;
+	stompClient = Stomp.over(socket);
+	// エンドポイントに対して接続
+	stompClient.connect({}, function (frame) {
+		stompClient.send("/socket_prefix/bulkexit", {}, JSON.stringify({'class_id':class_id}));
+	})
+	$("#myModal2").modal("show");
 }
 
 /* 表示 */
@@ -180,8 +193,7 @@ function ShowModal(){
 }
 
 // 解答状況表示
-function situation_Answer() {
-	console.log("解答状況閲覧　「到達」");
+function ShowSituationAnswer() {
 	$("#myModal").modal("show");
 }
 
@@ -191,6 +203,6 @@ function ShowStudent(student_name,student_classno){
 }
 
 // 字幕表示
-function showGreeting(message) {
+function ShowSubtitles(message) {
 	$("#result-div").append("<tr><td>" + message + "</td></tr>");
 }

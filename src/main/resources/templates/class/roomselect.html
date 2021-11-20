@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"xmlns:th="http://www.thymeleaf.org">
 <head>
-<script src="https://code.jquery.com/jquery-3.2.1.min.js"integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="crossorigin="anonymous"></script>
-<meta th:name="${_csrf.parameterName}" th:content="${_csrf.token}" />
-<meta charset="UTF-8">
-<link href="/css/main.css" rel="stylesheet">
-<script src="/js/roomselect.js"></script>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-<title>授業選択 | Eas</title>
+	<meta charset="UTF-8">
+	<meta th:name="${_csrf.parameterName}" th:content="${_csrf.token}" />
+	<title>授業選択 | Eas</title>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js"integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="crossorigin="anonymous"></script>
+	<link href="/css/main.css" rel="stylesheet">
+	<script src="/js/roomselect.js"></script>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 </head>
 <body>
-
+	<!-- セッション名、ログアウトボタン -->
 	<div id="log_session">
 		<div th:text="${session_name} + さん"></div>
 		<form th:action="@{/logout}" method="post">
@@ -18,6 +18,7 @@
 		</form>
 	</div>
 	
+	<!-- ナビゲーション -->
 	<nav>
     	<ul>
 			<form th:action="@{/homeworksubmi}" method="get">
@@ -55,19 +56,18 @@
 			</tr>
 		</thead>
 	</table>
-		<div id="list_id">
-			<div th:each="list_classEntity : ${list_classEntity}" th:object="${list_classEntity}">
-				<div>
-					<button type="submit" th:text="*{schoolclass} + 組" class="list_class btn btn-outline-dark btn-sm" th:data-parameter1="*{classid}" th:onclick="GetAction_Class(this.getAttribute('data-parameter1'))"></button>
-				</div>
+	<div id="list_id">
+		<div th:each="list_classEntity : ${list_classEntity}" th:object="${list_classEntity}">
+			<div>
+				<button type="submit" th:text="*{schoolclass} + 組" class="list_class btn btn-outline-dark btn-sm" th:data-parameter1="*{classid}" th:onclick="GetAction_Class(this.getAttribute('data-parameter1'))"></button>
 			</div>
 		</div>
+	</div>
 	
 	
-	<!-- 非同期表示 -->
-	<div class="border" id="disp">
-		<form id="disp_data">
-		</form>
+	<!-- 組選択(非同期) -->
+	<div id="disp">
+		<form id="disp_data"></form>
 	</div>
 </body>
 </html>

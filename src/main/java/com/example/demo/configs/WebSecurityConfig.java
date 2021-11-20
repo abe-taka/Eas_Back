@@ -35,8 +35,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.logoutSuccessUrl("/")
 				.deleteCookies("JSESSIONID")// ログアウト後、Cookieに保存されているセッションIDを削除。
 				.invalidateHttpSession(true);// ログアウト後セッション無効
-		//不正アクセスハンドリング
-		http.exceptionHandling()
-				.accessDeniedPage("/access-denied/access-denied");
 	}
 }

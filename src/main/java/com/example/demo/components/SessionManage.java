@@ -22,8 +22,8 @@ public class SessionManage {
 	}
 
 	// セッションid取得
-	public String Get_SessionId(String session_id) {
-		session_id = SecurityContextHolder.getContext().getAuthentication().getName();
+	public String Get_SessionId() {
+		String session_id = SecurityContextHolder.getContext().getAuthentication().getName();
 		return session_id;
 	}
 
@@ -78,6 +78,4 @@ public class SessionManage {
 	public void setSession_calss_no(int session_calss_no) {
 		this.session_calss_no = session_calss_no;
 	}
-	
-	
 }

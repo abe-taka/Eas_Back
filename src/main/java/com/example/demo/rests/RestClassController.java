@@ -3,8 +3,6 @@ package com.example.demo.rests;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -50,8 +48,6 @@ public class RestClassController {
 	EnterExitRepository enterexitRepository;
 	@Autowired
 	SessionRepository sessionRepository;
-//	@Autowired
-//	BCryptPasswordEncoder password;
 
 	// 組データ取得(授業選択画面)
 	@PostMapping("/rest/room_select")
@@ -66,50 +62,27 @@ public class RestClassController {
 		return jsonConversion.listToJSON(list_classEntity);
 	}
 
-	// 入室ログを登録
-	@PostMapping("/rest/enter")
-	public String RestEnter() {
-		try {
-			EnterExitEntity enterexitEntity = new EnterExitEntity();
-			// 学生情報を取得
-			String session_mail = session_manage.getSession_mail();
-			StudentEntity studentEntity = new StudentEntity();
-			studentEntity = studentRepository.SearchStudent(session_mail);
-			// 現在時刻を取得
-			String real_time = null;
-			real_time = datetime.Get_RealTime(real_time);
-			// Entityにセット
-			enterexitEntity.setStudent(studentEntity);
-			enterexitEntity.setEntertime(real_time);
-			// 保存
-			enterexitRepository.save(enterexitEntity);
-			return "1";
-		} catch (Exception e) {
-			System.out.println("RestIssueAnswer：" + e);
-			return "0";
-		}
-	}
-
 	// 退出ログを登録
 	@PostMapping("/rest/exit")
-	public String RestExit() {
+	public String RestExit(@RequestParam("js_enter_id") String enter_id) {
 		try {
-			EnterExitEntity enterexitEntity = new EnterExitEntity();
-			// 学生情報を取得
-			String session_mail = session_manage.getSession_mail();
-			StudentEntity studentEntity = new StudentEntity();
-			studentEntity = studentRepository.SearchStudent(session_mail);
-			// 現在時刻を取得
-			String real_time = null;
-			real_time = datetime.Get_RealTime(real_time);
+			//id検索
+			EnterExitEntity enterexitEntity = enterexitRepository.findById(Integer.parseInt(enter_id));
 			// Entityにセット
-			enterexitEntity.setStudent(studentEntity);
-			enterexitEntity.setExittime(real_time);
-			// 保存
-			enterexitRepository.save(enterexitEntity);
-			return "1";
+			System.out.println(enterexitEntity.getStudent().getStudentaddress());
+			System.out.println(enterexitEntity.getEntertime());
+			if(enterexitEntity.getExittime() == null) {
+				//年月日を取得
+				String real_time = datetime.Get_YearMonthDate();
+				enterexitEntity.setExittime(real_time);
+				// 保存
+				enterexitRepository.save(enterexitEntity);
+				return "1";
+			}else {
+				return "0";
+			}
 		} catch (Exception e) {
-			System.out.println("RestIssueAnswer：" + e);
+			System.out.println("[Rest]RestExit　：　" + e);
 			return "0";
 		}
 	}
@@ -131,7 +104,7 @@ public class RestClassController {
 			sessionRepository.save(sessionEntity);
 			return "1";
 		} catch (Exception e) {
-			System.out.println("RestIssueAnswer：" + e);
+			System.out.println("[Rest]RestSession　：　" + e);
 			return "0";
 		}
 	}
@@ -145,9 +118,8 @@ public class RestClassController {
 			String session_mail = session_manage.getSession_mail();
 			StudentEntity studentEntity = new StudentEntity();
 			studentEntity = studentRepository.SearchStudent(session_mail);
-			// 現在時刻を取得
-			String real_time = null;
-			real_time = datetime.Get_RealTime(real_time);
+			// 年月日を取得
+			String real_time = datetime.Get_YearMonthDate();
 			// Entityにセット
 			classIssueEntity.setStudent(studentEntity);
 			classIssueEntity.setClassanswercontent(answer);
@@ -156,7 +128,7 @@ public class RestClassController {
 			classIssueRepository.save(classIssueEntity);
 			return "1";
 		} catch (Exception e) {
-			System.out.println("RestIssueAnswer：" + e);
+			System.out.println("[Rest]RestIssueAnswer　：　" + e);
 			return "0";
 		}
 	}
