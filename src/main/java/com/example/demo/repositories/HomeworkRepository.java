@@ -174,7 +174,18 @@ public class HomeworkRepository<Homework> {
 						  + "(1000200501,3)",
 				homeWorkAnswerEntity.getAnswer_content(),homeWorkSubmissionEntity.getHomeworksubmissionid(),
 				homeWorkAnswerEntity.getClassno());
-	}	
+	}
+	
+	public List enterexitListfindAll(Integer schoolCode,Integer classNo){
+		String sql ="SELECT\r\n"
+					+ "enterexit_table.enter_time,\r\n"
+					+ "enterexit_table.exit_time\r\n"
+					+ "FROM\r\n"
+					+ "enterexit_table,student_table\r\n"
+					+ "WHERE student_table.class_no = ?\r\n"
+					+ "AND student_table.class_id = ?;";
+		return jdbctemplate.queryForList(sql,classNo,schoolCode);
+	}
 
 
 }

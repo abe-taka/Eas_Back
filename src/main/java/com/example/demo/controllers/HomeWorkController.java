@@ -528,4 +528,112 @@ public class HomeWorkController<SelectYearCode> {
 			return "homework/homework_student";
 		}
 	}
+	
+	// 入退室管理-1
+	@GetMapping(value = "/logmanagement")
+	public String Get_Accessmanagement(Model model) {
+		// セッションがあるかをチェック
+		if (session_manage.getSession_mail() == null) {
+			return "redirect:/";
+		} else {
+			// メールドレスを取得
+			String mailaddress = null;
+			mailaddress = session_manage.getSession_mail();
+			model.addAttribute("session_mail", mailaddress);
+			//名前を取得
+			String session_name = session_manage.getSession_name();
+			model.addAttribute("session_name", session_name);
+			//学校コードを取得
+			int session_schoolCode = session_manage.getSession_schoolcode();
+			model.addAttribute("session_schoolcode",session_schoolCode);
+			
+			model.addAttribute("HomeworkForm", new HomeworkForm());
+			
+			model.addAttribute("ClassForm",new ClassForm());
+			
+			return "logmanage/logmanagement";
+		}
+	}
+	
+	// 入退室管理-1
+	@PostMapping(value = "/logmanagement")
+	public String Post_Accessmanagement(Model model,ClassForm classform) {
+		// セッションがあるかをチェック
+		if (session_manage.getSession_mail() == null) {
+			return "redirect:/";
+		} else {
+			// メールドレスを取得
+			String mailaddress = null;
+			mailaddress = session_manage.getSession_mail();
+			model.addAttribute("session_mail", mailaddress);
+			//名前を取得
+			String session_name = session_manage.getSession_name();
+			model.addAttribute("session_name", session_name);
+			//学校コードを取得
+			int session_schoolCode = session_manage.getSession_schoolcode();
+			model.addAttribute("session_schoolcode",session_schoolCode);
+			System.out.println("session_schoolCode" + session_schoolCode);
+			
+			//selectタグから取得した学年　組
+			String getSchoolYear = String.valueOf(classform.getSchool_year());
+			String getSchoolClass = String.valueOf(classform.getSchool_class());
+			model.addAttribute("SchoolYear ", getSchoolYear);
+			model.addAttribute("SchoolClass ", getSchoolClass);
+			//学校コード生成
+			int schoolCode = Integer.parseInt(session_schoolCode + getSchoolYear.format("%2s", getSchoolYear).replace(" ", "0") + getSchoolClass.format("%2s", getSchoolClass).replace(" ", "0"));
+			System.out.println("schoolCode" + schoolCode);
+			
+			//セッションに追加
+			session.setAttribute("classID", schoolCode);
+			
+			//学校コードから学生情報テーブル(student_table)の一覧を取得
+			List studentList = jdbcTestRepository.studentListfindAll(schoolCode);
+			model.addAttribute("studentList",studentList);
+			
+			return "logmanage/logmanagement";
+			
+		}
+	}
+	
+	// 入退室管理-2
+	@GetMapping(value = "/logdetails/{student_name}/{class_no}")
+	public String Get_Accessmanagementdetails(@PathVariable String student_name,@PathVariable Integer class_no, Model model) {
+		// セッションがあるかをチェック
+		if (session_manage.getSession_mail() == null) {
+			return "redirect:/";
+		} else {
+			// メールドレスを取得
+			String mailaddress = null;
+			mailaddress = session_manage.getSession_mail();
+			model.addAttribute("session_mail", mailaddress);
+			//名前を取得
+			String session_name = session_manage.getSession_name();
+			model.addAttribute("session_name", session_name);
+			
+			int schoolCode = (int) session.getAttribute("classID");
+			
+			System.out.println("入退室管理-2のclass_no" + class_no);
+			System.out.println("入退室管理-2のschoolCode" + schoolCode);
+			
+			//学校コードからクラス別の宿題一覧を取得
+			List enterexitDetailsList = jdbcTestRepository.enterexitListfindAll(schoolCode,class_no);
+			model.addAttribute("enterexitDetailsList",enterexitDetailsList);
+			
+			model.addAttribute("student_name",student_name);
+			
+			System.out.println("1-1");
+			
+			 // 現在日時情報で初期化されたインスタンスの生成
+			 Date dateObj = new Date();
+			 SimpleDateFormat format = new SimpleDateFormat( "yyyy/MM/dd HH:mm:ss" );
+			 // 日時情報を指定フォーマットの文字列で取得
+			 String display = format.format( dateObj );
+			 model.addAttribute("display",display);
+			 
+			 System.out.println("1-2");
+			
+			model.addAttribute("HomeworkForm", new HomeworkForm());
+			return "logmanage/logdetails";
+		}
+	}
 }
