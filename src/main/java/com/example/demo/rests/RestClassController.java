@@ -62,28 +62,33 @@ public class RestClassController {
 		return jsonConversion.listToJSON(list_classEntity);
 	}
 
-	// 退出ログを登録
+	// 退出ログの保存、一時保存のセッションidのデータ削除
 	@PostMapping("/rest/exit")
 	public String RestExit(@RequestParam("js_enter_id") String enter_id) {
 		try {
-			//id検索
+			// id検索
 			EnterExitEntity enterexitEntity = enterexitRepository.findById(Integer.parseInt(enter_id));
-			// Entityにセット
-			System.out.println(enterexitEntity.getStudent().getStudentaddress());
-			System.out.println(enterexitEntity.getEntertime());
-			if(enterexitEntity.getExittime() == null) {
-				//年月日を取得
+			// 退出ログの保存
+			if (enterexitEntity.getExittime() == null) {
+				// 年月日を取得
 				String real_time = datetime.Get_YearMonthDate();
 				enterexitEntity.setExittime(real_time);
 				// 保存
 				enterexitRepository.save(enterexitEntity);
 				return "1";
-			}else {
+			} else {
 				return "0";
 			}
 		} catch (Exception e) {
 			System.out.println("[Rest]RestExit　：　" + e);
 			return "0";
+		} finally {
+			// 学生情報を取得
+			String session_mail = session_manage.getSession_mail();
+			StudentEntity studentEntity = new StudentEntity();
+			studentEntity = studentRepository.SearchStudent(session_mail);
+			//削除
+			sessionRepository.deleteByStudent(studentEntity);
 		}
 	}
 
@@ -96,7 +101,7 @@ public class RestClassController {
 			String session_mail = session_manage.getSession_mail();
 			StudentEntity studentEntity = new StudentEntity();
 			studentEntity = studentRepository.SearchStudent(session_mail);
-			
+
 			// Entityにセット
 			sessionEntity.setStudent(studentEntity);
 			sessionEntity.setSessionid(session_id);

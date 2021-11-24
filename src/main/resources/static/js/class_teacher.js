@@ -17,7 +17,7 @@ $(document).ready(() => {
     	// 音声認識、送信
     	VoiceRecognition();
         // 受信
-        stompClient.subscribe('/topic/voice_recog', function (response_data) {
+        stompClient.subscribe('/user/queue/voice_recog', function (response_data) {
         	i++;
         	console.log(i + "回目データ受け取り",JSON.parse(response_data.body).voicetext);	
         	ShowSubtitles(JSON.parse(response_data.body).voicetext);

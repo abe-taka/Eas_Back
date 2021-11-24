@@ -18,6 +18,7 @@ import com.example.demo.entities.EnterExitEntity;
 import com.example.demo.entities.StudentEntity;
 import com.example.demo.entities.TeacherEntity;
 import com.example.demo.entities.TimetabletimeEntity;
+import com.example.demo.forms.VoiceRecognitionForm;
 import com.example.demo.repositories.ClassRepository;
 import com.example.demo.repositories.EnterExitRepository;
 import com.example.demo.repositories.StudentRepository;
@@ -42,6 +43,8 @@ public class ClassController {
 	EnterExitRepository enterexitRepository;
 	@Autowired
 	TimetabletimeRepository timetabletimeRepository;
+	@Autowired
+	VoiceRecognitionForm voice_Form;
 	
 	// 授業選択
 	@GetMapping(value = "/roomselect")
@@ -99,6 +102,9 @@ public class ClassController {
 			
 			//クラスid
 			model.addAttribute("classid", classid);
+			//フォームにセットする
+			voice_Form.setClassid(classid);
+			voice_Form.setTeacher_sessionid(session_id);
 			
 			return "class/teacherclass";
 		}

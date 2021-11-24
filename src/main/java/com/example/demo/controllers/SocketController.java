@@ -4,13 +4,13 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.util.HtmlUtils;
 
 import com.example.demo.components.JsonConversion;
+import com.example.demo.components.SessionManage;
 import com.example.demo.entities.SessionEntity;
+import com.example.demo.forms.VoiceRecognitionForm;
 import com.example.demo.getsockets.GetBulkExit;
 import com.example.demo.getsockets.GetIssue;
 import com.example.demo.getsockets.GetNotice;
@@ -32,15 +32,38 @@ public class SocketController {
 	private SessionRepository sessionRepository;
 	@Autowired
 	JsonConversion json;
+	@Autowired
+	VoiceRecognitionForm voice_Form;
+	@Autowired
+	SessionManage session_manage;
 
 	// socket通信(音声認識)
 	@MessageMapping("/voice_recog")
-	@SendTo("/topic/voice_recog")
-	public SendVoiceRecognition SocketManage_VoiceRecog(GetVoiceRecognition get_voice) throws Exception {
+	public void SocketManage_VoiceRecog(GetVoiceRecognition get_voice) throws Exception {
 		// マルチスレッド処理中のCPUの負荷の抑え
 		Thread.sleep(1000);
-		// コンストラクタの呼び出し
-		return new SendVoiceRecognition(HtmlUtils.htmlEscape(get_voice.getVoicetext()));
+
+		try {
+			// 送信データをJson形式に変換
+			String response_message = json.ObjectToJSON(new SendVoiceRecognition(get_voice.getVoicetext()));
+
+			// 自分自身に送信
+			String teachersession_id = voice_Form.getTeacher_sessionid();
+			System.out.println("先生セッションid" + teachersession_id);
+			messagingTemplate.convertAndSendToUser(teachersession_id, "/queue/voice_recog", response_message);
+			
+			// 授業中のクラスの学生セッションidを取得
+			String class_id = voice_Form.getClassid();
+			List<SessionEntity> list_sessionEntity = sessionRepository.SearchStudentInClass(class_id);
+			for (int i = 0; i < list_sessionEntity.size(); i++) {
+				String session_id = null;
+				session_id = list_sessionEntity.get(i).getSessionid();
+				// 送信
+				messagingTemplate.convertAndSendToUser(session_id, "/queue/voice_recog", response_message);
+			}
+		} catch (Exception e) {
+			System.out.println("[Websocket]SocketManage_VoiceRecog　：　" + e);
+		}
 	}
 
 	// 授業内問題解答
@@ -53,8 +76,8 @@ public class SocketController {
 			String response_message = json.ObjectToJSON(new SendIssue(getIssue.getIssue(), getIssue.getAnswer()));
 
 			// 授業中のクラスの学生セッションidを取得
-			String classid = getIssue.getClassid();
-			List<SessionEntity> list_sessionEntity = sessionRepository.SearchStudentInClass(classid);
+			String class_id = getIssue.getClassid();
+			List<SessionEntity> list_sessionEntity = sessionRepository.SearchStudentInClass(class_id);
 			for (int i = 0; i < list_sessionEntity.size(); i++) {
 				String session_id = null;
 				session_id = list_sessionEntity.get(i).getSessionid();
@@ -71,15 +94,15 @@ public class SocketController {
 	public void SocketManage_SessionId(GetSession getsession) throws Exception {
 		// マルチスレッド処理中のCPUの負荷の抑え
 		Thread.sleep(1000);
-		
-		//クラスidの取得
-		String classid = getsession.getClass_id();
-		
+
+		// クラスidの取得
+		String class_id = getsession.getClass_id();
+
 		// 先生のセッションidを取得、Json形式に変換
 		String response_message = json.ObjectToJSON(new SendSession(getsession.getSession_id()));
-		
+
 		// 授業中のクラスの学生セッションidを取得
-		List<SessionEntity> list_sessionEntity = sessionRepository.SearchStudentInClass(classid);
+		List<SessionEntity> list_sessionEntity = sessionRepository.SearchStudentInClass(class_id);
 		for (int i = 0; i < list_sessionEntity.size(); i++) {
 			String session_id = null;
 			session_id = list_sessionEntity.get(i).getSessionid();

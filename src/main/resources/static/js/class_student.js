@@ -71,7 +71,7 @@ window.onload = function(){
 
 
 /* 処理 */
-//退出ログの保存
+//退出ログの保存、一時保存のセッションidのデータ削除
 function ExitRog(){
 	const enter_id =  $("#enterid").val();
 	
@@ -126,7 +126,8 @@ function GetVoiceRecog(){
 	// エンドポイントに対して接続
 	stompClient.connect({}, function (frame) {
 	    // 受信
-	    stompClient.subscribe('/topic/voice_recog', function (response_data) {
+	    stompClient.subscribe('/user/queue/voice_recog', function (response_data) {
+	    	console.log("うけとりりりっりりりりりり",JSON.parse(response_data.body).voicetext);
 	    	// 表示
 	    	ShowVoiceRecognition(JSON.parse(response_data.body).voicetext);
 	    });
