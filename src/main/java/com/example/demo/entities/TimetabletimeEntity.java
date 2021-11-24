@@ -43,12 +43,15 @@ public class TimetabletimeEntity {
 	@Column(name = "end_time")
 	private String endtime;
 
-	
 	// 時間割テーブル
 	@OneToMany(mappedBy = "timetabletime")
 	@JsonBackReference("json_timetabletime_timetable")
 	private List<TimetableEntity> timetable;
-	
+
+	// 時間割時間テーブル
+	@OneToMany(mappedBy = "timetabletime")
+	@JsonBackReference("json_timetabletime_enterexit")
+	private List<EnterExitEntity> enterexit;
 
 	// ゲッター、セッター
 	public int getTimetable_id() {
@@ -99,4 +102,12 @@ public class TimetabletimeEntity {
 		this.timetable = timetable;
 	}
 
+	public List<EnterExitEntity> getEnterexit() {
+		return enterexit;
+	}
+
+	public void setEnterexit(List<EnterExitEntity> enterexit) {
+		this.enterexit = enterexit;
+	}
+	
 }

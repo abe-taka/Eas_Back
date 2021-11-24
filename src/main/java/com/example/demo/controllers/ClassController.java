@@ -1,6 +1,7 @@
 package com.example.demo.controllers;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,10 +17,12 @@ import com.example.demo.entities.ClassEntity;
 import com.example.demo.entities.EnterExitEntity;
 import com.example.demo.entities.StudentEntity;
 import com.example.demo.entities.TeacherEntity;
+import com.example.demo.entities.TimetabletimeEntity;
 import com.example.demo.repositories.ClassRepository;
 import com.example.demo.repositories.EnterExitRepository;
 import com.example.demo.repositories.StudentRepository;
 import com.example.demo.repositories.TeacherRepository;
+import com.example.demo.repositories.TimetabletimeRepository;
 
 //授業
 @Controller
@@ -37,7 +40,9 @@ public class ClassController {
 	DateTimeComponent datetime;
 	@Autowired
 	EnterExitRepository enterexitRepository;
-
+	@Autowired
+	TimetabletimeRepository timetabletimeRepository;
+	
 	// 授業選択
 	@GetMapping(value = "/roomselect")
 	public String Get_RoomSelect(Model model,RedirectAttributes redir) {
@@ -134,20 +139,30 @@ public class ClassController {
 	
 	//入室ログ、授業画面に遷移
 	@PostMapping(value="/enterprocess")
-	public String Post_EnterProcess(String classid,RedirectAttributes redir) {
+	public String Post_EnterProcess(String classid,String time_period,RedirectAttributes redir) {
 		try {
 			// 学生情報を取得
 			String session_mail = session_manage.getSession_mail();
 			StudentEntity studentEntity = new StudentEntity();
 			studentEntity = studentRepository.SearchStudent(session_mail);
 			
+			//学校コードの取得
+			Optional<ClassEntity> classEntity = classRepository.findById(studentEntity.getClassentity().getClassid());
+			
 			// 年月日を取得
 			String real_time = datetime.Get_YearMonthDate();
 			
+			//時間割時間Entityデータの取得
+			TimetabletimeEntity timetabletimeEntity = new TimetabletimeEntity();
+			int int_time_period = Integer.parseInt(time_period);
+			timetabletimeEntity = timetabletimeRepository.SearchIdByPeriodAndSchoolCode(int_time_period, classEntity.get().getSchool().getSchoolcode());
+
 			// Entityにセット
 			EnterExitEntity enterexitEntity = new EnterExitEntity();
 			enterexitEntity.setStudent(studentEntity);
 			enterexitEntity.setEntertime(real_time);
+			enterexitEntity.setTimetabletime(timetabletimeEntity);
+			
 			// 保存
 			enterexitRepository.save(enterexitEntity);
 			

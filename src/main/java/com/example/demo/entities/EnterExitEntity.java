@@ -36,6 +36,12 @@ public class EnterExitEntity {
 	@Column(name = "exit_time")
 	private String exittime;
 
+	// 時間割時間ID
+	@ManyToOne
+	@JsonBackReference("json_timetabletime_enterexit")
+	@JoinColumn(name = "timetable_id")
+	private TimetabletimeEntity timetabletime;
+
 	// ゲッター、セッター
 	public int getEnterexitid() {
 		return enterexitid;
@@ -67,5 +73,13 @@ public class EnterExitEntity {
 
 	public void setExittime(String exittime) {
 		this.exittime = exittime;
+	}
+
+	public TimetabletimeEntity getTimetabletime() {
+		return timetabletime;
+	}
+
+	public void setTimetabletime(TimetabletimeEntity timetabletime) {
+		this.timetabletime = timetabletime;
 	}
 }

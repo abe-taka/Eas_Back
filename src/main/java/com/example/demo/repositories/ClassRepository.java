@@ -16,4 +16,5 @@ public interface ClassRepository extends JpaRepository<ClassEntity,String>,Class
 
 	@Query(value = "SELECT DISTINCT school_year FROM class_table WHERE school_code=:school_code", nativeQuery = true)
 	public List<String> findBySchoolyear(@Param("school_code") int school_code);
+	
 }

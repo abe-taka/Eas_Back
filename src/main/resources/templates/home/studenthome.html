@@ -50,7 +50,6 @@
 					<div class="modal-body">
 							<div>
 								<div id="subject"></div>
-								<div id="time"></div>
 							</div>
 					</div>
 
@@ -59,6 +58,7 @@
 						<form th:action="@{/class/enterprocess}" method="post">
 							<button id="send" class="btn btn-default" type="submit">参加する</button>
 							<input type="hidden" th:value="${classid}" name="classid">
+							<input type="hidden" name="time_period" id="time_period">
 						</form>
 					</div>
 				</div>
