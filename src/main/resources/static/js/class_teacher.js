@@ -23,9 +23,10 @@ $(document).ready(() => {
         	ShowSubtitles(JSON.parse(response_data.body).voicetext);
         });
         
-        // 自信のセッションidを取得
+        // 自信のセッションid、担当クラスのクラスidを取得
     	const session_id = document.socket_form.sendername.value;
-        stompClient.send("/socket_prefix/send_sessionid", {}, JSON.stringify({'session_id': session_id}));
+    	const class_id = $("#classid").val();
+        stompClient.send("/socket_prefix/send_sessionid", {}, JSON.stringify({'session_id': session_id,'class_id':class_id}));
         // 出席学生の情報取得
         GetNotice();
     });

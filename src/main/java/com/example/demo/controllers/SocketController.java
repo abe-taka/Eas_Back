@@ -68,11 +68,24 @@ public class SocketController {
 
 	// セッションid送信
 	@MessageMapping(value = "/send_sessionid")
-	@SendTo("/topic/send_sessionid")
-	public SendSession SocketManage_SessionId(GetSession getsession) throws Exception {
+	public void SocketManage_SessionId(GetSession getsession) throws Exception {
 		// マルチスレッド処理中のCPUの負荷の抑え
 		Thread.sleep(1000);
-		return new SendSession(HtmlUtils.htmlEscape(getsession.getSession_id()));
+		
+		//クラスidの取得
+		String classid = getsession.getClass_id();
+		
+		// 先生のセッションidを取得、Json形式に変換
+		String response_message = json.ObjectToJSON(new SendSession(getsession.getSession_id()));
+		
+		// 授業中のクラスの学生セッションidを取得
+		List<SessionEntity> list_sessionEntity = sessionRepository.SearchStudentInClass(classid);
+		for (int i = 0; i < list_sessionEntity.size(); i++) {
+			String session_id = null;
+			session_id = list_sessionEntity.get(i).getSessionid();
+			// 送信
+			messagingTemplate.convertAndSendToUser(session_id, "/queue/send_sessionid", response_message);
+		}
 	}
 
 	// 通知取得、表示クラス
@@ -82,7 +95,8 @@ public class SocketController {
 		Thread.sleep(1000);
 
 		// 送信データをJson形式に変換、SocketNoticeクラスにセット
-		String response_message = json.ObjectToJSON(new SendNotice(getNotice.getStudent_name(), getNotice.getStudent_classno()));
+		String response_message = json
+				.ObjectToJSON(new SendNotice(getNotice.getStudent_name(), getNotice.getStudent_classno()));
 		// 送信先ユーザーに送信
 		messagingTemplate.convertAndSendToUser(getNotice.getTeacher_sessionid(), "/queue/notice", response_message);
 	}
@@ -93,10 +107,10 @@ public class SocketController {
 		try {
 			// マルチスレッド処理中のCPUの負荷の抑え
 			Thread.sleep(1000);
-			
-			// 送信データをJson形式に変換、SocketMessageクラスにセット
+
+			// 送信データをJson形式に変換
 			String response_message = json.ObjectToJSON(new SendBulkExit("1"));
-			//クラスidを取得
+			// クラスidを取得
 			String classid = getBulkExit.getClass_id();
 			List<SessionEntity> list_sessionEntity = sessionRepository.SearchStudentInClass(classid);
 			for (int i = 0; i < list_sessionEntity.size(); i++) {
@@ -107,7 +121,7 @@ public class SocketController {
 			}
 		} catch (Exception e) {
 			System.out.println("[Websocket]SocketManage_BulkExit　：　" + e);
-		}	
+		}
 	}
 
 }

@@ -44,10 +44,14 @@ function ConfirmEnterTime(classid){
 		.then(function(period_response_data) {
 			// 成功時
 			console.log("time_period：",period_response_data);
+			//period_response_data = 0;
 			if(period_response_data != 0){
 				//id「time_period」に追加
 				var Element_timeperiod = document.getElementById("time_period");
 				Element_timeperiod.value = period_response_data;
+				//id「headerに追加」
+				$("#header").empty;
+				$("#header").append("以下の授業に参加しますか");
 				//id「subject」に追加
 				$("#subject").empty;
 				$("#subject").append(response_data["subjectname"]);
@@ -56,14 +60,32 @@ function ConfirmEnterTime(classid){
 			}
 			else{
 				// 失敗時
+				$("#header").empty;
+				//id「subject」に追加
+				$("#subject").empty;
+				$("#subject").append("本日は授業がありません");
+				//modalを表示
+				$("#myModal").modal("show");
 				console.log('[$.ajax]"/rest/time_period" Fail(response_data : 0)');
 			}
 		}, function() {
 			// 失敗時
+			$("#header").empty;
+			//id「subject」に追加
+			$("#subject").empty;
+			$("#subject").append("本日は授業がありません");
+			//modalを表示
+			$("#myModal").modal("show");
 			console.log('[$.ajax]"/rest/time_period" Fail');
 		});
 	}, function() {
 		// 失敗時
+		$("#header").empty;
+		//id「subject」に追加
+		$("#subject").empty;
+		$("#subject").append("本日は授業がありません");
+		//modalを表示
+		$("#myModal").modal("show");
 		console.log('[$.ajax]"/rest/confirm_entertime" Fail');
 	});
 }

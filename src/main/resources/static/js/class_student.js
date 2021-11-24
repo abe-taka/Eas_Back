@@ -42,7 +42,7 @@ $(document).ready(() => {
 	stompClient.connect({}, function (frame) {
 		
 		// 先生のセッションidの取得
-	    stompClient.subscribe('/topic/send_sessionid', function (response_data) {
+	    stompClient.subscribe('/user/queue/send_sessionid', function (response_data) {
 	    	  // 表示メソッドにデータを渡す
 	    	  ShowTeacherSession(JSON.parse(response_data.body).session_id);
 	    });
