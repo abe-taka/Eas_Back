@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"xmlns:th="http://www.thymeleaf.org">
 <head>
-<script src="https://code.jquery.com/jquery-3.2.1.min.js"integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="crossorigin="anonymous"></script>
-<meta th:name="${_csrf.parameterName}" th:content="${_csrf.token}" />
-<meta charset="UTF-8">
-<link href="/css/main.css" rel="stylesheet">
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-<title>授業選択 | Eas</title>
+	<meta charset="UTF-8">
+	<meta th:name="${_csrf.parameterName}" th:content="${_csrf.token}" />
+	<title>授業選択 | Eas</title>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js"integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="crossorigin="anonymous"></script>
+	<link href="/css/main.css" rel="stylesheet">
+	<script src="/js/roomselect.js"></script>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 </head>
 <body>
-
+	<!-- セッション名、ログアウトボタン -->
 	<div id="log_session">
 		<div th:text="${session_name} + さん"></div>
 		<form th:action="@{/logout}" method="post">
@@ -17,6 +18,7 @@
 		</form>
 	</div>
 	
+	<!-- ナビゲーション -->
 	<nav>
     	<ul>
 			<form th:action="@{/homeworksubmi}" method="get">
@@ -26,7 +28,8 @@
 				<button type="submit" class="btn btn-outline-dark">授業選択</button>
 			</form>
 		</ul>
-	</nav>	
+	</nav>
+	
 	<!-- 学年選択 -->
 	<form>
 		<table>
@@ -46,92 +49,25 @@
 	</form>
 
 	<!-- 組選択 -->
-		<table>
-			<thead>
-				<tr>
-					<th colspan="3" th:text="組"></th>
-				</tr>
-			</thead>
-			<tbody id="list_id">
-				<tr th:each="list_classEntity : ${list_classEntity}" th:object="${list_classEntity}">
-					<form th:action="@{/class/teacherclass/classid}" method="get">
-						<th>
-							<button type="submit" th:text="*{schoolclass} + 組" class="list_class btn btn-outline-dark btn-sm"></button>
-							<input type="hidden" th:value="*{classid}" name="classid">
-						</th>
-					</form>
-				</tr>
-			</tbody>
-		</table>
-	<div class="border" id="disp">
-		<form id="disp_data" th:action="@{/class/teacherclass/classid}" method="get">
-		</form>
+	<table>
+		<thead>
+			<tr>
+				<th colspan="3" th:text="組"></th>
+			</tr>
+		</thead>
+	</table>
+	<div id="list_id">
+		<div th:each="list_classEntity : ${list_classEntity}" th:object="${list_classEntity}">
+			<div>
+				<button type="submit" th:text="*{schoolclass} + 組" class="list_class btn btn-outline-dark btn-sm" th:data-parameter1="*{classid}" th:onclick="GetAction_Class(this.getAttribute('data-parameter1'))"></button>
+			</div>
+		</div>
+	</div>
+	
+	
+	<!-- 組選択(非同期) -->
+	<div id="disp">
+		<form id="disp_data"></form>
 	</div>
 </body>
-
-<script>
-	var flag = "0";
-
-	//学年ごとの「組」情報の取得
-	function clickGrade(school_year) {
-		console.log("学年",school_year);
-		// リロードを防ぐ
-		$("form").on('button', function(e) {
-			e.preventDefault();
-		})
-		// CSRFトークンの取得
-		const token = $("meta[name='_csrf']").attr("content");
-
-		/// 非同期通信
-		$.ajax({
-			type : "POST",
-			url : "/rest/room_select",
-			headers : {
-				"X-CSRF-TOKEN" : token
-			},
-			data : {
-				js_schoolyear : school_year,
-			},
-			dataType : "json"
-		})
-		.then(function(response_data) {
-			// 成功時
-			console.log("response_data",response_data);
-			
-			if(flag == "0"){
-				flag = "1";
-				//Get時の組を消す
-				var delete_element = document.getElementById('list_id'); 
-				delete_element.remove('list_class');
-			}
-			else if(flag == "1"){
-				//Rest取得の組を消す
-				var delete_element2 = document.querySelectorAll('disp_data');
-				$("#disp_data").empty();
-			}	
-			
-			/*-- 表示処理 --*/
-			for(var i = 0; i<response_data.length; i++){
-				//組を取得
-				var schoolclass = response_data[i]["schoolclass"] + "組";
-				//ボタンタグ生成
-				var newTag = document.createElement("button");
-				// 表示する値をセット
-				var addData = document.createTextNode(schoolclass);
-				//対象要素.apeendChild(追加する要素);
-				newTag.appendChild(addData);
-				//newTag.classList.add();
-	
-				//表示する場所の取得
-				var addPlace = document.getElementById("disp_data");
-				addPlace.appendChild(newTag); //対象要素.apeendChild(追加する要素);
-			}
-
-		}, function() {
-			// 失敗時
-			console.log('clickGrade:fail');
-		});
-	}
-</script>
-
 </html>

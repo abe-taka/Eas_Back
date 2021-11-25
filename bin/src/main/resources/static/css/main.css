@@ -66,13 +66,6 @@ nav{
   	background-color: #e0ffff;
 }
 
-#scroll_box {
-  width: 300px;
-  height: 200px;
-  overflow: scroll;
-  white-space: nowrap;
-}
-
 /* スクロールの幅の設定 */
 .scroll_box::-webkit-scrollbar {
   width: 10px;
