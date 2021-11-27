@@ -1,17 +1,15 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml"xmlns:th="http://www.thymeleaf.org">
 <head>
-<title>先生ホーム | Eas</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    
+	<title>先生ホーム | Eas</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />  
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 <body>
 	
+	<!-- セッション名、ログアウト -->
 	<div th:text="${session_name} + さん"></div>
-	
 	<form th:action="@{/logout}" method="post">
 		<button type="submit">ログアウト</button>
 	</form>
@@ -38,15 +36,16 @@
 			<!-- メイン -->
 			<div class="column col-lg-10">
 				<h3>スケジュール</h3>
-				<div th:text=" 【 +${date}+】"></div>
 				<div th:each="TimetableList : ${TimetableList}" th:object="${TimetableList}">
+					<div th:text=" 【 +${date}+】"></div>
 					<div th:text="*{timetabletime.timeperiod} + 限目"></div>
-					<nobr th:text="*{subjectname}"></nobr>
 					<nobr th:text="*{classentity.classid}"></nobr>
+					<nobr th:text="*{subjectname}"></nobr>
 				</div>
 			</div>
 		</div>
 	</div>
+	
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

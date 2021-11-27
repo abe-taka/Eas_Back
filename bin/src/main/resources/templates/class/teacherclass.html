@@ -6,9 +6,7 @@
 	<script src="/webjars/jquery/jquery.min.js"></script>
 	<script src="/webjars/sockjs-client/sockjs.min.js"></script>
 	<script src="/webjars/stomp-websocket/stomp.min.js"></script>
-	<script src="/js/ready.js"></script>
-	<script src="/js/queue.js"></script>
-	<script src="/js/app.js"></script>
+	<script src="/js/class_teacher.js"></script>
 	<!-- bootstrap -->
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
@@ -16,87 +14,42 @@
 </head>
 
 <body>
+	<!-- セッション名、ログアウト -->
 	<div class="session_name" th:text="${session_name} + さん"></div>
+	
+	<!-- 解答状況表示 -->
 	<div class="container" id="situation_buttonlist">
 		<button id="situation_button">1</button>
 	</div>
 	
-	<div id="main-content" class="container">
-		<div class="row">
-
-			<div class="col-md-6">
-				<form class="form-inline">
-					<div class="form-group">
-						<!-- ON -->
-						<!-- <button id="recog_connect" class="btn btn-dark" type="button">字幕開始</button>-->
-						<!-- OFF -->
-						<!--<button id="recog_disconnect" class="btn btn-dark" type="button">字幕停止</button>-->
-					</div>
-				</form>
-			</div>
-		</div>
-		<br>
-		<!-- 表示 -->
-		<div id="result-div"></div>
-		<div class="scroll_box"></div>
-		
-		<div class="container" style="margin-top: 5px;">
-			<button id="onModal" class="btn btn-dark">問題作成</button>
-		</div>
+	<!-- クラスid、セッションid -->
+	<div>
+		<input type="hidden" th:value="${classid}" id="classid">
+		<form name="socket_form">
+			<input type="hidden" name="sendername" id="name" th:value="${session_id}">
+		</form>
 	</div>
 	
-	<form th:action="@{/class/roomselect}" method="get">
-		<button type="submit" class="btn btn-dark">退出</button>
-	</form>
-	
+	<!-- 字幕表示、問題作成、退出、一括退出ボタン -->
+	<div id="main-content" class="container">
+		<!-- 字幕表示 -->
+		<div id="result-div"></div>
+		
+		<div class="container" style="margin-top: 5px;">
+			<button id="onModal" class="btn btn-outline-dark" th:onclick="ShowModal();">問題作成</button>
+			<form th:action="@{/class/roomselect}" method="get">
+				<button type="submit" class="btn btn-dark">退出</button>
+			</form>
+			<button type="submit" class="btn btn-outline-dark" th:data-parameter1="*{classid}" th:onclick="Bulkexit(this.getAttribute('data-parameter1'));">一括退出</button>
+		</div>
+	</div>
+
 	<!-- 授業生徒一覧表示 -->
 	<!-- <h3 class="right">授業参加学生</h3> -->
 	<div class="right" id="student_list"></div>
-	
-	<br>
-	
-		<!-- 表示スペース -->
-		<div class="row">
-			<div class="col-md-12">
-				<table id="conversation" class="table table-striped">
-				
-					<tr th:each="socketEntity : ${socketEntity}">
-						<td th:text="${socketEntity.name}"></td>
-						<td th:text="${socketEntity.message}"></td>
-					</tr>
 
-					<tbody id="show">
-					</tbody>
-				</table>
-			</div>
-		</div>
-		
-		<!-- 送信するデータ -->
-						<div class="col-md-6">
-							<form class="form-inline" name="socket_form">
-			
-								<!-- 名前 -->
-								<div class="form-group">
-									<label for="name">Name</label>
-									<input type="text" name="sendername" id="name" class="form-control" th:value="${session_id}" readonly>
-								</div>
-								
-								<!-- メッセージ -->
-								<div class="form-group">
-									<label for="name">Message</label>
-									<input type="text" id="message" class="form-control" placeholder="Hello">
-								</div>
-			
-								<!-- 宛先 -->
-								<div class="form-group">
-									<label for="name">SendTo_UserName</label>
-									<div id="send_username"></div>
-								</div>
-								
-							</form>
-						</div>
-	
-	<!-- modal -->
+
+	<!-- modal(授業内問題) -->
 	<div id="myModal" class="modal fade bd-example-modal-xl" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
 		<div class="modal-dialog modal-xl" role="document">
 			<div class="modal-content">
@@ -118,25 +71,11 @@
 								<input type="text" id="answer" class="form-control">
 							</div>
 						</form>
-						
-						<!-- Websocketとの接続のON/OFF -->
-						<div class="col-md-6">
-							<form class="form-inline">
-								<div class="form-group">
-									<!-- タイトル -->
-									<label for="connect">WebSocket connection:</label>
-									<!-- ON -->
-									<button id="connect" class="btn btn-default" type="submit">Connect</button>
-									<!-- OFF -->
-									<button id="disconnect" class="btn btn-default" type="submit" disabled="disabled">Disconnect</button>
-								</div>
-							</form>
-						</div>
 					</div>
 
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">閉じる</button>
-						<button id="send" class="btn btn-default" type="submit">送信</button>
+						<button id="send" class="btn btn-default btnNext" type="submit" th:onclick="SendIssue();">送信</button>
 					</div>
 				</div>
 
@@ -146,6 +85,28 @@
 
 					<div class="modal-body">
 						<div>送信しました</div>
+					</div>
+
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">閉じる</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- modal(一括退出) -->
+	<div id="myModal2" class="modal fade bd-example-modal-xl" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-xl" role="document">
+			<div class="modal-content">
+
+				<!-- ページ1 -->
+
+				<div id="modal-page1">
+					<div class="modal-header">一括退出完了</div>
+
+					<div class="modal-body">
+						<div>生徒を退出させました</div>
 					</div>
 
 					<div class="modal-footer">
@@ -167,40 +128,6 @@
 		src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
 		integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
 		crossorigin="anonymous"></script>
-	<script>
-	// 表示中のページと最終ページ番号
-	var page, max = 2;
 
-	$(function() {
-		// Modalオープンボタン
-		$("#onModal").click(function() {
-			page = 1;
-			drawModal();
-			$("#myModal").modal("show");
-		});
-
-		// 次へボタン
-		$(".btnNext").click(function() {
-			page++;
-			drawModal();
-		});
-
-		// 前へボタン
-		$(".btnPrev").click(function() {
-			page--;
-			drawModal();
-		});
-
-		// Modal内表示
-		function drawModal() {
-			for (var i = 1; i <= max; i++) {
-				if (i == page)
-					$("#modal-page" + i).show()
-				else
-					$("#modal-page" + i).hide()
-			}
-		}
-	});
-	</script>
 </body>
 </html>

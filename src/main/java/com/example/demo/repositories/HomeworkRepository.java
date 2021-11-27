@@ -178,10 +178,13 @@ public class HomeworkRepository<Homework> {
 	
 	public List enterexitListfindAll(Integer schoolCode,Integer classNo){
 		String sql ="SELECT\r\n"
+					+ "DISTINCT enterexit_table.timetable_id,\r\n"
 					+ "enterexit_table.enter_time,\r\n"
-					+ "enterexit_table.exit_time\r\n"
+					+ "enterexit_table.exit_time\r\n,"
+					+ "(SELECT timetabletime_table.time_period FROM timetabletime_table WHERE timetabletime_table.timetable_id = enterexit_table.timetable_id) AS atime_period,\r\n"
+					+ "SUBSTRING(enterexit_table.enter_time, 1, 10) AS date\r\n"
 					+ "FROM\r\n"
-					+ "enterexit_table,student_table\r\n"
+					+ "enterexit_table,student_table,timetabletime_table\r\n"
 					+ "WHERE student_table.class_no = ?\r\n"
 					+ "AND student_table.class_id = ?;";
 		return jdbctemplate.queryForList(sql,classNo,schoolCode);

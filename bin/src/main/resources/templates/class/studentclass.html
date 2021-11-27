@@ -2,170 +2,90 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<meta charset="UTF-8">
+	<meta th:name="${_csrf.parameterName}" th:content="${_csrf.token}" />
     <title>学生授業 | Eas</title>
     <script src="/webjars/jquery/jquery.min.js"></script>
     <script src="/webjars/sockjs-client/sockjs.min.js"></script>
     <script src="/webjars/stomp-websocket/stomp.min.js"></script>
-    <script src="/js/student_ready.js"></script>
-    <script src="/js/queue.js"></script>
+    <script src="/js/class_student.js"></script>
     <!-- bootstrap -->
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<link href="/css/main.css" rel="stylesheet">
 </head>
 <body>
-<div th:text="${session_name} + さん"></div>
-<input type="hidden" id="student_name" th:value="${session_name}">
-<input type="hidden" id="student_classno" th:value="${student_classno}">
+	<!-- セッション名、出席番号、入室登録id、生徒セッションid -->
+	<div th:text="${session_name} + さん"></div>
+	<input type="hidden" id="student_name" th:value="${session_name}">
+	<input type="hidden" id="student_classno" th:value="${student_classno}">
+	<input type="hidden" id="enterid" th:value="${enterid}">
+	<input type="hidden" id="student_sessionid" th:value="${session_id}">
+	
+	<div id="main-content" class="container">
+	    <div class="row">
+	    	
+	    	<!-- 字幕のON、OFF -->
+	        <div class="col-md-6">
+	            <form class="form-inline">
+	                <div class="form-group">
+	                    <!-- ON -->
+	                    <button th:onclick="GetVoiceRecog();" class="btn btn-outline-dark" type="button">字幕開始</button>
+	                    <!-- OFF -->
+	                    <button id="recog_disconnect" class="btn btn-outline-dark" type="button">字幕停止</button>
+	                </div>
+	            </form>
+	        </div>
+	        
+	        <!-- 退出ボタン -->
+	        <form th:action="@{/home/studenthome}" method="get">
+				<button class="btn btn-dark">退出</button>
+			</form>	
+	    
+		    <!-- 字幕表示 -->
+		    <form name="session_form">
+				<div id="result-div"></div>
+			</form>	
+		</div>
+	</div>		
 
-<form name="form_flag">
-	<input type="hidden" th:value="${flag}" name="flag">
-	<input type="hidden" th:value="${classid}" name="classid">
-</form>
-
-<div id="main-content" class="container">
-    <div class="row">
-    	
-        <div class="col-md-6">
-            <form class="form-inline">
-                <div class="form-group">
-                    <!-- ON -->
-                    <button th:onclick="get_voice_recog();" class="btn btn-default" type="button">字幕開始</button>
-                    <!-- OFF -->
-                    <button id="recog_disconnect" class="btn btn-default" type="button">字幕停止</button>
-                </div>
-            </form>
-        </div>
-    
-	    <!-- 表示 -->
-	    <form name="session_form">
-			<div id="result-div"></div>
-		</form>	
-	</div>
-</div>		
-
-<br>
-<br>
-<br>
-
-<div id="main-content" class="container">
-    <div class="row">
-    	
-    	<!-- Websocketとの接続のON/OFF -->
-        <div class="col-md-6">
-            <form class="form-inline">
-                <div class="form-group">
-                	<!-- タイトル -->
-                    <label for="connect">WebSocket connection:</label>
-                    <!-- ON -->
-                    <button id="connect" class="btn btn-default" type="submit">Connect</button>
-                    <!-- OFF -->
-                    <button id="disconnect" class="btn btn-default" type="submit" disabled="disabled">Disconnect</button>
-                </div>
-            </form>
-        </div>
-        
-        <!-- 送信するデータ -->
-        <div class="col-md-6">
-            <form class="form-inline" name="socket_form">
-            
-            	<!-- 名前 -->
-                <div class="form-group">
-                    <label for="name">Name</label>
-                    <input type="text" name="sendername" id="name" class="form-control" th:value="${session_id}" readonly>
-                </div>
-                
-                <!-- メッセージ -->
-                <div class="form-group">
-                    <label for="name">Message</label>
-                    <input type="text" id="message" class="form-control" placeholder="Hello">
-                </div>
-                
-                <!-- 宛先 -->
-                <div class="form-group">
-                    <label for="name">SendTo_UserName</label>
-                    <div id="send_username"></div>
-                </div>
-                <button id="send" class="btn btn-default" type="submit">Send</button>
-            </form>
-        </div>
-    </div>
-    
-    <!-- 表示スペース -->
-    <div class="row">
-        <div class="col-md-12">
-            <table id="conversation" class="table table-striped">
-                <thead>
-                <tr>
-                    <th>Messages</th>
-                </tr>
-                </thead>
-                <tr th:each="socketEntity : ${socketEntity}">
-                	<td th:text="${socketEntity.name}"></td>
-                	<td th:text="${socketEntity.message}"></td>
-                </tr>
-                
-                <tbody>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-<!-- modal -->
+	<!-- modal(授業内問題) -->
 	<div id="myModal" class="modal fade bd-example-modal-xl" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
 		<div class="modal-dialog modal-xl" role="document">
 			<div class="modal-content">
-
+	
 				<!-- ページ1 -->
-
 				<div id="modal-page1">
 					<div class="modal-header">授業内問題</div>
-
+	
 					<div class="modal-body">
 						<form>
 							<div class="form-group">
 								<label for="recipient-name" class="col-form-label">問題</label>
 								<div id="show"></div>
 							</div>
-
+	
 							<div class="form-group">
 								<label for="message-text" class="col-form-label">解答</label>
 								<input type="text" id="answer" class="form-control">
 							</div>
 						</form>
-						
-						<!-- Websocketとの接続のON/OFF -->
-						<div class="col-md-6">
-							<form class="form-inline">
-								<div class="form-group">
-									<!-- タイトル -->
-									<label for="connect">WebSocket connection:</label>
-									<!-- ON -->
-									<button id="connect" class="btn btn-default" type="submit">Connect</button>
-									<!-- OFF -->
-									<button id="disconnect" class="btn btn-default" type="submit"
-										disabled="disabled">Disconnect</button>
-								</div>
-							</form>
-						</div>
 					</div>
-
+	
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">閉じる</button>
-						<a href="#" id="send_answer" class="btn btn-default btnNext">確認</a>
+						<a href="#" id="send_answer" class="btn btn-default btnNext" th:onclick="SendAnswer();">送信</a>
 					</div>
 				</div>
-
+	
 				<!-- ページ2 -->
 				<div id="modal-page2">
 					<div class="modal-header">送信完了</div>
-
+	
 					<div class="modal-body">
 						<div id="answer_result"></div>
 						<div id="result_value"></div>
 					</div>
-
+	
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">閉じる</button>
 					</div>
@@ -174,9 +94,6 @@
 		</div>
 	</div>
 
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-		integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-		crossorigin="anonymous"></script>
 	<script
 		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
 		integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
@@ -185,42 +102,6 @@
 		src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
 		integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
 		crossorigin="anonymous"></script>
-	<script>
-		// 表示中のページと最終ページ番号
-		var page, max = 2;
-	
-		$(function() {
-			
-			// Modalオープンボタン
-			$("#onModal").click(function() {
-				page = 1;
-				drawModal();
-				$("#myModal").modal("show");
-			});
-			
-			// 次へボタン
-			$(".btnNext").click(function() {
-				page++;
-				drawModal();
-			});
-	
-			// 前へボタン
-			$(".btnPrev").click(function() {
-				page--;
-				drawModal();
-			});
-	
-			// Modal内表示
-			function drawModal() {
-				for (var i = 1; i <= max; i++) {
-					if (i == page)
-						$("#modal-page" + i).show()
-					else
-						$("#modal-page" + i).hide()
-				}
-			}
-		});
-	</script>
 
 </body>
 </html>

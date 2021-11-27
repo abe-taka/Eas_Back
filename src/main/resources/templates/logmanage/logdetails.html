@@ -32,8 +32,8 @@
                     <th>退室</th>
                 </tr>
                 <tr th:each="enterexitDetailsList:${enterexitDetailsList}">
-                    <td th:text="11/10"></td>
-                    <td th:text="1時間目"></td>
+                    <td th:text="${enterexitDetailsList.date}"></td>
+                    <td th:text="${enterexitDetailsList.atime_period}"></td>
                     <td th:if="${enterexitDetailsList.enter_time == null}" th:text="未入室"></td>
                     <td th:if="${(enterexitDetailsList.enter_time != null)}" th:text="${enterexitDetailsList.enter_time}"></td>
                     <td th:if="${enterexitDetailsList.exit_time == null}" th:text="未退室"></td>
