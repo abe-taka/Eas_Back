@@ -11,12 +11,14 @@ import com.example.demo.components.JsonConversion;
 import com.example.demo.components.SessionManage;
 import com.example.demo.entities.SessionEntity;
 import com.example.demo.forms.VoiceRecognitionForm;
+import com.example.demo.getsockets.GetAnswer;
 import com.example.demo.getsockets.GetBulkExit;
 import com.example.demo.getsockets.GetIssue;
 import com.example.demo.getsockets.GetNotice;
 import com.example.demo.getsockets.GetSession;
 import com.example.demo.getsockets.GetVoiceRecognition;
 import com.example.demo.repositories.SessionRepository;
+import com.example.demo.sendsockets.SendAnswer;
 import com.example.demo.sendsockets.SendBulkExit;
 import com.example.demo.sendsockets.SendIssue;
 import com.example.demo.sendsockets.SendNotice;
@@ -51,7 +53,7 @@ public class SocketController {
 			String teachersession_id = voice_Form.getTeacher_sessionid();
 			System.out.println("先生セッションid" + teachersession_id);
 			messagingTemplate.convertAndSendToUser(teachersession_id, "/queue/voice_recog", response_message);
-			
+
 			// 授業中のクラスの学生セッションidを取得
 			String class_id = voice_Form.getClassid();
 			List<SessionEntity> list_sessionEntity = sessionRepository.SearchStudentInClass(class_id);
@@ -147,4 +149,21 @@ public class SocketController {
 		}
 	}
 
+	// 生と解答送信、解答状況表示
+	@MessageMapping("/send_student_answer")
+	public void SocketManage_StudentAnswer(GetAnswer getAnswer) throws Exception {
+		try {
+			// マルチスレッド処理中のCPUの負荷の抑え
+			Thread.sleep(1000);
+
+			// 送信データをJson形式に変換
+			String response_message = json.ObjectToJSON(new SendAnswer(getAnswer.getStudentname(),getAnswer.getClass_no(),getAnswer.getAnswer()));
+			//先生のセッションidの取得
+			String teacher_sessionid = getAnswer.getTeacher_sessionid();
+			// 送信
+			messagingTemplate.convertAndSendToUser(teacher_sessionid, "/queue/student_answer", response_message);
+		} catch (Exception e) {
+			System.out.println("[Websocket]SocketManage_StudentAnswer　：　" + e);
+		}
+	}
 }

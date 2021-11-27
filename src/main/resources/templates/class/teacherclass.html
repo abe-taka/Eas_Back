@@ -18,9 +18,7 @@
 	<div class="session_name" th:text="${session_name} + さん"></div>
 	
 	<!-- 解答状況表示 -->
-	<div class="container" id="situation_buttonlist">
-		<button id="situation_button">1</button>
-	</div>
+	<div class="container" id="situation_buttonlist"></div>
 	
 	<!-- クラスid、セッションid -->
 	<div>
@@ -107,6 +105,28 @@
 
 					<div class="modal-body">
 						<div>生徒を退出させました</div>
+					</div>
+
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">閉じる</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- modal(解答状況) -->
+	<div id="myModal3" class="modal fade bd-example-modal-xl" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-xl" role="document">
+			<div class="modal-content">
+
+				<!-- ページ1 -->
+
+				<div id="modal-page1">
+					<div class="modal-header">解答状況</div>
+
+					<div class="modal-body">
+						<div id="answer_situation"></div>
 					</div>
 
 					<div class="modal-footer">

@@ -19,7 +19,6 @@ public class SchoolEntity {
 
 	// 学校コード
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "school_code")
 	private int schoolcode;
 

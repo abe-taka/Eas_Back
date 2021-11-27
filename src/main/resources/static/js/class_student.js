@@ -2,7 +2,7 @@
 var stompClient = null; // Websocket接続用変数
 
 /* ロード処理 */
-$(document).ready(() => {	
+$(document).ready(() => {
 	const session_id =  $("#student_sessionid").val();
 	
 	// CSRFトークンの取得
@@ -43,8 +43,10 @@ $(document).ready(() => {
 		
 		// 先生のセッションidの取得
 	    stompClient.subscribe('/user/queue/send_sessionid', function (response_data) {
-	    	  // 表示メソッドにデータを渡す
-	    	  ShowTeacherSession(JSON.parse(response_data.body).session_id);
+	    	let element_teacher_sessionid = document.getElementById('teacher_sessionid');
+	    	element_teacher_sessionid.value = JSON.parse(response_data.body).session_id;
+	    	// 出席処理
+	    	SendToNotice(JSON.parse(response_data.body).session_id);
 	    });
 	    
 	    // 授業内問題の取得
@@ -127,7 +129,6 @@ function GetVoiceRecog(){
 	stompClient.connect({}, function (frame) {
 	    // 受信
 	    stompClient.subscribe('/user/queue/voice_recog', function (response_data) {
-	    	console.log("うけとりりりっりりりりりり",JSON.parse(response_data.body).voicetext);
 	    	// 表示
 	    	ShowVoiceRecognition(JSON.parse(response_data.body).voicetext);
 	    });
@@ -136,7 +137,22 @@ function GetVoiceRecog(){
 
 // 問題の解答送信処理
 function SendAnswer() {
+	//生徒名の取得
+	const studentname = document.getElementById('student_name').value;
+	//出席番号の取得
+	const class_no = document.getElementById('student_classno').value;
+	//解答の取得
 	const answer_value = document.getElementById('answer').value;
+	//先生のセッションidの取得
+	const teacher_sessionid =  $("#teacher_sessionid").val();
+	
+	//先生側に解答を送信
+	var socket = new SockJS('/socket_endpoint');
+	stompClient = Stomp.over(socket);
+	// エンドポイントに対して接続
+	stompClient.connect({}, function (frame) {
+		stompClient.send("/socket_prefix/send_student_answer", {}, JSON.stringify({'studentname':studentname,'class_no':class_no,'answer':answer_value,'teacher_sessionid':teacher_sessionid}));
+	});
 	
 	// CSRFトークンの取得
 	const token = $("meta[name='_csrf']").attr("content");
@@ -183,11 +199,6 @@ function SendAnswer() {
 }
 
 /* 表示 */
-// 先生側セッションid表示
-function ShowTeacherSession(teacher_sessionid){
-	// 出席処理
-	SendToNotice(teacher_sessionid);
-}
 
 // 字幕表示
 function ShowVoiceRecognition(message) {
