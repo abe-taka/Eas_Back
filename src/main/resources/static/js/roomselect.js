@@ -44,7 +44,6 @@ function clickGrade(school_year) {
 			var btn = document.createElement('button');
 			btn.textContent = response_data[i]["schoolclass"] + '組';
 			btn.setAttribute("type", "button");
-			//btn.setAttribute("name", "classid");
 			btn.setAttribute("name", i);
 			btn.setAttribute("value", response_data[i]["schoolclass"]);
 			btn.setAttribute("data-parameter1", response_data[i]["classid"]);

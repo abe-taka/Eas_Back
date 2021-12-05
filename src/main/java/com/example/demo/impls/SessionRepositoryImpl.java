@@ -13,7 +13,7 @@ import com.example.demo.entities.SessionEntity;
 import com.example.demo.entities.StudentEntity;
 
 @Repository
-public class SessionRepositoryImpl implements SessionCustomRepository{
+public class SessionRepositoryImpl implements SessionCustomRepository {
 
 	@Autowired
 	EntityManager entityManager;
@@ -25,9 +25,23 @@ public class SessionRepositoryImpl implements SessionCustomRepository{
 		// SQL
 		String jpql = "SELECT * FROM session_table WHERE student_address in (select student_address from student_table where class_id = :classid)";
 		// 検索
-		TypedQuery<SessionEntity> query = (TypedQuery<SessionEntity>) entityManager.createNativeQuery(jpql,SessionEntity.class);
+		TypedQuery<SessionEntity> query = (TypedQuery<SessionEntity>) entityManager.createNativeQuery(jpql,
+				SessionEntity.class);
 		query.setParameter("classid", classid);
 
 		return query.getResultList();
+	}
+
+	// メールアドレスを基に学生データを取得
+	@SuppressWarnings("unchecked")
+	@Override
+	public SessionEntity SearchIdByStudent(String mailaddress) {
+		// SQL
+		String jpql = "SELECT * FROM session_table WHERE student_address = :mailaddress";
+		// 検索
+		TypedQuery<SessionEntity> query = (TypedQuery<SessionEntity>) entityManager.createNativeQuery(jpql,SessionEntity.class);
+		query.setParameter("mailaddress", mailaddress);
+
+		return query.getSingleResult();
 	}
 }

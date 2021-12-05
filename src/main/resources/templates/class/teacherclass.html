@@ -2,6 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<meta charset="UTF-8">
+	<meta th:name="${_csrf.parameterName}" th:content="${_csrf.token}" />
 	<title>先生授業 | Eas</title>
 	<script src="/webjars/jquery/jquery.min.js"></script>
 	<script src="/webjars/sockjs-client/sockjs.min.js"></script>
@@ -20,12 +21,13 @@
 	<!-- 解答状況表示 -->
 	<div class="container" id="situation_buttonlist"></div>
 	
-	<!-- クラスid、セッションid -->
+	<!-- クラスid、セッションid、timeid -->
 	<div>
 		<input type="hidden" th:value="${classid}" id="classid">
 		<form name="socket_form">
 			<input type="hidden" name="sendername" id="name" th:value="${session_id}">
 		</form>
+		<input type="hidden" id="timeid">
 	</div>
 	
 	<!-- 字幕表示、問題作成、退出、一括退出ボタン -->
@@ -137,9 +139,6 @@
 		</div>
 	</div>
 
-	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-		integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-		crossorigin="anonymous"></script>
 	<script
 		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
 		integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"

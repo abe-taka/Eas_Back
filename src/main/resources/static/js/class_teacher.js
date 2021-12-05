@@ -9,6 +9,40 @@ var flag = 0; //解答状況閲覧ボタンtext
 /* ロード処理 */
 $(document).ready(() => {
 	
+	// CSRFトークンの取得
+	const token = $("meta[name='_csrf']").attr("content");
+	
+	//クラスidの取得
+	const classid = $("#classid").val();
+	
+	// 非同期通信
+	// 入室の許可をする
+	$.ajax({
+		type : "POST",
+		url : "/rest/update_enterflag",
+		headers : {
+			"X-CSRF-TOKEN" : token
+		},
+		data : {
+			"js_classid" : classid
+		}
+	})
+	.then(function(response_data){
+		//成功時
+		if(response_data != 0){
+			console.log("成功");
+			const element_timeid = document.getElementById("timeid");
+			element_timeid.value = response_data;
+		}
+		else{
+			console.log("失敗");
+		}
+	}
+	,function(){
+		//失敗時
+		console.log('[$.ajax]"/rest/update_enterflag" Fail');
+	});
+	
 	// アクセスするエンドポイントを設定
     var socket = new SockJS('/socket_endpoint');
     stompClient = Stomp.over(socket);
@@ -24,17 +58,7 @@ $(document).ready(() => {
         	ShowSubtitles(JSON.parse(response_data.body).voicetext);
         });
         
-        // 自信のセッションid、担当クラスのクラスidを取得
-    	const session_id = document.socket_form.sendername.value;
-    	const class_id = $("#classid").val();
-    	//　先生のセッションidの送信
-        stompClient.send("/socket_prefix/send_sessionid", {}, JSON.stringify({'session_id': session_id,'class_id':class_id}));
         // 出席学生の情報の受信
-		stompClient.subscribe('/user/queue/notice', function(response_data) {
-			// 表示メソッドにデータを渡す
-		    ShowStudent(JSON.parse(response_data.body).student_name,JSON.parse(response_data.body).student_classno);
-		});
-		// 出席学生の情報の受信
 		stompClient.subscribe('/user/queue/notice', function(response_data) {
 			// 表示メソッドにデータを渡す
 		    ShowStudent(JSON.parse(response_data.body).student_name,JSON.parse(response_data.body).student_classno);
@@ -44,10 +68,48 @@ $(document).ready(() => {
 			// 表示メソッドにデータを渡す
 		    ShowStudentAnswer(JSON.parse(response_data.body).studentname,JSON.parse(response_data.body).class_no,JSON.parse(response_data.body).answer);
 		});
+
+	    //入室許可の通知
+	    stompClient.send("/socket_prefix/notice_enter", {}, JSON.stringify({'class_id': classid}));
     });
+    
 })
 
 /* 処理 */
+/* 授業画面退出時 */
+window.onload = function(){
+	window.onunload = function(){
+		//退出ログ
+		ReturnEnterFlag();
+	}
+}
+
+//入室許可フラグを基に戻す
+function ReturnEnterFlag(){
+	// CSRFトークンの取得
+	const token = $("meta[name='_csrf']").attr("content");
+	//クラスid、timeidを取得
+	const classid = $("#classid").val();
+	const timeid = $("#timeid").val();
+	
+	$.ajax({
+		type : "POST",
+		url : "/rest/return_enterflag",
+		headers : {
+			"X-CSRF-TOKEN" : token
+		},
+		data : {
+			js_classid : classid,
+			js_timeid : timeid
+		}
+	})
+	.then(function(response_data){
+		//成功
+	},function(){
+		//失敗
+	});
+}
+
 // 授業内問題送信処理
 function SendIssue() {
 	//問題の送信

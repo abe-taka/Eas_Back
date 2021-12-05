@@ -16,12 +16,12 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 @Table(name = "timetable_table")
 public class TimetableEntity {
 
-	//時間ID
+	// 時間ID
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="time_id")
+	@Column(name = "time_id")
 	private int timeid;
-	
+
 	// 時間割ID
 	@ManyToOne
 	@JsonBackReference("json_timetabletime_timetable")
@@ -47,7 +47,9 @@ public class TimetableEntity {
 	@JoinColumn(name = "teacher_address")
 	private TeacherEntity teacher;
 
-	
+	// フラグ
+	private int enter_flag;
+
 	// ゲッター、セッター
 	public int getTimeid() {
 		return timeid;
@@ -55,8 +57,8 @@ public class TimetableEntity {
 
 	public void setTimeid(int timeid) {
 		this.timeid = timeid;
-	}	
-	
+	}
+
 	public TimetabletimeEntity getTimetabletime() {
 		return timetabletime;
 	}
@@ -95,5 +97,13 @@ public class TimetableEntity {
 
 	public void setTeacher(TeacherEntity teacher) {
 		this.teacher = teacher;
+	}
+	
+	public int getEnter_flag() {
+		return enter_flag;
+	}
+
+	public void setEnter_flag(int enter_flag) {
+		this.enter_flag = enter_flag;
 	}
 }

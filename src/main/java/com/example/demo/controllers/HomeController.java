@@ -133,6 +133,10 @@ public class HomeController {
 			// 名前を取得
 			String session_name = session_manage.getSession_name();
 			model.addAttribute("session_name", session_name);
+			
+			//セッションidの取得
+			String session_id = session_manage.Get_SessionId();
+			model.addAttribute("student_sessionid", session_id);
 
 			return "home/studenthome";
 		}

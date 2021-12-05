@@ -22,7 +22,8 @@ public class TimetableRepositoryImpl implements TimetableCustomRepository {
 		// SQL
 		String jpql = "SELECT * FROM timetable_table WHERE dayofweek = :dayofweek AND teacher_address = :mailaddress";
 		// 検索
-		TypedQuery<TimetableEntity> query = (TypedQuery<TimetableEntity>) entityManager.createNativeQuery(jpql,TimetableEntity.class);
+		TypedQuery<TimetableEntity> query = (TypedQuery<TimetableEntity>) entityManager.createNativeQuery(jpql,
+				TimetableEntity.class);
 		query.setParameter("dayofweek", dayofweek);
 		query.setParameter("mailaddress", mailaddress);
 
@@ -36,23 +37,44 @@ public class TimetableRepositoryImpl implements TimetableCustomRepository {
 		// SQL
 		String jpql = "SELECT * FROM timetable_table WHERE dayofweek = :dayofweek AND class_id = :classid";
 		// 検索
-		TypedQuery<TimetableEntity> query = (TypedQuery<TimetableEntity>) entityManager.createNativeQuery(jpql,TimetableEntity.class);
+		TypedQuery<TimetableEntity> query = (TypedQuery<TimetableEntity>) entityManager.createNativeQuery(jpql,
+				TimetableEntity.class);
 		query.setParameter("dayofweek", dayofweek);
 		query.setParameter("classid", classid);
 
 		return query.getResultList();
 	}
 
-	// 授業に参加できるかの確認
-	public TimetableEntity CheckClassJoin(String dayofweek, String classid, String current_time, String tenafter_time) {
+	// 開始する授業データの取得
+	@SuppressWarnings("unchecked")
+	@Override
+	public TimetableEntity SearchStartClass(String dayofweek, String classid, String current_time,
+			String tenafter_time) {
 		// SQL
 		String jpql = "SELECT * FROM timetable_table WHERE class_id = :classid AND dayofweek = :dayofweek AND timetable_id in (select timetable_id from timetabletime_table where (start_time BETWEEN :current_time AND :tenafter_time) OR (start_time <= :current_time AND :current_time <= end_time))";
 		// 検索
-		TypedQuery<TimetableEntity> query = (TypedQuery<TimetableEntity>) entityManager.createNativeQuery(jpql,TimetableEntity.class);
+		TypedQuery<TimetableEntity> query = (TypedQuery<TimetableEntity>) entityManager.createNativeQuery(jpql,
+				TimetableEntity.class);
 		query.setParameter("classid", classid);
 		query.setParameter("dayofweek", dayofweek);
 		query.setParameter("current_time", current_time);
 		query.setParameter("tenafter_time", tenafter_time);
+
+		return query.getSingleResult();
+	}
+
+	// 授業データを取得
+	@SuppressWarnings("unchecked")
+	@Override
+	public TimetableEntity SearchClass(String dayofweek, String classid, String periodid) {
+		// SQL
+		String jpql = "SELECT * FROM timetable_table WHERE class_id = :classid AND dayofweek = :dayofweek AND timetable_id = :periodid";
+		// 検索
+		TypedQuery<TimetableEntity> query = (TypedQuery<TimetableEntity>) entityManager.createNativeQuery(jpql,
+				TimetableEntity.class);
+		query.setParameter("classid", classid);
+		query.setParameter("dayofweek", dayofweek);
+		query.setParameter("periodid", periodid);
 
 		return query.getSingleResult();
 	}

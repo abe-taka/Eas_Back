@@ -5,35 +5,35 @@ var stompClient = null; // Websocket接続用変数
 $(document).ready(() => {
 	const session_id =  $("#student_sessionid").val();
 	
-	// CSRFトークンの取得
-	const token = $("meta[name='_csrf']").attr("content");
-	
-	// 非同期通信
-	//セッションidの一時保存
-	$.ajax({
-		type : "POST",
-		url : "/rest/session",
-		headers : {
-			"X-CSRF-TOKEN" : token
-		},
-		data : {
-			js_session_id : session_id,
-		},
-		dataType : "json"
-	})
-	.then(function(response_data) {
-		// 成功時
-		console.log("response_data",response_data);
-		if(response_data == 1){
-			//登録成功
-		}
-		else{
-			//登録失敗
-		}
-	}, function() {
-		// 失敗時
-		console.log('[$.ajax]"/rest/session" Fail');
-	});
+//	// CSRFトークンの取得
+//	const token = $("meta[name='_csrf']").attr("content");
+//	
+//	// 非同期通信
+//	//セッションidの一時保存
+//	$.ajax({
+//		type : "POST",
+//		url : "/rest/session",
+//		headers : {
+//			"X-CSRF-TOKEN" : token
+//		},
+//		data : {
+//			js_session_id : session_id,
+//		},
+//		dataType : "json"
+//	})
+//	.then(function(response_data) {
+//		// 成功時
+//		console.log("response_data",response_data);
+//		if(response_data == 1){
+//			//登録成功
+//		}
+//		else{
+//			//登録失敗
+//		}
+//	}, function() {
+//		// 失敗時
+//		console.log('[$.ajax]"/rest/session" Fail');
+//	});
   
 	// アクセスするエンドポイントを設定
 	var socket = new SockJS('/socket_endpoint');
@@ -42,7 +42,11 @@ $(document).ready(() => {
 	stompClient.connect({}, function (frame) {
 		
 		// 先生のセッションidの取得
-	    stompClient.subscribe('/user/queue/send_sessionid', function (response_data) {
+		const class_id = $("#classid").val();
+		//送信
+		stompClient.send("/socket_prefix/get_sessionid", {}, JSON.stringify({'class_id':class_id}));
+		//受信
+	    stompClient.subscribe('/user/queue/get_sessionid', function (response_data) {
 	    	let element_teacher_sessionid = document.getElementById('teacher_sessionid');
 	    	element_teacher_sessionid.value = JSON.parse(response_data.body).session_id;
 	    	// 出席処理

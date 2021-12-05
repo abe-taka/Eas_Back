@@ -1,5 +1,8 @@
 package com.example.demo.rests;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +19,14 @@ import com.example.demo.entities.EnterExitEntity;
 import com.example.demo.entities.SessionEntity;
 import com.example.demo.entities.StudentEntity;
 import com.example.demo.entities.TeacherEntity;
+import com.example.demo.entities.TimetableEntity;
 import com.example.demo.repositories.ClassIssueRepository;
 import com.example.demo.repositories.ClassRepository;
 import com.example.demo.repositories.EnterExitRepository;
 import com.example.demo.repositories.SessionRepository;
 import com.example.demo.repositories.StudentRepository;
 import com.example.demo.repositories.TeacherRepository;
+import com.example.demo.repositories.TimetableRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 //Restコントローラー(授業)
@@ -48,6 +53,8 @@ public class RestClassController {
 	EnterExitRepository enterexitRepository;
 	@Autowired
 	SessionRepository sessionRepository;
+	@Autowired
+	TimetableRepository timetableRepository;
 
 	// 組データ取得(授業選択画面)
 	@PostMapping("/rest/room_select")
@@ -87,30 +94,8 @@ public class RestClassController {
 			String session_mail = session_manage.getSession_mail();
 			StudentEntity studentEntity = new StudentEntity();
 			studentEntity = studentRepository.SearchStudent(session_mail);
-			//削除
+			// 削除
 			sessionRepository.deleteByStudent(studentEntity);
-		}
-	}
-
-	// セッションidの一時保存
-	@PostMapping("/rest/session")
-	public String RestSession(@RequestParam("js_session_id") String session_id) {
-		try {
-			SessionEntity sessionEntity = new SessionEntity();
-			// 学生情報を取得
-			String session_mail = session_manage.getSession_mail();
-			StudentEntity studentEntity = new StudentEntity();
-			studentEntity = studentRepository.SearchStudent(session_mail);
-
-			// Entityにセット
-			sessionEntity.setStudent(studentEntity);
-			sessionEntity.setSessionid(session_id);
-			// 保存
-			sessionRepository.save(sessionEntity);
-			return "1";
-		} catch (Exception e) {
-			System.out.println("[Rest]RestSession　：　" + e);
-			return "0";
 		}
 	}
 
@@ -134,6 +119,60 @@ public class RestClassController {
 			return "1";
 		} catch (Exception e) {
 			System.out.println("[Rest]RestIssueAnswer　：　" + e);
+			return "0";
+		}
+	}
+
+	// 学生の入室を許可
+	@PostMapping(value = "/rest/update_enterflag")
+	public String RestUpdateEnterflag(@RequestParam("js_classid") String classid) {
+		try {
+			// 現在時刻、曜日を取得
+			String dayofweek = datetime.Get_DayOfTheWeekShort();
+			String current_time = datetime.Get_Time();
+			// 10分後のじかんを取得
+			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+			Date dt = sdf.parse(current_time);
+			// Calendarクラスのインスタンスを生成
+			Calendar cal = Calendar.getInstance();
+			// 10分加算
+			cal.setTime(dt);
+			cal.add(Calendar.MINUTE, 10);
+			String tenafter_time = String.valueOf(sdf.format(cal.getTime()));
+
+			// DB検索
+			try {
+				TimetableEntity time_table = new TimetableEntity();
+				time_table = timetableRepository.SearchStartClass(dayofweek, classid, current_time, tenafter_time);
+				// フラグを「1」にする
+				time_table.setEnter_flag(1);
+				// 更新
+				timetableRepository.save(time_table);
+				
+				return jsonConversion.ObjectToJSON(time_table.getTimeid());
+			} catch (NullPointerException e) {
+				System.out.println("[Rest]RestUpdateEnterflag[Null]　：　" + e);
+				return "0";
+			}
+		} catch (Exception e) {
+			System.out.println("[Rest]RestUpdateEnterflag　：　" + e);
+			return "0";
+		}
+	}
+
+	// 学生の入室を拒否
+	@PostMapping(value = "/rest/return_enterflag")
+	public String RestReturnEnterflag(@RequestParam("js_classid") String classid,@RequestParam("js_timeid") String timeid) {
+		try {
+			// 更新
+			TimetableEntity time_table = new TimetableEntity();
+			time_table = timetableRepository.findById(Integer.parseInt(timeid));
+			time_table.setEnter_flag(0);
+			timetableRepository.save(time_table);
+			
+			return "1";
+		} catch (Exception e) {
+			System.out.println("[Rest]RestReturnEnterflag　：　" + e);
 			return "0";
 		}
 	}

@@ -10,11 +10,13 @@ import org.springframework.stereotype.Controller;
 import com.example.demo.components.JsonConversion;
 import com.example.demo.components.SessionManage;
 import com.example.demo.entities.SessionEntity;
+import com.example.demo.forms.SocketSessionidForm;
 import com.example.demo.forms.VoiceRecognitionForm;
 import com.example.demo.getsockets.GetAnswer;
 import com.example.demo.getsockets.GetBulkExit;
 import com.example.demo.getsockets.GetIssue;
 import com.example.demo.getsockets.GetNotice;
+import com.example.demo.getsockets.GetNoticeEnter;
 import com.example.demo.getsockets.GetSession;
 import com.example.demo.getsockets.GetVoiceRecognition;
 import com.example.demo.repositories.SessionRepository;
@@ -22,6 +24,7 @@ import com.example.demo.sendsockets.SendAnswer;
 import com.example.demo.sendsockets.SendBulkExit;
 import com.example.demo.sendsockets.SendIssue;
 import com.example.demo.sendsockets.SendNotice;
+import com.example.demo.sendsockets.SendNoticeEnter;
 import com.example.demo.sendsockets.SendSession;
 import com.example.demo.sendsockets.SendVoiceRecognition;
 
@@ -38,6 +41,8 @@ public class SocketController {
 	VoiceRecognitionForm voice_Form;
 	@Autowired
 	SessionManage session_manage;
+	@Autowired
+	SocketSessionidForm socketSessionidForm;
 
 	// socket通信(音声認識)
 	@MessageMapping("/voice_recog")
@@ -91,17 +96,20 @@ public class SocketController {
 		}
 	}
 
-	// セッションid送信
-	@MessageMapping(value = "/send_sessionid")
+	// セッションid受信
+	@MessageMapping(value = "/get_sessionid")
 	public void SocketManage_SessionId(GetSession getsession) throws Exception {
 		// マルチスレッド処理中のCPUの負荷の抑え
 		Thread.sleep(1000);
 
+		// 先生のセッションidの取得
+		String teacher_sessionid = socketSessionidForm.getTeacher_sessionid();
+		
 		// クラスidの取得
 		String class_id = getsession.getClass_id();
 
 		// 先生のセッションidを取得、Json形式に変換
-		String response_message = json.ObjectToJSON(new SendSession(getsession.getSession_id()));
+		String response_message = json.ObjectToJSON(new SendSession(teacher_sessionid));
 
 		// 授業中のクラスの学生セッションidを取得
 		List<SessionEntity> list_sessionEntity = sessionRepository.SearchStudentInClass(class_id);
@@ -109,7 +117,7 @@ public class SocketController {
 			String session_id = null;
 			session_id = list_sessionEntity.get(i).getSessionid();
 			// 送信
-			messagingTemplate.convertAndSendToUser(session_id, "/queue/send_sessionid", response_message);
+			messagingTemplate.convertAndSendToUser(session_id, "/queue/get_sessionid", response_message);
 		}
 	}
 
@@ -149,7 +157,7 @@ public class SocketController {
 		}
 	}
 
-	// 生と解答送信、解答状況表示
+	// 生徒の解答送信、解答状況表示
 	@MessageMapping("/send_student_answer")
 	public void SocketManage_StudentAnswer(GetAnswer getAnswer) throws Exception {
 		try {
@@ -157,13 +165,38 @@ public class SocketController {
 			Thread.sleep(1000);
 
 			// 送信データをJson形式に変換
-			String response_message = json.ObjectToJSON(new SendAnswer(getAnswer.getStudentname(),getAnswer.getClass_no(),getAnswer.getAnswer()));
-			//先生のセッションidの取得
+			String response_message = json.ObjectToJSON(
+					new SendAnswer(getAnswer.getStudentname(), getAnswer.getClass_no(), getAnswer.getAnswer()));
+			// 先生のセッションidの取得
 			String teacher_sessionid = getAnswer.getTeacher_sessionid();
 			// 送信
 			messagingTemplate.convertAndSendToUser(teacher_sessionid, "/queue/student_answer", response_message);
 		} catch (Exception e) {
 			System.out.println("[Websocket]SocketManage_StudentAnswer　：　" + e);
+		}
+	}
+
+	// 入室許可の通知
+	@MessageMapping("/notice_enter")
+	public void SocketManage_NoticeEnter(GetNoticeEnter getNoticeEnter) throws Exception {
+		try {
+			// マルチスレッド処理中のCPUの負荷の抑え
+			Thread.sleep(1000);
+
+			// 送信データをJson形式に変換
+			String response_message = json.ObjectToJSON(new SendNoticeEnter("1"));
+			// クラスidを取得
+			String classid = getNoticeEnter.getClass_id();
+			
+			List<SessionEntity> list_sessionEntity = sessionRepository.SearchStudentInClass(classid);
+			for (int i = 0; i < list_sessionEntity.size(); i++) {
+				String session_id = null;
+				session_id = list_sessionEntity.get(i).getSessionid();
+				// 送信
+				messagingTemplate.convertAndSendToUser(session_id, "/queue/notice_enter", response_message);
+			}
+		} catch (Exception e) {
+			System.out.println("[Websocket]SocketManage_NoticeEnter　：　" + e);
 		}
 	}
 }
