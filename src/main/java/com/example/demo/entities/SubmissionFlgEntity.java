@@ -1,5 +1,7 @@
 package com.example.demo.entities;
 
+import java.sql.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 //宿題提出確認テーブル
 @Entity
@@ -37,6 +41,11 @@ public class SubmissionFlgEntity {
 	//提出管理フラグ
 	@Column(name = "submission_flg")
 	private int submissionflg;
+	
+	//提出日
+	@Column(name = "submi_date")
+	private String submi_date;
+	
 
 	public int getSubmission_id() {
 		return submission_id;
@@ -77,6 +86,17 @@ public class SubmissionFlgEntity {
 	public void setSubmissionflg(int submissionflg) {
 		this.submissionflg = submissionflg;
 	}
+
+	public String getSubmi_date() {
+		return submi_date;
+	}
+
+	public void setSubmi_date(String submi_date) {
+		this.submi_date = submi_date;
+	}
+	
+	
+	
 	
 	
 

@@ -4,33 +4,99 @@
 <meta charset="UTF-8">
 <meta th:name="${_csrf.parameterName}" th:content="${_csrf.token}" />
 <title>宿題提出確認 | Eas</title>
-<!-- Bootstrap CSS -->
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<link rel="stylesheet" href="css/reset.css">
+	<link rel="stylesheet" href="css/homework/homeworkSubmission.css">
+	<!-- フォント -->
+    <script>
+        (function(d) {
+            var config = {
+                    kitId: 'fcl7ixt',
+                    scriptTimeout: 3000,
+                    async: true
+                },
+                h = d.documentElement,
+                t = setTimeout(function() {
+                    h.className = h.className.replace(/\bwf-loading\b/g, "") + " wf-inactive";
+                }, config.scriptTimeout),
+                tk = d.createElement("script"),
+                f = false,
+                s = d.getElementsByTagName("script")[0],
+                a;
+            h.className += " wf-loading";
+            tk.src = 'https://use.typekit.net/' + config.kitId + '.js';
+            tk.async = true;
+            tk.onload = tk.onreadystatechange = function() {
+                a = this.readyState;
+                if (f || a && a != "complete" && a != "loaded") return;
+                f = true;
+                clearTimeout(t);
+                try {
+                    Typekit.load(config)
+                } catch (e) {}
+            };
+            s.parentNode.insertBefore(tk, s)
+        })(document);
+    </script>
+
+    <!-- タブ動作 -->
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script>
+        $(function() {
+            $(".tab li").click(function() {
+                var num = $(".tab li").index(this);
+                $(".tabContent").removeClass('active');
+                $(".tabContent").eq(num).addClass('active');
+                $(".tab li").removeClass('active');
+                $(this).addClass('active')
+            });
+        });
+    </script>
 </head>
 <body>
+    <header>
+        <button onclick="history.back()">もどる</button>
+    </header>
 	<div th:text="${session_name} + さん"></div>
-	
 	<form th:action="@{/logout}" method="post">
 		<button type="submit">ログアウト</button>
 	</form>
-	<p>宿題提出確認</p>
-        <table class="table table-bordered table-striped">
-            <tr>
-                <th>宿題ファイル名</th>
-                <th>科目名</th>
-                <th>提出状況</th>
-            </tr>
-            <tr th:each="homeworkDetailsList:${homeworkDetailsList}">
-                <td th:text="${homeworkDetailsList.homework_filename}"></td>
-                <td th:text="${homeworkDetailsList.homework_subject}"></td>
-                <td th:if="${homeworkDetailsList.submission_flg == 1}" th:text="提出"></td>
-                <td th:if="${homeworkDetailsList.submission_flg == 0}"><a th:text="未提出" th:href="@{'/homeworkstudent/' + ${homeworkDetailsList.homework_id} + '/' + ${homeworkDetailsList.submission_id}}"></a></td>
-            </tr>
-        </table>
-<!-- Optional JavaScript -->
-<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+	
+    <div class="homeworkContainer">
+        <!-- tabメニュー -->
+        <div class="tabWrapper">
+            <ul class="tab">
+                <li class="active">宿題を提出する</li>
+                <li>提出履歴</li>
+            </ul>
+        </div>
+
+        <!-- tabコンテンツ -->
+        <div class="tabContainer">
+
+            <!-- 課題提出 -->
+            <div class="homeworkPlay tabContent active">
+                <ul th:if="${homeworkDetailsList.submission_flg == 0}"  th:each="homeworkDetailsList:${homeworkDetailsList}">
+                    <li class="hisSubject" th:text="${homeworkDetailsList.homework_subject}"></li>
+                    <li class="hisTitle" th:text="${homeworkDetailsList.homework_filename}"></li>
+                    <li class="playButton">
+                        <a th:href="@{'/homeworkstudent/' + ${homeworkDetailsList.homework_id} + '/' + ${homeworkDetailsList.submission_id}}">
+                            <img src="/images/playButton.svg" alt="play">
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- 提出履歴 -->
+            <div class="homeworkHistory tabContent">
+                <div>
+                    <ul th:if="${homeworkDetailsList.submission_flg == 1}" th:each="homeworkDetailsList:${homeworkDetailsList}">
+                        <li class="status">12/01</li>
+                        <li class="hisSubject" th:text="${homeworkDetailsList.homework_subject}"></li>
+                        <li class="hisTitle" th:text="${homeworkDetailsList.homework_filename}"></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

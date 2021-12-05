@@ -1,0 +1,133 @@
+@charset "UTF-8";
+/* 共通のスタイル */
+body {
+  background-image: url("/images/gura.jpg");
+  background-size: cover;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 30vh 1fr;
+      grid-template-columns: 30vh 1fr;
+  -ms-grid-rows: 8vh 1fr;
+      grid-template-rows: 8vh 1fr;
+      grid-template-areas: "navi header" "navi main";
+  height: 100vh;
+  padding: 24px;
+  font-family: source-han-sans-japanese, sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+header {
+  -ms-grid-row: 1;
+  -ms-grid-column: 2;
+  grid-area: header;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: end;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 24px;
+  letter-spacing: 0.1em;
+}
+
+header button {
+  letter-spacing: 0.1em;
+  padding: 8px 24px;
+  background-color: #FFF;
+  border: none;
+  border-radius: 100vh;
+  color: #FAA2C1;
+  -webkit-box-shadow: #faa2c13a 0 4px 40px;
+          box-shadow: #faa2c13a 0 4px 40px;
+}
+
+.navigation {
+  -ms-grid-row: 1;
+  -ms-grid-row-span: 2;
+  -ms-grid-column: 1;
+  grid-area: navi;
+  background-color: #fff;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  padding: 24px 24px 48px 24px;
+  border-radius: 40px;
+  -webkit-box-shadow: #e7e2f75d 0 24px 40px;
+          box-shadow: #e7e2f75d 0 24px 40px;
+}
+
+.navigation div {
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.navigation nav {
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+}
+
+.navigation nav ul {
+  height: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+
+.navigation nav ul li {
+  border-radius: 100vh;
+}
+
+.navigation nav ul li a {
+  display: block;
+  text-decoration: none;
+  color: #000;
+  font-size: 14px;
+  padding: 20px 24px;
+  letter-spacing: 0.05em;
+}
+
+.navigation nav ul .active {
+  background-color: #FFF0F6;
+  border-radius: 100vh;
+  -webkit-box-shadow: #faa2c165 0 16px 40px;
+          box-shadow: #faa2c165 0 16px 40px;
+}
+
+.navigation nav ul .active a {
+  color: #FAA2C1;
+}
+
+main {
+  -ms-grid-row: 2;
+  -ms-grid-column: 2;
+  grid-area: main;
+}
+/*# sourceMappingURL=common.css.map */

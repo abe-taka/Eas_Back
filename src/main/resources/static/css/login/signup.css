@@ -1,0 +1,24 @@
+div#wrap{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	
+	/* グラデーション背景 */
+	background: rgb(211,246,255); /* Old browsers */
+	background: -moz-linear-gradient(-45deg,  rgb(211,246,255) 0%, rgb(255,230,230) 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(-45deg,  rgb(211,246,255) 0%,rgb(255,230,230) 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(135deg,  rgb(211,246,255) 0%,rgb(255,230,230) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d3f6ff', endColorstr='#ffe6e6',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}
+
+
+
+	section#teacher{
+		width: 600px;
+		height: 500px;
+		border-radius: 30px;
+		background-color: #fff;
+		box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+	}
+
+

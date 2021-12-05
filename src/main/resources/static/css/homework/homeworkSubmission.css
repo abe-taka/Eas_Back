@@ -1,0 +1,203 @@
+html {
+  font-family: source-han-sans-japanese, sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+body {
+  background-image: url("/images/gura.jpg");
+  background-size: cover;
+  padding: 24px;
+  height: 100vh;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  letter-spacing: 0.1em;
+}
+
+header {
+  padding: 16px;
+  text-align: end;
+}
+
+header button {
+  cursor: pointer;
+  padding: 10px 24px;
+  border-radius: 100vh;
+  border: none;
+  background-color: #FFDEEB;
+  color: #3d3d3d;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  -webkit-box-shadow: #ffdeeb 0 0 14px;
+          box-shadow: #ffdeeb 0 0 14px;
+}
+
+.homeworkContainer {
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  text-align: center;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+.homeworkContainer .tabWrapper {
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
+}
+
+.homeworkContainer .tabWrapper .tab {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  background-color: rgba(255, 255, 255, 0.5);
+  padding: 24px;
+  cursor: pointer;
+  border-radius: 16px;
+}
+
+.homeworkContainer .tabWrapper .tab li {
+  list-style: none;
+  width: 8em;
+  padding: 24px 48px;
+  -webkit-box-sizing: content-box;
+          box-sizing: content-box;
+  text-align: center;
+  border-radius: 16px;
+  letter-spacing: 0.1em;
+}
+
+.homeworkContainer .tabWrapper .tab .active {
+  background-color: #FFDEEB;
+  -webkit-box-shadow: #ffdeeb 0 0 24px;
+          box-shadow: #ffdeeb 0 0 24px;
+}
+
+.homeworkContainer .tabContainer {
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+}
+
+.homeworkContainer .tabContainer .homeworkPlay {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: calc(100%/4) calc(100%/4) calc(100%/4) calc(100%/4);
+      grid-template-columns: calc(100%/4) calc(100%/4) calc(100%/4) calc(100%/4);
+  justify-items: center;
+  row-gap: 24px;
+}
+
+.homeworkContainer .tabContainer .homeworkPlay ul {
+  -ms-flex-preferred-size: auto;
+      flex-basis: auto;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  background-color: rgba(255, 255, 255, 0.5);
+  padding: 24px;
+  font-size: 16px;
+  border-radius: 24px;
+}
+
+.homeworkContainer .tabContainer .homeworkPlay ul li {
+  list-style: none;
+}
+
+.homeworkContainer .tabContainer .homeworkPlay ul .playSubject {
+  width: 4em;
+}
+
+.homeworkContainer .tabContainer .homeworkPlay ul .playTitle {
+  width: 8em;
+}
+
+.homeworkContainer .tabContainer .homeworkPlay ul .playButton {
+  cursor: pointer;
+  position: relative;
+  border: none;
+  width: 80px;
+  height: 80px;
+  line-height: 80px;
+  text-align: center;
+  border-radius: 50%;
+  background-color: #FFDEEB;
+  border: 10px solid #FFF0F6;
+  -webkit-box-shadow: #FFDEEB 0 4px 30px;
+          box-shadow: #FFDEEB 0 4px 30px;
+}
+
+.homeworkContainer .tabContainer .homeworkPlay ul .playButton img {
+  width: 24px;
+  height: auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+}
+
+.homeworkContainer .tabContainer .homeworkHistory {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.homeworkContainer .tabContainer .homeworkHistory div {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: calc(100%/3) calc(100%/3) calc(100%/3);
+      grid-template-columns: calc(100%/3) calc(100%/3) calc(100%/3);
+  justify-items: center;
+  width: 100%;
+  row-gap: 24px;
+}
+
+.homeworkContainer .tabContainer .homeworkHistory div ul {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-preferred-size: auto;
+      flex-basis: auto;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  border-radius: 16px;
+  list-style: none;
+  gap: 24px;
+  background-color: rgba(255, 255, 255, 0.5);
+  padding: 24px;
+}
+
+.homeworkContainer .tabContainer .homeworkHistory div ul li {
+  text-align: left;
+  width: 8em;
+}
+
+.homeworkContainer .tabContainer .tabContent {
+  display: none;
+}
+
+.homeworkContainer .tabContainer .active {
+  display: -ms-grid;
+  display: grid;
+  padding: 24px 40px;
+}
+/*# sourceMappingURL=homeworkSubmission.css.map */

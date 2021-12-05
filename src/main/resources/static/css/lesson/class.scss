@@ -1,0 +1,296 @@
+body {
+    height: 100vh;
+    padding: 40px;
+    font-family: source-han-sans-japanese, sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    //Grid
+    display: grid;
+    grid-template-columns: 30vw 1fr 15vw;
+    grid-template-rows: 75vh 1fr;
+    gap: 24px;
+}
+
+@mixin scrollbar {
+    width: 16px;
+}
+
+@mixin scrollbar-thumb {
+    background-color: #FCC2D7;
+    border-radius: 100vh;
+}
+
+@mixin scrollbar-track {
+    width: 3px;
+    background-color: #fce8ef;
+    border-radius: 100vh;
+}
+
+//字幕エリアー大枠
+.subtitle {
+    grid-column: 1/2;
+    grid-row: 1/3;
+    border-radius: 16px;
+    background-color: #FBFAFF;
+    overflow-y: scroll;
+    //字幕が表示されるエリア
+    .subtitle-container {
+        // height: 200vh; //スクロールバーの確認（あとで消す）
+        padding: 24px;
+        white-space: normal; //改行
+        p {
+            line-height: 1.5em;
+            margin-bottom: 20px;
+        }
+    }
+    &::-webkit-scrollbar {
+        @include scrollbar;
+    }
+    &::-webkit-scrollbar-thumb {
+        @include scrollbar-thumb;
+    }
+    &::-webkit-scrollbar-track {
+        @include scrollbar-track;
+    }
+}
+
+.test {
+    grid-column: 2/3;
+    grid-row: 1/2;
+    background-color: #FBFAFF;
+    padding: 24px;
+    border-radius: 16px;
+    display: grid;
+    grid-template-rows: 80% 1fr;
+    gap: 24px;
+    .testList {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        gap: 16px;
+        align-content: space-around;
+        .test-container {
+            width: 45%;
+            padding: 24px;
+            background-color: #FFF0F6;
+            border-radius: 100vh;
+            text-align: center;
+            h3 {
+                font-weight: 700;
+                font-size: 18px;
+                letter-spacing: 0.2em;
+            }
+        }
+    }
+    button {
+        justify-self: center;
+        width: 50%;
+        border-radius: 100vh;
+        color: #fff;
+        background-color: #FCC2D7;
+        border: none;
+        font-size: 18px;
+        font-weight: 700;
+    }
+}
+
+.list {
+    grid-column: 3/4;
+    grid-row: 1/3;
+    border-radius: 16px;
+    background-color: #FBFAFF;
+    overflow-y: scroll;
+    //生徒の名簿
+    .list-container {
+        padding: 24px;
+        //生徒コンテナ
+        li {
+            display: grid;
+            grid-template-areas: "list-number list-name";
+            margin-bottom: 1.5em;
+            //生徒＿番号
+            .list-number {
+                grid-area: list-number;
+            }
+            //生徒_名前
+            .list-name {
+                padding-left: 2em;
+                grid-area: list-name;
+                letter-spacing: 0.2em;
+            }
+        }
+    }
+    &::-webkit-scrollbar {
+        @include scrollbar;
+    }
+    &::-webkit-scrollbar-thumb {
+        @include scrollbar-thumb;
+    }
+    &::-webkit-scrollbar-track {
+        @include scrollbar-track;
+    }
+}
+
+.outButton {
+    grid-column: 2/3;
+    grid-row: 2/3;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    button {
+        font-weight: 700;
+        padding: 16px 48px;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        background-color: #FF6B6B;
+        border-radius: 100vh;
+    }
+}
+
+//問題作成のモーダル
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    .modal-content {
+        background-color: white;
+        width: 500px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 16px;
+        border-radius: 16px;
+        .modal-body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            //問題文///////////////////////
+            .test-sentence {
+                width: 100%;
+                border: none;
+                background-color: #F8F9FA;
+                padding: 16px;
+                height: 15em;
+                overflow-y: scroll;
+                resize: none;
+                font-weight: 700;
+                letter-spacing: 0.1em;
+                line-height: 1.5em;
+                border-radius: 8px;
+                &:focus {
+                    outline: none;
+                }
+                &::-webkit-scrollbar {
+                    @include scrollbar;
+                }
+                &::-webkit-scrollbar-thumb {
+                    @include scrollbar-thumb;
+                }
+                &::-webkit-scrollbar-track {
+                    @include scrollbar-track;
+                }
+            }
+            //問題の解答///////////////
+            .test-answer {
+                width: 100%;
+                border: none;
+                height: 7em;
+                background-color: #F8F9FA;
+                padding: 16px;
+                overflow-y: scroll;
+                resize: none;
+                font-weight: 700;
+                letter-spacing: 0.1em;
+                line-height: 1.5em;
+                border-radius: 8px;
+                &:focus {
+                    outline: none;
+                }
+                &::-webkit-scrollbar {
+                    @include scrollbar;
+                }
+                &::-webkit-scrollbar-thumb {
+                    @include scrollbar-thumb;
+                }
+                &::-webkit-scrollbar-track {
+                    @include scrollbar-track;
+                }
+            }
+            .test-submit {
+                border: none;
+                background-color: #FCC2D7;
+                color: #fff;
+                padding: 16px 80px;
+                border-radius: 100vh;
+                font-weight: 700;
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+.answer-modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    .answer-modal-content {
+        background-color: #fff;
+        width: 90%;
+        height: 90%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: 16px;
+        .answer-list {
+            padding: 24px;
+            overflow-x: scroll;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+            gap: 1.5em;
+            column-gap: 3em;
+            align-items: center;
+            &::-webkit-scrollbar {
+                @include scrollbar;
+            }
+            &::-webkit-scrollbar-thumb {
+                @include scrollbar-thumb;
+            }
+            &::-webkit-scrollbar-track {
+                @include scrollbar-track;
+            }
+            ul {
+                display: flex;
+                gap: 8px;
+                list-style: none;
+                .number {
+                    width: 2em;
+                }
+                .name {
+                    width: 8em;
+                }
+                .answer {
+                    width: 20em;
+                    border-bottom: #000 1px solid;
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,31 @@
+$shadow: 24px 24px 40px rgba(231, 226, 247, 0.5);
+main {
+    grid-area: main;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 0 80px;
+    ul {
+        display: flex;
+        padding: 8px 8px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: $shadow;
+        justify-content: space-between;
+        li {
+            width: 100%;
+            list-style: none;
+            padding: 16px 16px;
+            text-align: center;
+            letter-spacing: 0.1em;
+        }
+        .main-date {
+            background-color: #FFF0F6;
+            border-radius: 8px;
+        }
+    }
+    .title {
+        background-color: rgba(255, 255, 255, 0);
+        box-shadow: none;
+    }
+}

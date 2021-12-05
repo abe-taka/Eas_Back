@@ -1,55 +1,93 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-	<title>先生ホーム | Eas</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />  
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ホーム | Eas</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/home/home.css">
+
+    <!-- Google Fonts -->
+    <script>
+        (function(d) {
+            var config = {
+                    kitId: 'fcl7ixt',
+                    scriptTimeout: 3000,
+                    async: true
+                },
+                h = d.documentElement,
+                t = setTimeout(function() {
+                    h.className = h.className.replace(/\bwf-loading\b/g, "") + " wf-inactive";
+                }, config.scriptTimeout),
+                tk = d.createElement("script"),
+                f = false,
+                s = d.getElementsByTagName("script")[0],
+                a;
+            h.className += " wf-loading";
+            tk.src = 'https://use.typekit.net/' + config.kitId + '.js';
+            tk.async = true;
+            tk.onload = tk.onreadystatechange = function() {
+                a = this.readyState;
+                if (f || a && a != "complete" && a != "loaded") return;
+                f = true;
+                clearTimeout(t);
+                try {
+                    Typekit.load(config)
+                } catch (e) {}
+            };
+            s.parentNode.insertBefore(tk, s)
+        })(document);
+    </script>
+
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/e169475605.js" crossorigin="anonymous"></script>
+
+    <!-- jQuery CDN -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+
+
 </head>
+
 <body>
-	
-	<!-- セッション名、ログアウト -->
-	<div th:text="${session_name} + さん"></div>
-	<form th:action="@{/logout}" method="post">
-		<button type="submit">ログアウト</button>
-	</form>
 
-	<div>
-		<form th:action="@{/homeworksubmi}" method="get">
-			<button type="submit">提出状況</button>
+    <header>
+        <h2 th:text="${session_name} + さん"></h2>
+		<form th:action="@{/logout}" method="post">
+			<button type="submit">ログアウト</button>
 		</form>
-	</div>
-
-	<div>
-		<form th:action="@{/class/roomselect}" method="get">
-			<button type="submit">授業選択画面</button>
-		</form>
-	</div>
+    </header>
 	
-	<div class="container">
-		<div class="row">
-			<!-- サイドバー -->
-			<div class="side col-lg-2">
-				<!-- サイドバー共通部品 -->
-				<div th:replace="/common/sidebar::sidebar"></div>
-			</div>
-			<!-- メイン -->
-			<div class="column col-lg-10">
-				<h3>スケジュール</h3>
-				<div th:each="TimetableList : ${TimetableList}" th:object="${TimetableList}">
-					<div th:text=" 【 +${date}+】"></div>
-					<div th:text="*{timetabletime.timeperiod} + 限目"></div>
-					<nobr th:text="*{classentity.classid}"></nobr>
-					<nobr th:text="*{subjectname}"></nobr>
-				</div>
-			</div>
-		</div>
-	</div>
-	
-<!-- Optional JavaScript -->
-<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+	<div class="navigation">
+        <div><img src="/images/eas_logo.svg" alt="Eas"></div>
+        <nav>
+            <ul>
+                <li class="active"><a th:href="@{/home/teacherhome}">ホーム</a></li>
+                <li><a th:href="@{/homework}">問題作成</a></li>
+                <li><a th:href="@{/homeworklist}">問題管理</a></li>
+                <li><a th:href="@{/homework_submistatus}">提出状況確認</a></li>
+                <li><a th:href="@{/class/roomselect}">授業選択</a></li>
+                <li><a th:href="@{/logmanagement}">生徒入室管理</a></li>
+            </ul>
+        </nav>
+    </div>
+    
+    <main>
+        <ul class="title">
+            <li>Day</li>
+            <li>Time</li>
+            <li>Class</li>
+            <li>Class</li>
+        </ul>
+        <ul th:each="TimetableList : ${TimetableList}" th:object="${TimetableList}">
+            <li class="main-date" th:text="${date}"></li>
+            <li th:text="*{timetabletime.timeperiod} + 限目"></li>
+            <li th:text="*{classentity.classid}"></li>
+            <li th:text="*{subjectname}"></li>
+        </ul>
+    </main>
 </body>
 </html>

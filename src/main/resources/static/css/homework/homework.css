@@ -1,0 +1,184 @@
+html {
+  font-family: source-han-sans-japanese, sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+body {
+  background-image: url("/images/gura.jpg");
+  background-size: cover;
+  padding: 24px;
+  height: 100vh;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  letter-spacing: 0.1em;
+}
+
+header {
+  padding: 16px;
+  text-align: end;
+}
+
+header button {
+  cursor: pointer;
+  padding: 10px 24px;
+  border-radius: 100vh;
+  border: none;
+  background-color: #FFDEEB;
+  color: #3d3d3d;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  -webkit-box-shadow: #ffdeeb 0 0 14px;
+          box-shadow: #ffdeeb 0 0 14px;
+}
+
+.homework {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 60% 38%;
+      grid-template-columns: 60% 38%;
+  gap: 2%;
+  height: 100%;
+}
+
+.homework .homeworkPdf {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  height: 100%;
+  overflow-y: scroll;
+}
+
+.homework .homeworkPdf::-webkit-scrollbar {
+  width: 16px;
+}
+
+.homework .homeworkPdf::-webkit-scrollbar-thumb {
+  background-color: #FCC2D7;
+  border-radius: 100vh;
+}
+
+.homework .homeworkPdf::-webkit-scrollbar-track {
+  width: 3px;
+  background-color: #fce8ef;
+  border-radius: 100vh;
+}
+
+.homework .homeworkAnswer {
+  height: 100%;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 100%;
+      grid-template-columns: 100%;
+  -ms-grid-rows: 85% 13%;
+      grid-template-rows: 85% 13%;
+  gap: 2%;
+}
+
+.homework .homeworkAnswer .homeworkAnswerContainer {
+  overflow-y: scroll;
+  padding: 24px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  gap: 32px;
+}
+
+.homework .homeworkAnswer .homeworkAnswerContainer::-webkit-scrollbar {
+  width: 16px;
+}
+
+.homework .homeworkAnswer .homeworkAnswerContainer::-webkit-scrollbar-thumb {
+  background-color: #FCC2D7;
+  border-radius: 100vh;
+}
+
+.homework .homeworkAnswer .homeworkAnswerContainer::-webkit-scrollbar-track {
+  width: 3px;
+  background-color: #fce8ef;
+  border-radius: 100vh;
+}
+
+.homework .homeworkAnswer .homeworkAnswerContainer .homeworkAnswerArea {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: start;
+      -ms-flex-align: start;
+          align-items: flex-start;
+  gap: 10px;
+}
+
+.homework .homeworkAnswer .homeworkAnswerContainer .homeworkAnswerArea label {
+  width: 4em;
+}
+
+.homework .homeworkAnswer .homeworkAnswerContainer .homeworkAnswerArea .answer_content {
+  width: 100%;
+  resize: none;
+  border: none;
+  padding: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  background-color: #ffffff;
+  border-radius: 8px;
+  overflow-y: scroll;
+}
+
+.homework .homeworkAnswer .homeworkAnswerContainer .homeworkAnswerArea .answer_content::-webkit-scrollbar {
+  width: 16px;
+}
+
+.homework .homeworkAnswer .homeworkAnswerContainer .homeworkAnswerArea .answer_content::-webkit-scrollbar-thumb {
+  background-color: #FCC2D7;
+  border-radius: 100vh;
+}
+
+.homework .homeworkAnswer .homeworkAnswerContainer .homeworkAnswerArea .answer_content::-webkit-scrollbar-track {
+  width: 3px;
+  background-color: #fce8ef;
+  border-radius: 100vh;
+}
+
+.homework .homeworkAnswer .homeworkSubmit {
+  padding: 24px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.homework .homeworkAnswer .homeworkSubmit input {
+  border: none;
+  background-color: #FCC2D7;
+  padding: 16px 48px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  border-radius: 100vh;
+  cursor: pointer;
+}
+/*# sourceMappingURL=homework.css.map */

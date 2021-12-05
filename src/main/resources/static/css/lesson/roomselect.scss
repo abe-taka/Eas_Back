@@ -1,0 +1,48 @@
+$shadow: 24px 24px 40px rgba(231, 226, 247, 0.5);
+main {
+    padding: 0 80px;
+    grid-area: main;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+    h2 {
+        letter-spacing: 0.2em;
+        margin-right: -0.2em;
+    }
+    div {
+        display: flex;
+        justify-content: space-between;
+        .radiobutton {
+            display: none;
+            cursor: pointer;
+        }
+        label {
+            padding: 40px 64px;
+            cursor: pointer;
+            background-color: rgba(255, 255, 255, 0.4);
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .radiobutton:checked+label {
+            background-color: #FCC2D7;
+            color: #fff;
+            box-shadow: $shadow;
+        }
+    }
+    //ボタン
+    .class-button {
+        align-self: center;
+        button {
+            font-weight: 700;
+            padding: 16px 80px;
+            border: none;
+            background-color: #fff;
+            border-radius: 100vh;
+            cursor: pointer;
+            letter-spacing: 0.2em;
+            margin-right: -0.2em;
+            box-shadow: $shadow;
+        }
+    }
+}

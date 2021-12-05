@@ -1,0 +1,9 @@
+diff a/src/main/resources/static/css/common.css b/src/main/resources/static/css/common.css	(rejected hunks)
+@@ -3,7 +3,6 @@
+ body {
+   background-image: url("/images/gura.jpg");
+   background-size: cover;
+-  display: -webkit-box;
+   display: -ms-grid;
+   display: grid;
+   -ms-grid-columns: 30vh 1fr;

@@ -4,6 +4,7 @@ let recognition = ''; // 音声認識クラス変数
 let finalTranscript = ''; // 確定した認識結果
 var flag_speech = ''; // 音声認識最中かを判断するフラグ
 var i = 0; // 認識数
+var flag = 0; //解答状況閲覧ボタンtext
 
 /* ロード処理 */
 $(document).ready(() => {
@@ -16,7 +17,7 @@ $(document).ready(() => {
     stompClient.connect({}, function (frame) {
     	// 音声認識、送信
     	VoiceRecognition();
-        // 受信
+        // 音声認識受信
         stompClient.subscribe('/user/queue/voice_recog', function (response_data) {
         	i++;
         	console.log(i + "回目データ受け取り",JSON.parse(response_data.body).voicetext);	
@@ -26,9 +27,23 @@ $(document).ready(() => {
         // 自信のセッションid、担当クラスのクラスidを取得
     	const session_id = document.socket_form.sendername.value;
     	const class_id = $("#classid").val();
+    	//　先生のセッションidの送信
         stompClient.send("/socket_prefix/send_sessionid", {}, JSON.stringify({'session_id': session_id,'class_id':class_id}));
-        // 出席学生の情報取得
-        GetNotice();
+        // 出席学生の情報の受信
+		stompClient.subscribe('/user/queue/notice', function(response_data) {
+			// 表示メソッドにデータを渡す
+		    ShowStudent(JSON.parse(response_data.body).student_name,JSON.parse(response_data.body).student_classno);
+		});
+		// 出席学生の情報の受信
+		stompClient.subscribe('/user/queue/notice', function(response_data) {
+			// 表示メソッドにデータを渡す
+		    ShowStudent(JSON.parse(response_data.body).student_name,JSON.parse(response_data.body).student_classno);
+		});
+		// 生徒の問題解答の受信
+		stompClient.subscribe('/user/queue/student_answer', function(response_data) {
+			// 表示メソッドにデータを渡す
+		    ShowStudentAnswer(JSON.parse(response_data.body).studentname,JSON.parse(response_data.body).class_no,JSON.parse(response_data.body).answer);
+		});
     });
 })
 
@@ -42,42 +57,15 @@ function SendIssue() {
 		'classid' : $("#classid").val()
 	}));
 	
-	// ボタンタグ生成
-	var newTag = document.createElement('button');
-	newTag.value= 'SYNCER';
-	newTag.id= 'situation_button';
-	newTag.onclick = 'ShowSituationAnswer()';
-	// let innerTag = `<button id="situation_button"
-	// th:onclick="situation_Answer();">test</button>`;
-	// $("#situation_buttonlist").append(innerTag);
-	var addData = document.createTextNode("1");
-	// //対象要素.apeendChild(追加する要素);
-	// console.log('333');
-		newTag.appendChild(addData);
-	// //newTag.classList.add();
-	// //表示する場所の取得
-	// console.log('444');
+	//解答状況閲覧用ボタン生成
+	flag += 1;
+	var btn = document.createElement('button');
+	btn.textContent = '問題' + flag;
+	btn.setAttribute("type", "button");
+	btn.setAttribute("id", 'situation_button');
+	btn.setAttribute('onclick', 'ShowSituationAnswer()');
 	var addPlace = document.getElementById("situation_buttonlist");
-	addPlace.appendChild(newTag);
-	// //document.getElementById('situation_button').value = "SYNCER" ;
-	// console.log('$$$$', document.getElementById('situation_button').value);
-}
-
-// 通知受け取り処理
-function GetNotice(){
-	// エンドポイントに接続
-	var socket = new SockJS('/socket_endpoint');
-	stompClient = Stomp.over(socket);
-		
-	// エンドポイントに対して接続
-	stompClient.connect({}, function(frame) {
-		// 受信
-		// ここで、「1P1」か「1対多」かの指定を行っている
-		stompClient.subscribe('/user/queue/notice', function(response_data) {
-			// 表示メソッドにデータを渡す
-		    ShowStudent(JSON.parse(response_data.body).student_name,JSON.parse(response_data.body).student_classno);
-		});
-	});
+	addPlace.appendChild(btn);
 }
 
 // 音声認識処理
@@ -135,8 +123,6 @@ function VoiceRecognition(){
   		
   		// 送信(送信先のパス、データの設定)
     	stompClient.send("/socket_prefix/voice_recog", {}, JSON.stringify({'voicetext': finalTranscript}));
-    	// テキストログ
-  		console.log('##websocketに送信しました##',finalTranscript);
   		// 初期化
     	finalTranscript = '';
     	interimTranscript = '';
@@ -195,7 +181,7 @@ function ShowModal(){
 
 // 解答状況表示
 function ShowSituationAnswer() {
-	$("#myModal").modal("show");
+	$("#myModal3").modal("show");
 }
 
 // 授業出席学生の表示
@@ -206,4 +192,9 @@ function ShowStudent(student_name,student_classno){
 // 字幕表示
 function ShowSubtitles(message) {
 	$("#result-div").append("<tr><td>" + message + "</td></tr>");
+}
+
+//生徒の問題解答の表示
+function ShowStudentAnswer(student_name,student_classno,student_answer){
+	$("#answer_situation").append(student_classno + "番     " + student_name + "  " + student_answer + "<br>");
 }

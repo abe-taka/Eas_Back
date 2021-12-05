@@ -1,0 +1,154 @@
+html {
+    font-family: source-han-sans-japanese, sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+body {
+    background-image: url("/images/gura.jpg");
+    background-size: cover;
+    padding: 24px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    letter-spacing: 0.1em;
+}
+
+header {
+    padding: 16px;
+    text-align: end;
+    button {
+        cursor: pointer;
+        padding: 10px 24px;
+        border-radius: 100vh;
+        border: none;
+        background-color: #FFDEEB;
+        color: rgb(61, 61, 61);
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        box-shadow: #ffdeeb 0 0 14px;
+    }
+}
+
+.homeworkContainer {
+    flex: 1;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    //タブメニュー
+    .tabWrapper {
+        align-self: center;
+        .tab {
+            display: flex;
+            justify-content: center;
+            background-color: rgba(255, 255, 255, 0.5);
+            padding: 24px;
+            cursor: pointer;
+            border-radius: 16px;
+            li {
+                list-style: none;
+                width: 8em;
+                padding: 24px 48px;
+                box-sizing: content-box;
+                text-align: center;
+                border-radius: 16px;
+                letter-spacing: 0.1em;
+            }
+            .active {
+                background-color: #FFDEEB;
+                box-shadow: #ffdeeb 0 0 24px;
+            }
+        }
+    }
+    //タブの中身
+    .tabContainer {
+        flex: 1;
+        //activeなタブ
+        //課題やるタブの中身////////////////////////////
+        //////////////////////////////////////////
+        .homeworkPlay {
+            display: grid;
+            grid-template-columns: calc(100%/4) calc(100%/4) calc(100%/4) calc(100%/4);
+            justify-items: center;
+            row-gap: 24px;
+            //一つの課題↓
+            ul {
+                flex-basis: auto;
+                display: flex;
+                align-items: center;
+                background-color: rgba(255, 255, 255, 0.5);
+                padding: 24px;
+                font-size: 16px;
+                border-radius: 24px;
+                li {
+                    list-style: none;
+                }
+                .playSubject {
+                    width: 4em;
+                }
+                .playTitle {
+                    width: 8em;
+                }
+                .playButton {
+                    button {
+                        cursor: pointer;
+                        position: relative;
+                        $circle: 80px;
+                        border: none;
+                        width: $circle;
+                        height: $circle;
+                        line-height: $circle;
+                        text-align: center;
+                        border-radius: 50%;
+                        background-color: #FFDEEB;
+                        border: 10px solid #FFF0F6;
+                        box-shadow: #FFDEEB 0 4px 30px;
+                        // box-sizing: content-box;
+                        img {
+                            width: 24px;
+                            height: auto;
+                            position: absolute;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                        }
+                    }
+                }
+            }
+        }
+        //提出履歴//////////////////////////
+        ///////////////////////////////////
+        .homeworkHistory {
+            display: flex;
+            div {
+                display: grid;
+                grid-template-columns: calc(100%/3) calc(100%/3) calc(100%/3);
+                justify-items: center;
+                width: 100%;
+                row-gap: 24px;
+                ul {
+                    display: flex;
+                    flex-basis: auto;
+                    align-items: center;
+                    border-radius: 16px;
+                    list-style: none;
+                    gap: 24px;
+                    background-color: rgba(255, 255, 255, 0.5);
+                    padding: 24px;
+                    li {
+                        text-align: left;
+                        width: 8em;
+                    }
+                }
+            }
+        }
+        //activeではないタブ
+        .tabContent {
+            display: none;
+        }
+        .active {
+            display: grid;
+            padding: 24px 40px;
+        }
+    }
+}
