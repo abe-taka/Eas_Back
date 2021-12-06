@@ -1,0 +1,121 @@
+main {
+  grid-area: main;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  padding: 0 80px;
+}
+
+main ul {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 8px 8px;
+  border-radius: 8px;
+  -webkit-box-shadow: 24px 24px 40px rgba(231, 226, 247, 0.5);
+          box-shadow: 24px 24px 40px rgba(231, 226, 247, 0.5);
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+
+main ul li {
+  list-style: none;
+  padding: 16px 16px;
+  text-align: center;
+  letter-spacing: 0.1em;
+}
+
+main ul .main-date {
+  border-radius: 8px;
+}
+
+main .title {
+  background-color: rgba(255, 255, 255, 0);
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+
+
+.list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+}
+.item {
+  margin: 5px;
+  width: calc(50% - 10px);
+}
+
+
+.btn-flat-border {
+  background-color: #FCC2D7;
+  display: inline-block;
+  padding: 0.3em 1em;
+  text-decoration: none;
+  border: solid 2px #FCC2D7;
+  border-radius: 50px;
+  transition: .4s;
+}
+
+.contents {
+   overflow: hidden;
+}
+.itemselect {
+   float: left;
+   padding: 20px 30px;
+   text-align: center;
+}
+
+
+.container {
+  margin: 50px auto 0;
+  position: relative;
+  width: 100px;
+}
+select {
+  -webkit-appearance: none;
+  appearance: none; /* デフォルトのスタイルを無効 */
+  border-radius: 0;
+  height: 37px;
+  padding-left: 10px;
+  width: 100px;
+}
+select::-ms-expand {
+  display: none; /* デフォルトのスタイルを無効(IE用) */
+}
+/* セレクトボックスの矢印デザイン変更 */
+.container::before {
+  border-bottom: 4.5px solid red;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  content: "";
+  position: absolute;
+  right: 9px;
+  top: 10px;
+  width: 0;
+}
+.container::after {
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4.5px solid red;
+  content: "";
+  position: absolute;
+  right: 9px;
+  top: 21px;
+  width: 0;
+}
+
+
+
+
+/*# sourceMappingURL=home.css.map */
