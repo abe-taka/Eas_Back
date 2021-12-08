@@ -52,6 +52,7 @@
 <body>
 
     <header>
+     	<button onclick="history.back()">もどる</button>
         <h2 th:text="${session_name} + さん"></h2>
         <form th:action="@{/logout}" method="post">
             <button type="submit">ログアウト</button>

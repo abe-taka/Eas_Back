@@ -3,49 +3,138 @@
 <head>
 <title>問題管理</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/homework/homework_submistatus.css">
     
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    
+    <!-- Google Fonts -->
+    <script>
+        (function(d) {
+            var config = {
+                    kitId: 'fcl7ixt',
+                    scriptTimeout: 3000,
+                    async: true
+                },
+                h = d.documentElement,
+                t = setTimeout(function() {
+                    h.className = h.className.replace(/\bwf-loading\b/g, "") + " wf-inactive";
+                }, config.scriptTimeout),
+                tk = d.createElement("script"),
+                f = false,
+                s = d.getElementsByTagName("script")[0],
+                a;
+            h.className += " wf-loading";
+            tk.src = 'https://use.typekit.net/' + config.kitId + '.js';
+            tk.async = true;
+            tk.onload = tk.onreadystatechange = function() {
+                a = this.readyState;
+                if (f || a && a != "complete" && a != "loaded") return;
+                f = true;
+                clearTimeout(t);
+                try {
+                    Typekit.load(config)
+                } catch (e) {}
+            };
+            s.parentNode.insertBefore(tk, s)
+        })(document);
+    </script>
+    
+    
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/e169475605.js" crossorigin="anonymous"></script>
+
+    <!-- jQuery CDN -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 </head>
 <body>
-<div th:text="${session_name} + さん"></div>
-
-<form th:action="@{/logout}" method="post">
-	<button type="submit">ログアウト</button>
-</form>
-<div class="container">
-	<div class="row">
-		<!-- サイドバー -->
-		<div class="side col-lg-2">
-			<!-- サイドバー共通部品 -->
-			<div th:replace="/common/sidebar::sidebar"></div>
-		</div>
+    <header>
+        <h2 th:text="${session_name} + さん"></h2>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit">ログアウト</button>
+        </form>
+    </header>
+    
+    <div class="navigation">
+        <div><img src="/images/eas_logo.svg" alt="Eas"></div>
+        <nav>
+            <ul>
+                <li><a th:href="@{/home/teacherhome}">ホーム</a></li>
+                <li><a th:href="@{/homework}">問題作成</a></li>
+                <li><a th:href="@{/homeworklist}">問題管理</a></li>
+                <li class="active"><a th:href="@{/homework_submistatus}">提出状況確認</a></li>
+                <li><a th:href="@{/class/roomselect}">授業選択</a></li>
+                <li><a th:href="@{/logmanagement}">生徒入室管理</a></li>
+            </ul>
+        </nav>
+    </div>
+    
+    
 		<!-- メイン -->
-		<div class="column col-lg-10">
-			<h1>生徒個別提出状況確認</h1>
+		<main>
+		<div><a th:href="@{/homework_submistatus}">提出状況確認　></a></div>
 			<div th:if="${student_name}">
                 <span th:text="${student_name} + 'さんの提出状況'"></span>
         	</div>
-	        <table class="table table-bordered table-striped">
-	            <tr>
-	                <th>課題名</th>
-	                <th>科目</th>
-	                <th>提出有無</th>
-	            </tr>
-	            <tr th:each="homeworkDetailsList:${homeworkDetailsList}">
-	                <td th:text="${homeworkDetailsList.homework_filename}"></td>
-	                <td th:text="${homeworkDetailsList.homework_subject}"></td>
-	                <td th:if="${homeworkDetailsList.submission_flg == 1}" th:text="提出"></td>
-	                <td th:if="${homeworkDetailsList.submission_flg == 0}" th:text="未提出"></td>
-	            </tr>
-	        </table>
-        </div>
-    </div>
-</div>
-<!-- Optional JavaScript -->
-<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+			<div class="wrap">
+			  <div class="itemee">
+			    <h2>国語</h2>
+	        	<ul th:each="homeworkDetailsJapaneseList:${homeworkDetailsJapaneseList}">
+			        <li th:text="${homeworkDetailsJapaneseList.homework_filename}"></li>
+			        <li class = "submitted" th:if="${homeworkDetailsJapaneseList.submission_flg == 1}" th:text="提出済み"></li>
+			        <li class = "notsubmitted" th:if="${homeworkDetailsJapaneseList.submission_flg == 0}" th:text="未提出"></li>
+		        </ul>
+			  </div>
+			
+			  <div class="itemee">
+			    <h2>算数</h2>
+	        	<ul th:each="homeworkDetailsMathList:${homeworkDetailsMathList}">
+			        <li th:text="${homeworkDetailsMathList.homework_filename}"></li>
+			        <li class = "submitted" th:if="${homeworkDetailsMathList.submission_flg == 1}" th:text="提出済み"></li>
+			        <li class = "notsubmitted"  th:if="${homeworkDetailsMathList.submission_flg == 0}" th:text="未提出"></li>
+		        </ul>
+			  </div>
+			
+			  <div class="itemee">
+			    <h2>理科</h2>
+	        	<ul th:each="homeworkDetailsScienceList:${homeworkDetailsScienceList}">
+			        <li th:text="${homeworkDetailsScienceList.homework_filename}"></li>
+			        <li class = "submitted" th:if="${homeworkDetailsScienceList.submission_flg == 1}" th:text="提出済み"></li>
+			        <li class = "notsubmitted"  th:if="${homeworkDetailsScienceList.submission_flg == 0}" th:text="未提出"></li>
+		        </ul>
+			  </div>
+			  
+	          <div class="itemee">
+			    <h2>社会</h2>
+	        	<ul th:each="homeworkDetailsSocialstudiesList:${homeworkDetailsSocialstudiesList}">
+			        <li th:text="${homeworkDetailsSocialstudiesList.homework_filename}"></li>
+			        <li class = "submitted" th:if="${homeworkDetailsSocialstudiesList.submission_flg == 1}" th:text="提出済み"></li>
+			        <li class = "notsubmitted"  th:if="${homeworkDetailsSocialstudiesList.submission_flg == 0}" th:text="未提出"></li>
+		        </ul>
+			  </div>
+			  
+			  <div class="itemee">
+			    <h2>英語</h2>
+	        	<ul th:each="homeworkDetailsEnglishList:${homeworkDetailsEnglishList}">
+			        <li th:text="${homeworkDetailsEnglishList.homework_filename}"></li>
+			        <li class = "submitted" th:if="${homeworkDetailsEnglishList.submission_flg == 1}" th:text="提出済み"></li>
+			        <li class = "notsubmitted"  th:if="${homeworkDetailsEnglishList.submission_flg == 0}" th:text="未提出"></li>
+		        </ul>
+			  </div>
+			  
+			  <div class="itemee">
+			    <h2>その他</h2>
+	        	<ul th:each="homeworkDetailsOthersList:${homeworkDetailsOthersList}">
+			        <li th:text="${homeworkDetailsOthersList.homework_filename}"></li>
+			        <li class = "submitted" th:if="${homeworkDetailsOthersList.submission_flg == 1}" th:text="提出済み"></li>
+			        <li class = "notsubmitted"  th:if="${homeworkDetailsOthersList.submission_flg == 0}" th:text="未提出"></li>
+		        </ul>
+			  </div>
+			  
+			  
+			</div>
+		 </main>
 </body>
 </html>

@@ -84,16 +84,16 @@ main .title {
 }
 select {
   -webkit-appearance: none;
-  appearance: none; /* ƒfƒtƒHƒ‹ƒg‚ÌƒXƒ^ƒCƒ‹‚ğ–³Œø */
+  appearance: none; /* ï¿½fï¿½tï¿½Hï¿½ï¿½ï¿½gï¿½ÌƒXï¿½^ï¿½Cï¿½ï¿½ï¿½ğ–³Œï¿½ */
   border-radius: 0;
   height: 37px;
   padding-left: 10px;
   width: 100px;
 }
 select::-ms-expand {
-  display: none; /* ƒfƒtƒHƒ‹ƒg‚ÌƒXƒ^ƒCƒ‹‚ğ–³Œø(IE—p) */
+  display: none; /* ï¿½fï¿½tï¿½Hï¿½ï¿½ï¿½gï¿½ÌƒXï¿½^ï¿½Cï¿½ï¿½ï¿½ğ–³Œï¿½(IEï¿½p) */
 }
-/* ƒZƒŒƒNƒgƒ{ƒbƒNƒX‚Ì–îˆóƒfƒUƒCƒ“•ÏX */
+/* ï¿½Zï¿½ï¿½ï¿½Nï¿½gï¿½{ï¿½bï¿½Nï¿½Xï¿½Ì–ï¿½ï¿½fï¿½Uï¿½Cï¿½ï¿½ï¿½ÏX */
 .container::before {
   border-bottom: 4.5px solid red;
   border-left: 4px solid transparent;
@@ -115,6 +115,29 @@ select::-ms-expand {
   width: 0;
 }
 
+
+.wrap {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.itemee {
+  padding: 30px;
+  width: 32%;
+}
+
+ul li.submitted{
+	background-color: #ebfeeb;
+	border-radius: 30px;
+	color: #5da268;
+}
+
+ul li.notsubmitted{
+	background-color: #ffe3e7;
+	border-radius: 30px;
+	color: #dd5a5f;
+}
 
 
 

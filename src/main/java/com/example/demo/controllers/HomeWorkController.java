@@ -394,6 +394,24 @@ public class HomeWorkController<SelectYearCode> {
 			List homeworkDetailsList = jdbcTestRepository.homeworkListfindAll(schoolCode,class_no);
 			model.addAttribute("homeworkDetailsList",homeworkDetailsList);
 			
+			List homeworkDetailsJapaneseList = jdbcTestRepository.homeworkListfindAllJapanese(schoolCode,class_no);
+			model.addAttribute("homeworkDetailsJapaneseList",homeworkDetailsJapaneseList);
+			
+			List homeworkDetailsMathList = jdbcTestRepository.homeworkListfindAllMath(schoolCode,class_no);
+			model.addAttribute("homeworkDetailsMathList",homeworkDetailsMathList);
+			
+			List homeworkDetailsSocialstudiesList = jdbcTestRepository.homeworkListfindAllSocialstudies(schoolCode,class_no);
+			model.addAttribute("homeworkDetailsSocialstudiesList",homeworkDetailsSocialstudiesList);
+			
+			List homeworkDetailsScienceList = jdbcTestRepository.homeworkListfindAllScience(schoolCode,class_no);
+			model.addAttribute("homeworkDetailsScienceList",homeworkDetailsScienceList);
+			
+			List homeworkDetailsEnglishList = jdbcTestRepository.homeworkListfindAllEnglish(schoolCode,class_no);
+			model.addAttribute("homeworkDetailsEnglishList",homeworkDetailsEnglishList);
+			
+			List homeworkDetailsOthersList = jdbcTestRepository.homeworkListfindAllOthers(schoolCode,class_no);
+			model.addAttribute("homeworkDetailsOthersList",homeworkDetailsOthersList);
+			
 			model.addAttribute("student_name",student_name);
 			
 			 // 現在日時情報で初期化されたインスタンスの生成
